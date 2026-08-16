@@ -1,0 +1,22 @@
+[project]
+name = "fitapp"
+type = "app"
+domain = "nextnode.fr"
+
+[deploy]
+target = "cloudflare-workers"
+secrets = []
+
+[deploy.services.front]
+url = "front-fitapp.nextnode.fr"
+needs = ["api"]
+entry = "apps/front/dist/server/entry.mjs"
+
+[deploy.services.api]
+url = "api-fitapp.nextnode.fr"
+needs = ["d1"]
+entry = "apps/api/src/index.ts"
+
+[services.d1]
+migrations_folder = "apps/api/drizzle"
+check_command = "pnpm --filter @fitapp/api exec drizzle-kit check"

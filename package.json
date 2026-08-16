@@ -8,7 +8,8 @@
     "lint": "turbo run lint",
     "prepare": "node .husky/install.mjs",
     "test": "turbo run test",
-    "type-check": "turbo run type-check"
+    "type-check": "turbo run type-check",
+    "types:gen": "worker-types gen --config nextnode.toml"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.2",
