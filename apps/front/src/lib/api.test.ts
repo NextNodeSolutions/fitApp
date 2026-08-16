@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { ApiError, fetchFromApi, getApiJson } from './api'
+import { fetchFromApi, getApiJson } from './api'
+import { ApiError } from './errors/api-error'
 
 const HTTP_SERVER_ERROR = 500
 
