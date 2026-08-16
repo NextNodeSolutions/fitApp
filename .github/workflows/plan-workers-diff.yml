@@ -1,0 +1,15 @@
+name: Plan workers diff
+
+on:
+    pull_request:
+        paths:
+            - '**/nextnode.toml'
+
+jobs:
+    plan-infra:
+        uses: NextNodeSolutions/core/.github/workflows/plan-workers-diff.yml@main
+        with:
+            environment: development
+        secrets: inherit
+        permissions:
+            pull-requests: write

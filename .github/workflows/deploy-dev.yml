@@ -1,0 +1,12 @@
+name: Deploy (dev)
+
+on:
+    push:
+        branches: [main]
+
+jobs:
+    pipeline:
+        uses: NextNodeSolutions/core/.github/workflows/deploy-workers.yml@main
+        with:
+            environment: development
+        secrets: inherit
