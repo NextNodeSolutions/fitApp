@@ -1,0 +1,11 @@
+name: Deploy (prod)
+
+on:
+    workflow_dispatch:
+
+jobs:
+    pipeline:
+        uses: NextNodeSolutions/core/.github/workflows/deploy-workers.yml@main
+        with:
+            environment: production
+        secrets: inherit

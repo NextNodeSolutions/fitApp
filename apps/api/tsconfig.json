@@ -1,0 +1,5 @@
+{
+	"extends": "@nextnode-solutions/standards/typescript/library",
+	"include": ["src", "drizzle.config.ts", "worker-configuration.d.ts"],
+	"exclude": ["node_modules", "dist", "vitest.config.ts"]
+}

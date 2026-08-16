@@ -1,0 +1,32 @@
+{
+  "name": "fitapp",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
+    "lint": "turbo run lint",
+    "prepare": "node .husky/install.mjs",
+    "test": "turbo run test",
+    "type-check": "turbo run type-check",
+    "types:gen": "worker-types gen --config nextnode.toml"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.2.2",
+    "@commitlint/config-conventional": "19.8.1",
+    "@nextnode-solutions/standards": "1.22.0",
+    "@nextnode-solutions/worker-types": "1.0.0",
+    "better-sort-package-json": "1.1.1",
+    "husky": "9.1.7",
+    "lint-staged": "17.3.0",
+    "oxfmt": "0.63.0",
+    "oxlint": "1.78.0",
+    "turbo": "2.10.10"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "private": true,
+  "packageManager": "pnpm@11.21.0",
+  "type": "module"
+}
