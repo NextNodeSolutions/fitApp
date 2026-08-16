@@ -11,26 +11,17 @@
     "type-check": "turbo run type-check",
     "types:gen": "worker-types gen --config nextnode.toml"
   },
-  "dependencies": {
-    "drizzle-orm": "^0.45.2",
-    "hono": "^4.13.2"
-  },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20260815.1",
     "@commitlint/cli": "21.2.2",
     "@commitlint/config-conventional": "19.8.1",
     "@nextnode-solutions/standards": "1.22.0",
     "@nextnode-solutions/worker-types": "1.0.0",
     "better-sort-package-json": "1.1.1",
-    "drizzle-kit": "^0.31.10",
     "husky": "9.1.7",
     "lint-staged": "17.3.0",
     "oxfmt": "0.63.0",
     "oxlint": "1.78.0",
-    "turbo": "2.10.10",
-    "typescript": "^7.0.2",
-    "vitest": "^4.1.10",
-    "wrangler": "^4.123.0"
+    "turbo": "2.10.10"
   },
   "engines": {
     "node": ">=24"
