@@ -1,0 +1,5 @@
+{
+	"extends": "@nextnode-solutions/standards/typescript/astro",
+	"include": [".astro/types.d.ts", "**/*"],
+	"exclude": ["dist", "vitest.config.ts"]
+}
