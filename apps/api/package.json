@@ -1,0 +1,28 @@
+{
+  "name": "@fitapp/api",
+  "version": "0.0.1",
+  "scripts": {
+    "db:check": "drizzle-kit check",
+    "db:generate": "drizzle-kit generate",
+    "dev": "wrangler dev --config wrangler.dev.jsonc",
+    "lint": "oxlint",
+    "test": "vitest run",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.2",
+    "hono": "^4.13.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260815.1",
+    "drizzle-kit": "^0.31.10",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10",
+    "wrangler": "^4.123.0"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "private": true,
+  "type": "module"
+}
