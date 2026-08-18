@@ -1,8 +1,11 @@
 import { Hono } from 'hono'
 
+import { onboarding } from './routes/onboarding'
+
 const app = new Hono<{ Bindings: Env }>()
 
 app.get('/healthz', c => c.json({ status: 'ok', service: 'api' }))
+app.route('/api/onboarding', onboarding)
 
 export { app }
 
