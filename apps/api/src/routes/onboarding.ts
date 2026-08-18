@@ -36,34 +36,67 @@ const HTTP_BAD_REQUEST = 400
 const HTTP_CREATED = 201
 const HTTP_NOT_FOUND = 404
 
+type OnboardingBody = {
+	height: number
+	weight: number
+	age: number
+	sex: string
+	activityLevel: string
+}
+
 const onboarding = new Hono<{ Bindings: Env }>()
 
-onboarding.post('/', async c => {
-	const body = await c.req.json<{
-		height: number
-		weight: number
-		age: number
-		sex: string
-		activityLevel: string
-	}>()
+function validateNumericField(
+	value: unknown,
+	min: number,
+	max: number,
+	label: string,
+): string | null {
+	if (typeof value !== 'number' || !Number.isFinite(value)) {
+		return `${label} doit être un nombre valide`
+	}
+	if (value < min || value > max) {
+		return `${label} doit être compris entre ${min} et ${max}`
+	}
+	return null
+}
 
+function validateOnboardingBody(body: OnboardingBody): string[] {
 	const errors: string[] = []
 
-	if (body.height < MIN_HEIGHT || body.height > MAX_HEIGHT) {
-		errors.push('La taille doit être comprise entre 100 et 250 cm')
-	}
-	if (body.weight < MIN_WEIGHT || body.weight > MAX_WEIGHT) {
-		errors.push('Le poids doit être compris entre 30 et 300 kg')
-	}
-	if (body.age < MIN_AGE || body.age > MAX_AGE) {
-		errors.push("L'âge doit être compris entre 10 et 120 ans")
-	}
+	const heightError = validateNumericField(
+		body.height,
+		MIN_HEIGHT,
+		MAX_HEIGHT,
+		'La taille',
+	)
+	if (heightError) errors.push(heightError)
+
+	const weightError = validateNumericField(
+		body.weight,
+		MIN_WEIGHT,
+		MAX_WEIGHT,
+		'Le poids',
+	)
+	if (weightError) errors.push(weightError)
+
+	const ageError = validateNumericField(body.age, MIN_AGE, MAX_AGE, "L'âge")
+	if (ageError) errors.push(ageError)
+
 	if (!isValidSex(body.sex)) {
 		errors.push('Le sexe est obligatoire')
 	}
 	if (!isValidActivityLevel(body.activityLevel)) {
 		errors.push("Le niveau d'activité est obligatoire")
 	}
+
+	return errors
+}
+
+onboarding.post('/', async c => {
+	const body = await c.req.json<OnboardingBody>()
+
+	const errors = validateOnboardingBody(body)
 
 	if (errors.length > 0) {
 		return c.json({ errors }, HTTP_BAD_REQUEST)
@@ -84,15 +117,19 @@ onboarding.post('/', async c => {
 		)
 		.run()
 
-	const d1 = drizzle(c.env.DB, { schema })
-
-	const [profile] = await d1
-		.select()
-		.from(schema.profiles)
-		.where(eq(schema.profiles.sessionId, sessionId))
-		.limit(1)
-
-	return c.json({ profile, sessionId }, HTTP_CREATED)
+	return c.json(
+		{
+			profile: {
+				height: body.height,
+				weight: body.weight,
+				age: body.age,
+				sex: body.sex,
+				activityLevel: body.activityLevel,
+			},
+			sessionId,
+		},
+		HTTP_CREATED,
+	)
 })
 
 onboarding.get('/:sessionId', async c => {
@@ -101,7 +138,13 @@ onboarding.get('/:sessionId', async c => {
 	const d1 = drizzle(c.env.DB, { schema })
 
 	const [profile] = await d1
-		.select()
+		.select({
+			height: schema.profiles.height,
+			weight: schema.profiles.weight,
+			age: schema.profiles.age,
+			sex: schema.profiles.sex,
+			activityLevel: schema.profiles.activityLevel,
+		})
 		.from(schema.profiles)
 		.where(eq(schema.profiles.sessionId, sessionId))
 		.limit(1)
