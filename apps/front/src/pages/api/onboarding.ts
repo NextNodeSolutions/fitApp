@@ -1,9 +1,11 @@
 import { env } from 'cloudflare:workers'
 
+import { fetchFromApi } from '../../lib/api'
+
 import type { APIRoute } from 'astro'
 
 export const POST: APIRoute = async ({ request }) => {
-	const apiResponse = await env.API.fetch('/api/onboarding', {
+	const apiResponse = await fetchFromApi(env, '/api/onboarding', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: await request.text(),
