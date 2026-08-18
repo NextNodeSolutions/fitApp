@@ -74,8 +74,10 @@ async function submitFormData(
 	}
 }
 
+type FieldId = keyof FormData
+
 const TEXT_FIELDS: {
-	id: string
+	id: FieldId
 	label: string
 	unit: string
 	min: number
@@ -110,7 +112,20 @@ const TEXT_FIELDS: {
 	},
 ]
 
-export function OnboardingForm(): ReactElement {
+function getValue(values: FormData, id: FieldId): string {
+	return values[id]
+}
+
+type FormState = {
+	handleChange: (name: string, value: string) => void
+	handleSubmit: (e: React.SyntheticEvent) => void
+	values: FormData
+	errors: Record<string, string>
+	submitting: boolean
+	serverError: string
+}
+
+function useFormState(): FormState {
 	const [height, setHeight] = useState('')
 	const [weight, setWeight] = useState('')
 	const [age, setAge] = useState('')
@@ -119,13 +134,8 @@ export function OnboardingForm(): ReactElement {
 	const [errors, setErrors] = useState<Record<string, string>>({})
 	const [submitting, setSubmitting] = useState(false)
 	const [serverError, setServerError] = useState('')
-	const values: Record<string, string> = {
-		height,
-		weight,
-		age,
-		sex,
-		activityLevel,
-	}
+
+	const values: FormData = { height, weight, age, sex, activityLevel }
 	const setters: Record<string, (v: string) => void> = {
 		height: setHeight,
 		weight: setWeight,
@@ -133,6 +143,7 @@ export function OnboardingForm(): ReactElement {
 		sex: setSex,
 		activityLevel: setActivityLevel,
 	}
+
 	function updateError(name: string, value: string): void {
 		const error = validateOneField(name, value)
 		setErrors(prev => {
@@ -142,27 +153,42 @@ export function OnboardingForm(): ReactElement {
 			)
 		})
 	}
+
 	function handleChange(name: string, value: string): void {
 		const setter = setters[name]
 		if (setter) setter(value)
 		updateError(name, value)
 	}
+
 	async function handleSubmit(e: React.SyntheticEvent): Promise<void> {
 		e.preventDefault()
 		const allErrors = validateAllFields(Object.entries(values))
 		setErrors(allErrors)
 		if (Object.keys(allErrors).length > 0) return
-		await submitFormData(
-			{ height, weight, age, sex, activityLevel },
-			setSubmitting,
-			setServerError,
-		)
+		await submitFormData(values, setSubmitting, setServerError)
 	}
+
+	return {
+		handleChange,
+		handleSubmit,
+		values,
+		errors,
+		submitting,
+		serverError,
+	}
+}
+
+export function OnboardingForm(): ReactElement {
+	const form = useFormState()
+
 	return (
-		<form onSubmit={handleSubmit} className="mx-auto max-w-md space-y-6">
-			{serverError ? (
+		<form
+			onSubmit={form.handleSubmit}
+			className="mx-auto max-w-md space-y-6"
+		>
+			{form.serverError ? (
 				<div className="rounded bg-red-900/50 p-3 text-sm text-red-200">
-					{serverError}
+					{form.serverError}
 				</div>
 			) : null}
 			{TEXT_FIELDS.map(f => (
@@ -171,45 +197,47 @@ export function OnboardingForm(): ReactElement {
 					id={f.id}
 					label={f.label}
 					unit={f.unit}
-					value={values[f.id]!}
-					onChange={v => handleChange(f.id, v)}
-					onBlur={() => updateError(f.id, values[f.id]!)}
+					value={getValue(form.values, f.id)}
+					onChange={v => form.handleChange(f.id, v)}
+					onBlur={() =>
+						form.handleChange(f.id, getValue(form.values, f.id))
+					}
 					min={f.min}
 					max={f.max}
 					step={f.step}
 					placeholder={f.placeholder}
-					error={errors[f.id]}
+					error={form.errors[f.id]}
 				/>
 			))}
 			<RadioGroup
 				label="Sexe"
 				name="sex"
-				selected={sex}
+				selected={form.values.sex}
 				options={[
 					{ value: 'male', label: 'Homme' },
 					{ value: 'female', label: 'Femme' },
 				]}
-				onChange={v => handleChange('sex', v)}
-				error={errors.sex}
+				onChange={v => form.handleChange('sex', v)}
+				error={form.errors.sex}
 			/>
 			<RadioGroup
 				label="Niveau d'activité"
 				name="activityLevel"
-				selected={activityLevel}
+				selected={form.values.activityLevel}
 				options={ACTIVITY_LEVELS.map(l => ({
 					value: l.value,
 					label: l.label,
 					hint: l.hint,
 				}))}
-				onChange={v => handleChange('activityLevel', v)}
-				error={errors.activityLevel}
+				onChange={v => form.handleChange('activityLevel', v)}
+				error={form.errors.activityLevel}
 			/>
 			<button
 				type="submit"
-				disabled={submitting}
+				disabled={form.submitting}
 				className="w-full rounded bg-lime-500 px-4 py-2 font-medium text-black transition hover:bg-lime-400 disabled:opacity-50"
 			>
-				{submitting ? 'Enregistrement…' : 'Commencer mon suivi'}
+				{form.submitting ? 'Enregistrement…' : 'Commencer mon suivi'}
 			</button>
 		</form>
 	)
