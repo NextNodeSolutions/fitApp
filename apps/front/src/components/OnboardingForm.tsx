@@ -174,6 +174,25 @@ function useFormState(): FormState {
 	}
 }
 
+function renderTextFields(form: FormState): ReactElement[] {
+	return TEXT_FIELDS.map(f => (
+		<TextInput
+			key={f.id}
+			id={f.id}
+			label={f.label}
+			unit={f.unit}
+			value={getValue(form.values, f.id)}
+			onChange={v => form.handleChange(f.id, v)}
+			onBlur={() => form.handleChange(f.id, getValue(form.values, f.id))}
+			min={f.min}
+			max={f.max}
+			step={f.step}
+			placeholder={f.placeholder}
+			error={form.errors[f.id]}
+		/>
+	))
+}
+
 function FormView({ form }: { form: FormState }): ReactElement {
 	return (
 		<form
@@ -185,24 +204,7 @@ function FormView({ form }: { form: FormState }): ReactElement {
 					{form.serverError}
 				</div>
 			) : null}
-			{TEXT_FIELDS.map(f => (
-				<TextInput
-					key={f.id}
-					id={f.id}
-					label={f.label}
-					unit={f.unit}
-					value={getValue(form.values, f.id)}
-					onChange={v => form.handleChange(f.id, v)}
-					onBlur={() =>
-						form.handleChange(f.id, getValue(form.values, f.id))
-					}
-					min={f.min}
-					max={f.max}
-					step={f.step}
-					placeholder={f.placeholder}
-					error={form.errors[f.id]}
-				/>
-			))}
+			{renderTextFields(form)}
 			<RadioGroup
 				label="Sexe"
 				name="sex"
