@@ -134,7 +134,6 @@ function useFormState(): FormState {
 	const [errors, setErrors] = useState<Record<string, string>>({})
 	const [submitting, setSubmitting] = useState(false)
 	const [serverError, setServerError] = useState('')
-
 	const values: FormData = { height, weight, age, sex, activityLevel }
 	const setters: Record<string, (v: string) => void> = {
 		height: setHeight,
@@ -153,13 +152,11 @@ function useFormState(): FormState {
 			)
 		})
 	}
-
 	function handleChange(name: string, value: string): void {
 		const setter = setters[name]
 		if (setter) setter(value)
 		updateError(name, value)
 	}
-
 	async function handleSubmit(e: React.SyntheticEvent): Promise<void> {
 		e.preventDefault()
 		const allErrors = validateAllFields(Object.entries(values))
@@ -167,7 +164,6 @@ function useFormState(): FormState {
 		if (Object.keys(allErrors).length > 0) return
 		await submitFormData(values, setSubmitting, setServerError)
 	}
-
 	return {
 		handleChange,
 		handleSubmit,
@@ -178,9 +174,7 @@ function useFormState(): FormState {
 	}
 }
 
-export function OnboardingForm(): ReactElement {
-	const form = useFormState()
-
+function FormView({ form }: { form: FormState }): ReactElement {
 	return (
 		<form
 			onSubmit={form.handleSubmit}
@@ -241,4 +235,9 @@ export function OnboardingForm(): ReactElement {
 			</button>
 		</form>
 	)
+}
+
+export function OnboardingForm(): ReactElement {
+	const form = useFormState()
+	return <FormView form={form} />
 }
