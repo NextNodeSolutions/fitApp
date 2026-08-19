@@ -1,9 +1,7 @@
 import {
 	HTTP_BAD_REQUEST,
 	HTTP_CREATED,
-	HTTP_NOT_FOUND,
 	OnboardingBodySchema,
-	PROFILE_NOT_FOUND_ERROR,
 } from '@fitapp/contracts'
 import { vValidator } from '@hono/valibot-validator'
 import { Hono } from 'hono'
@@ -55,13 +53,6 @@ export function createOnboardingRoutes(deps: OnboardingDeps): Hono<{
 			{ repository: deps.createRepository(res.env.DB) },
 			sessionId,
 		)
-
-		if (!profile) {
-			return res.json(
-				{ errors: [PROFILE_NOT_FOUND_ERROR] },
-				HTTP_NOT_FOUND,
-			)
-		}
 
 		return res.json({ profile })
 	})

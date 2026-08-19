@@ -1,3 +1,5 @@
+import { ProfileNotFoundError } from '@fitapp/contracts'
+
 import type { Profile } from '../domain/profile'
 import type { ProfileRepository } from '../ports/profile-repository'
 
@@ -8,6 +10,8 @@ export type GetProfileDeps = {
 export async function getProfile(
 	deps: GetProfileDeps,
 	sessionId: string,
-): Promise<Profile | null> {
-	return deps.repository.findBySessionId(sessionId)
+): Promise<Profile> {
+	const profile = await deps.repository.findBySessionId(sessionId)
+	if (!profile) throw new ProfileNotFoundError()
+	return profile
 }

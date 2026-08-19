@@ -1,3 +1,4 @@
+import { AppError } from '@fitapp/contracts'
 import { Hono } from 'hono'
 
 import { createOnboardingRoutes } from './onboarding/http/onboarding-routes'
@@ -5,7 +6,14 @@ import { createD1ProfileRepository } from './onboarding/infrastructure/d1-profil
 
 const app = new Hono<{ Bindings: Env }>()
 
-app.get('/healthz', c => c.json({ status: 'ok', service: 'api' }))
+app.get('/healthz', res => res.json({ status: 'ok', service: 'api' }))
+
+app.onError((error, res) => {
+	if (error instanceof AppError && error.status) {
+		return res.json(error.toJSON(), error.status)
+	}
+	throw error
+})
 
 app.route(
 	'/api/onboarding',
