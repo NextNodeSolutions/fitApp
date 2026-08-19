@@ -1,3 +1,4 @@
+import { HTTP_BAD_REQUEST } from '@fitapp/contracts'
 import { describe, expect, it } from 'vitest'
 
 import { app } from './index'
@@ -28,7 +29,7 @@ describe('POST /api/onboarding', () => {
 			}),
 		})
 
-		expect(response.status).toBe(400)
+		expect(response.status).toBe(HTTP_BAD_REQUEST)
 		const body: { errors: string[] } = await response.json()
 		expect(body.errors).toBeDefined()
 	})
@@ -40,7 +41,7 @@ describe('POST /api/onboarding', () => {
 			body: JSON.stringify({ height: 175 }),
 		})
 
-		expect(response.status).toBe(400)
+		expect(response.status).toBe(HTTP_BAD_REQUEST)
 	})
 
 	it('rejects invalid sex value', async () => {
@@ -56,6 +57,6 @@ describe('POST /api/onboarding', () => {
 			}),
 		})
 
-		expect(response.status).toBe(400)
+		expect(response.status).toBe(HTTP_BAD_REQUEST)
 	})
 })

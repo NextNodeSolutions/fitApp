@@ -1,11 +1,19 @@
 import { Hono } from 'hono'
 
-import { onboarding } from './routes/onboarding'
+import { createOnboardingRoutes } from './onboarding/http/onboarding-routes'
+import { createD1ProfileRepository } from './onboarding/infrastructure/d1-profile-repository'
 
 const app = new Hono<{ Bindings: Env }>()
 
 app.get('/healthz', c => c.json({ status: 'ok', service: 'api' }))
-app.route('/api/onboarding', onboarding)
+
+app.route(
+	'/api/onboarding',
+	createOnboardingRoutes({
+		createRepository: createD1ProfileRepository,
+		generateSessionId: () => crypto.randomUUID(),
+	}),
+)
 
 export { app }
 
