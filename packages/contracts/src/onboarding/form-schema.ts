@@ -11,14 +11,6 @@ import {
 	WEIGHT_MAX,
 	WEIGHT_MIN,
 } from './constants'
-import {
-	ACTIVITY_LEVEL_LABEL,
-	AGE_LABEL,
-	HEIGHT_LABEL,
-	rangeMessage,
-	SEX_LABEL,
-	WEIGHT_LABEL,
-} from './messages'
 
 import type { OnboardingBody } from './body-schema'
 
@@ -31,8 +23,14 @@ function requiredNumericString(label: string, min: number, max: number) {
 			value => !Number.isNaN(Number(value)),
 			`${label} doit être un nombre valide`,
 		),
-		v.check(value => Number(value) >= min, rangeMessage(label, min, max)),
-		v.check(value => Number(value) <= max, rangeMessage(label, min, max)),
+		v.check(
+			value => Number(value) >= min,
+			`${label} doit être entre ${min} et ${max}`,
+		),
+		v.check(
+			value => Number(value) <= max,
+			`${label} doit être entre ${min} et ${max}`,
+		),
 	)
 }
 
@@ -49,12 +47,12 @@ function requiredPicklistSchema<Value extends string>(
 }
 
 export const OnboardingFormSchema = v.object({
-	height: requiredNumericString(HEIGHT_LABEL, HEIGHT_MIN, HEIGHT_MAX),
-	weight: requiredNumericString(WEIGHT_LABEL, WEIGHT_MIN, WEIGHT_MAX),
-	age: requiredNumericString(AGE_LABEL, AGE_MIN, AGE_MAX),
-	sex: requiredPicklistSchema(SEX_LABEL, SEX_VALUES),
+	height: requiredNumericString('La taille', HEIGHT_MIN, HEIGHT_MAX),
+	weight: requiredNumericString('Le poids', WEIGHT_MIN, WEIGHT_MAX),
+	age: requiredNumericString("L'âge", AGE_MIN, AGE_MAX),
+	sex: requiredPicklistSchema('Le sexe', SEX_VALUES),
 	activityLevel: requiredPicklistSchema(
-		ACTIVITY_LEVEL_LABEL,
+		"Le niveau d'activité",
 		ACTIVITY_LEVEL_VALUES,
 	),
 })
