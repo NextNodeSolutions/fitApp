@@ -36,6 +36,7 @@ Tout module métier de `apps/api` vit dans `src/<module>/` avec ce découpage :
 - `http/` — adapter Hono thin : validation (vValidator) → use case → réponse.
 
 `src/index.ts` est la composition root : seul endroit qui câble les adapters concrets aux ports. Jamais d'import Drizzle/D1 hors de `infrastructure/`, jamais de logique métier dans `http/`.
+
 - Paramètre du context Hono : `res`, jamais `c`.
 
 ### Architecture front — SOLID/SRP par feature et par fichier
@@ -48,9 +49,11 @@ Tout module métier de `apps/api` vit dans `src/<module>/` avec ce découpage :
 ### Validation — `@fitapp/contracts`, source de vérité unique
 
 - Un domaine = un dossier `packages/contracts/src/<domaine>/`, une responsabilité par fichier (`constants`, `body-schema`, `form-schema`, `form-fields`, `responses`, `index`). Jamais un monolithe `<domaine>.ts`.
-- Schémas valibot consommés par l'api (`vValidator`) ET le front (`react-hook-form`). Jamais de validateur hand-rolled dans une app — étendre le schéma dans contracts.
+- Schémas valibot consommés par l'api (`vValidator`) ET le front (`react-hook-form`). Messages de validation sur le schéma du champ, jamais un fichier `messages.ts`.
+- Jamais de validateur hand-rolled dans une app — étendre le schéma dans contracts.
 - Specs de champs (labels, options, bornes) et constantes métier dans contracts, jamais re-hardcodées ailleurs.
-- Statuts HTTP et messages d'erreur réutilisables dans `packages/contracts/src/errors.ts`. Jamais de `const HTTP_*` ni de string d'erreur dans une route ou un submit.
+- Erreurs : classes `extends Error` avec `code` (et `status` HTTP si l'API la renvoie). 1 erreur = 1 fichier. Métier dans `errors/business/`, technique dans `errors/technical/`. Jamais de string d'erreur dans une route ou un submit.
+- Statuts HTTP hors erreur (`201`, `400` validation) dans `packages/contracts/src/http.ts`.
 
 ### Composants UI — `@fitapp/ui`, source unique
 
