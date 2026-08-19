@@ -1,17 +1,18 @@
 import {
-	CONNECTION_ERROR,
-	INVALID_SERVER_RESPONSE_ERROR,
-	ONBOARDING_SAVE_ERROR,
+	ConnectionError,
+	InvalidServerResponseError,
 	OnboardingCreatedResponseSchema,
 	OnboardingErrorResponseSchema,
+	OnboardingSaveError,
+	OnboardingValidationError,
 } from '@fitapp/contracts'
 import * as v from 'valibot'
 
-import type { OnboardingBody } from '@fitapp/contracts'
+import type { AppError, OnboardingBody } from '@fitapp/contracts'
 
 export type SubmitResult =
 	| { ok: true; sessionId: string }
-	| { ok: false; error: string }
+	| { ok: false; error: AppError }
 
 export async function submitOnboarding(
 	body: OnboardingBody,
@@ -28,16 +29,16 @@ export async function submitOnboarding(
 			return {
 				ok: false,
 				error: parsed.success
-					? parsed.output.errors.join(' ')
-					: ONBOARDING_SAVE_ERROR,
+					? new OnboardingValidationError(parsed.output.errors)
+					: new OnboardingSaveError(),
 			}
 		}
 		const created = v.safeParse(OnboardingCreatedResponseSchema, payload)
 		if (!created.success) {
-			return { ok: false, error: INVALID_SERVER_RESPONSE_ERROR }
+			return { ok: false, error: new InvalidServerResponseError() }
 		}
 		return { ok: true, sessionId: created.output.sessionId }
 	} catch {
-		return { ok: false, error: CONNECTION_ERROR }
+		return { ok: false, error: new ConnectionError() }
 	}
 }

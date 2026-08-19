@@ -34,7 +34,7 @@ export function useOnboardingForm(): {
 		form.clearErrors('root')
 		const submission = await submitOnboarding(toOnboardingBody(values))
 		if (!submission.ok) {
-			form.setError('root', { message: submission.error })
+			form.setError('root', { message: submission.error.message })
 			return
 		}
 		localStorage.setItem(SESSION_STORAGE_KEY, submission.sessionId)
