@@ -27,11 +27,16 @@ function createEnv(
 
 describe('fetchFromApi', () => {
 	it('forwards the path through the service binding', async () => {
-		const env = createEnv(async () => new Response('ok'))
+		let received: RequestInfo | URL | undefined
+		const env = createEnv(async input => {
+			received = input
+			return new Response('ok')
+		})
 
 		const response = await fetchFromApi(env, '/healthz')
 
 		expect(await response.text()).toBe('ok')
+		expect(String(received)).toBe('https://api.internal/healthz')
 	})
 })
 

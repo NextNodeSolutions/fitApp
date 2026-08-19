@@ -1,0 +1,9 @@
+{
+	"extends": "@nextnode-solutions/standards/typescript/library",
+	"include": ["src"],
+	"compilerOptions": {
+		"rootDir": "src",
+		"outDir": "dist",
+		"jsx": "react-jsx"
+	}
+}

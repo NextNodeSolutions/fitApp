@@ -10,8 +10,11 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@fitapp/contracts": "workspace:*",
+    "@hono/valibot-validator": "^0.6.1",
     "drizzle-orm": "^0.45.2",
-    "hono": "^4.13.2"
+    "hono": "^4.13.2",
+    "valibot": "^1.4.2"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260815.1",
