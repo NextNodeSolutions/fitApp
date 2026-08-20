@@ -1,14 +1,8 @@
+import { PROTECTED_PATHS } from './protected-paths'
+
 const LOGIN_PATH = '/login'
 const SIGNUP_PATH = '/signup'
 const DASHBOARD_PATH = '/dashboard'
-const ONBOARDING_PATH = '/onboarding'
-const SETTINGS_PATH = '/parametres'
-
-const PROTECTED_PATHS = [
-	DASHBOARD_PATH,
-	ONBOARDING_PATH,
-	SETTINGS_PATH,
-] as const
 const GUEST_PATHS = [LOGIN_PATH, SIGNUP_PATH] as const
 
 function matchesPath(pathname: string, base: string): boolean {

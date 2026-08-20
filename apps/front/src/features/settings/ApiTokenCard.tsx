@@ -1,6 +1,4 @@
-import { Button } from '@fitapp/ui'
-import { Check, Copy } from 'lucide-react'
-
+import { ApiTokenCopyButton } from './ApiTokenCopyButton'
 import { useApiTokenCopy } from './use-api-token-copy'
 
 import type { ReactElement } from 'react'
@@ -21,26 +19,13 @@ export function ApiTokenCard({ token }: ApiTokenCardProps): ReactElement {
 						{token}
 					</code>
 					<div className="mt-4 flex justify-end">
-						<Button
-							ref={copyButtonRef}
-							type="button"
-							variant="outline"
-							onClick={() => {
+						<ApiTokenCopyButton
+							copied={copied}
+							buttonRef={copyButtonRef}
+							onCopy={() => {
 								void copyToken(token)
 							}}
-						>
-							{copied ? (
-								<>
-									<Check />
-									Copié !
-								</>
-							) : (
-								<>
-									<Copy />
-									Copier
-								</>
-							)}
-						</Button>
+						/>
 					</div>
 				</>
 			) : (

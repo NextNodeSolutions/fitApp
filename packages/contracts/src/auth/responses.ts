@@ -1,5 +1,7 @@
 import * as v from 'valibot'
 
+export const BETTER_AUTH_USER_ALREADY_EXISTS_CODE = 'USER_ALREADY_EXISTS'
+
 export const AuthUserSchema = v.object({
 	id: v.string(),
 	name: v.string(),

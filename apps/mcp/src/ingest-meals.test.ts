@@ -12,7 +12,6 @@ import type { IngestBody } from '@fitapp/contracts'
 import type { FitAppConfig } from './read-fitapp-config.ts'
 
 const CONFIG = {
-	fitappUrl: 'https://api.example.test',
 	apiToken: 'test-token',
 } satisfies FitAppConfig
 
@@ -53,7 +52,7 @@ describe('ingestMeals', () => {
 			kind: 'success',
 		})
 		expect(fetchImpl).toHaveBeenCalledWith(
-			'https://api.example.test/api/ingest',
+			'https://api-fitapp.nextnode.fr/api/ingest',
 			{
 				method: 'POST',
 				headers: {

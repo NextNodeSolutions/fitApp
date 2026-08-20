@@ -5,7 +5,6 @@ import {
 	ACTIVITY_LEVEL_OPTIONS,
 	ACTIVITY_LEVEL_VALUES,
 	OnboardingBodySchema,
-	getOnboardingFormErrors,
 	OnboardingFormSchema,
 	SEX_OPTIONS,
 	SEX_VALUES,
@@ -116,19 +115,6 @@ describe('OnboardingFormSchema', () => {
 
 	it('converts valid form values into a body', () => {
 		expect(toOnboardingBody(VALID_FORM_VALUES)).toEqual(VALID_BODY)
-	})
-
-	it('maps issues to field messages', () => {
-		expect(
-			getOnboardingFormErrors({
-				...VALID_FORM_VALUES,
-				height: '',
-				age: '200',
-			}),
-		).toEqual({
-			height: 'La taille est obligatoire',
-			age: "L'âge doit être entre 10 et 120",
-		})
 	})
 
 	it('returns an issue per invalid field', () => {

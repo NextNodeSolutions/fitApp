@@ -1,6 +1,7 @@
+import { SignUpFormSchema } from '@fitapp/contracts'
+import { valibotResolver } from '@hookform/resolvers/valibot'
 import { useForm } from 'react-hook-form'
 
-import { signUpResolver } from './sign-up-resolver'
 import { submitSignUp } from './submit-sign-up'
 
 import type { SignUpFormValues } from '@fitapp/contracts'
@@ -14,14 +15,22 @@ const EMPTY_VALUES: SignUpFormValues = {
 	passwordConfirmation: '',
 }
 
-export type SignUpFormApi = UseFormReturn<SignUpFormValues>
+export type SignUpFormApi = UseFormReturn<
+	SignUpFormValues,
+	undefined,
+	SignUpFormValues
+>
 
 export function useSignUpForm(): {
 	form: SignUpFormApi
 	onSubmit: ReturnType<SignUpFormApi['handleSubmit']>
 } {
-	const form = useForm<SignUpFormValues>({
-		resolver: signUpResolver,
+	const form = useForm<SignUpFormValues, undefined, SignUpFormValues>({
+		resolver: valibotResolver<
+			SignUpFormValues,
+			undefined,
+			SignUpFormValues
+		>(SignUpFormSchema),
 		defaultValues: EMPTY_VALUES,
 		mode: 'onChange',
 	})

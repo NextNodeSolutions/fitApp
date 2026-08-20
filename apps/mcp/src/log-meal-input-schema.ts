@@ -1,9 +1,8 @@
+import { Temporal } from '@js-temporal/polyfill'
 import { z } from 'zod/v4'
 
-import { todayIsoDate } from './today-iso-date.ts'
-
 export const logMealInputSchema = z.object({
-	date: z.iso.date().default(todayIsoDate),
+	date: z.iso.date().default(() => Temporal.Now.plainDateISO().toString()),
 	items: z
 		.array(
 			z.object({

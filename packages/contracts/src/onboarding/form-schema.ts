@@ -1,7 +1,5 @@
 import * as v from 'valibot'
 
-import { firstFieldMessages } from '../auth/first-field-messages'
-
 import { OnboardingBodySchema } from './body-schema'
 import {
 	ACTIVITY_LEVEL_VALUES,
@@ -61,28 +59,6 @@ export const OnboardingFormSchema = v.object({
 
 export type OnboardingFormValues = v.InferInput<typeof OnboardingFormSchema>
 export type OnboardingFormField = keyof OnboardingFormValues
-
-const FORM_FIELDS = [
-	'height',
-	'weight',
-	'age',
-	'sex',
-	'activityLevel',
-] as const satisfies readonly OnboardingFormField[]
-
-export function isOnboardingFormField(
-	field: string,
-): field is OnboardingFormField {
-	return FORM_FIELDS.some(name => name === field)
-}
-
-export function getOnboardingFormErrors(
-	values: OnboardingFormValues,
-): Partial<Record<OnboardingFormField, string>> {
-	const result = v.safeParse(OnboardingFormSchema, values)
-	if (result.success) return {}
-	return firstFieldMessages(result.issues, isOnboardingFormField)
-}
 
 export function toOnboardingBody(values: OnboardingFormValues): OnboardingBody {
 	return v.parse(OnboardingBodySchema, {

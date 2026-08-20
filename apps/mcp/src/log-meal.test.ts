@@ -4,16 +4,15 @@ import {
 	HTTP_UNAUTHORIZED,
 	INGEST_INVALID_BODY_MESSAGE,
 } from '@fitapp/contracts'
+import { Temporal } from '@js-temporal/polyfill'
 import { describe, expect, it, vi } from 'vitest'
 
 import { logMealInputSchema } from './log-meal-input-schema.ts'
 import { logMeal } from './log-meal.ts'
-import { todayIsoDate } from './today-iso-date.ts'
 
 import type { FitAppConfig } from './read-fitapp-config.ts'
 
 const CONFIG = {
-	fitappUrl: 'https://api.example.test',
 	apiToken: 'test-token',
 } satisfies FitAppConfig
 
@@ -47,10 +46,10 @@ describe('logMeal', () => {
 		await logMeal(CONFIG, input, fetchImpl)
 
 		expect(fetchImpl).toHaveBeenCalledWith(
-			'https://api.example.test/api/ingest',
+			'https://api-fitapp.nextnode.fr/api/ingest',
 			expect.objectContaining({
 				body: JSON.stringify({
-					date: todayIsoDate(),
+					date: Temporal.Now.plainDateISO().toString(),
 					items: FOODS.map(food => ({
 						...food,
 						protein_g: 0,

@@ -11,3 +11,5 @@ export type IngestSource = (typeof INGEST_SOURCE_VALUES)[number]
 
 export const INGEST_INVALID_BODY_MESSAGE = 'Invalid body schema'
 export const INGEST_INVALID_TOKEN_MESSAGE = 'Invalid API token'
+
+export const INGEST_PATH = '/api/ingest'
