@@ -1,3 +1,4 @@
+import { API_TOKEN_HEX_LENGTH } from '@fitapp/contracts'
 import { describe, expect, it, vi } from 'vitest'
 
 import { createProfile } from './create-profile'
@@ -23,7 +24,7 @@ describe('createProfile', () => {
 			{
 				repository,
 				generateSessionId: () => 'session-1',
-				generateApiToken: () => 'a'.repeat(32),
+				generateApiToken: () => 'a'.repeat(API_TOKEN_HEX_LENGTH),
 				userId: 'user-1',
 			},
 			SUBMISSION,
@@ -32,7 +33,7 @@ describe('createProfile', () => {
 		expect(profile).toEqual({
 			...SUBMISSION,
 			sessionId: 'session-1',
-			apiToken: 'a'.repeat(32),
+			apiToken: 'a'.repeat(API_TOKEN_HEX_LENGTH),
 			userId: 'user-1',
 		})
 		expect(repository.save).toHaveBeenCalledWith(profile)

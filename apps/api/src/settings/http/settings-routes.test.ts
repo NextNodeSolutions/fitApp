@@ -1,4 +1,5 @@
 import {
+	API_TOKEN_HEX_LENGTH,
 	HTTP_OK,
 	HTTP_UNAUTHORIZED,
 	SETTINGS_UNAUTHORIZED_MESSAGE,
@@ -44,7 +45,7 @@ describe('GET /api/settings/token', () => {
 	})
 
 	it('returns the current user API token', async () => {
-		const token = 'a'.repeat(32)
+		const token = 'a'.repeat(API_TOKEN_HEX_LENGTH)
 		const repository = createRepository(token)
 		const routes = createSettingsRoutes({
 			createRepository: () => repository,

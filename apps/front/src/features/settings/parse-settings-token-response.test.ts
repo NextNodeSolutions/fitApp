@@ -1,8 +1,9 @@
+import { API_TOKEN_HEX_LENGTH } from '@fitapp/contracts'
 import { describe, expect, it } from 'vitest'
 
 import { parseSettingsTokenResponse } from './parse-settings-token-response'
 
-const VALID_TOKEN = 'a'.repeat(32)
+const VALID_TOKEN = 'a'.repeat(API_TOKEN_HEX_LENGTH)
 
 describe('parseSettingsTokenResponse', () => {
 	it('returns the token from a valid response', () => {

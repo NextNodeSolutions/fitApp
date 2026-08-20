@@ -7,17 +7,12 @@ import * as v from 'valibot'
 
 import { createAuth } from './create-auth'
 
-import type { AuthSession, AuthUser } from '@fitapp/contracts'
-
 const GetSessionResponseSchema = v.object({
 	user: AuthUserSchema,
 	session: AuthSessionSchema,
 })
 
-type AuthSessionResponse = {
-	user: AuthUser
-	session: AuthSession
-}
+type AuthSessionResponse = v.InferOutput<typeof GetSessionResponseSchema>
 
 export async function getAuthSession(
 	env: Env,
