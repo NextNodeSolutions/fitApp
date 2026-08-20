@@ -18,7 +18,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./http": "./src/http.ts"
+    "./http": "./src/http.ts",
+    "./ingest": "./src/ingest/body-schema.ts"
   },
   "types": "src/index.ts"
 }

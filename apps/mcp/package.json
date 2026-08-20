@@ -11,6 +11,7 @@
     "@fitapp/contracts": "workspace:*",
     "@js-temporal/polyfill": "^0.5.1",
     "@modelcontextprotocol/server": "2.0.0",
+    "valibot": "^1.4.2",
     "zod": "^4.3.6"
   },
   "devDependencies": {

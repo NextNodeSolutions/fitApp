@@ -1,7 +1,10 @@
+import { IngestBodySchema } from '@fitapp/contracts/ingest'
+import * as v from 'valibot'
+
 import { formatMealSummary } from './format-meal-summary.ts'
 import { ingestMeals } from './ingest-meals.ts'
 
-import type { IngestBody, IngestItem } from '@fitapp/contracts'
+import type { IngestBody } from '@fitapp/contracts'
 import type { CallToolResult } from '@modelcontextprotocol/server'
 import type { IngestMealsOutcome } from './ingest-meals.ts'
 import type { LogMealInput } from './log-meal-input-schema.ts'
@@ -18,20 +21,7 @@ export async function logMeal(
 }
 
 function toIngestBody(input: LogMealInput): IngestBody {
-	return {
-		date: input.date,
-		items: input.items.map(toIngestItem),
-	}
-}
-
-function toIngestItem(food: LogMealInput['items'][number]): IngestItem {
-	return {
-		name: food.name,
-		calories: food.calories,
-		protein_g: food.protein_g ?? 0,
-		carbs_g: food.carbs_g ?? 0,
-		fat_g: food.fat_g ?? 0,
-	}
+	return v.parse(IngestBodySchema, input)
 }
 
 function toLogMealResult(
