@@ -1,6 +1,7 @@
-import { AppError } from '@fitapp/contracts'
+import { AUTH_BASE_PATH, AppError } from '@fitapp/contracts'
 import { Hono } from 'hono'
 
+import { createAuthRoutes } from './auth/http/auth-routes'
 import { createOnboardingRoutes } from './onboarding/http/onboarding-routes'
 import { createD1ProfileRepository } from './onboarding/infrastructure/d1-profile-repository'
 
@@ -14,6 +15,8 @@ app.onError((error, res) => {
 	}
 	throw error
 })
+
+app.route(AUTH_BASE_PATH, createAuthRoutes())
 
 app.route(
 	'/api/onboarding',

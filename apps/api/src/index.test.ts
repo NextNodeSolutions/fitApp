@@ -1,7 +1,29 @@
-import { HTTP_BAD_REQUEST } from '@fitapp/contracts'
+import { AUTH_SIGN_UP_PATH, HTTP_BAD_REQUEST } from '@fitapp/contracts'
 import { describe, expect, it } from 'vitest'
 
 import { app } from './index'
+
+function isD1Database(database: object): database is D1Database {
+	return 'prepare' in database && typeof database.prepare === 'function'
+}
+
+function createAuthTestEnv(): Env {
+	const database = {
+		prepare(): never {
+			throw new Error('D1 is not available in unit tests')
+		},
+	}
+	if (!isD1Database(database)) {
+		throw new Error('Auth tests require a D1-shaped database binding')
+	}
+
+	return {
+		DB: database,
+		BETTER_AUTH_SECRET: 'test-better-auth-secret-32chars!',
+		SITE_URL: 'http://localhost:4321',
+		D1_DATABASE_ID: 'test-d1',
+	}
+}
 
 describe('GET /healthz', () => {
 	it('returns 200 with service info', async () => {
@@ -12,6 +34,26 @@ describe('GET /healthz', () => {
 			status: 'ok',
 			service: 'api',
 		})
+	})
+})
+
+describe('POST /api/auth/sign-up/email', () => {
+	it('is handled by the mounted Better Auth adapter', async () => {
+		const response = await app.request(
+			AUTH_SIGN_UP_PATH,
+			{
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					name: 'Jean',
+					email: 'not-an-email',
+					password: 'short',
+				}),
+			},
+			createAuthTestEnv(),
+		)
+
+		expect(response.status).not.toBe(404)
 	})
 })
 

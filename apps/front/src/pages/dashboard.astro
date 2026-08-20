@@ -1,5 +1,9 @@
 ---
 import '../styles.css'
+
+import { LogoutButton } from '../features/auth/LogoutButton'
+
+const { user } = Astro.locals
 ---
 
 <html lang="fr">
@@ -12,7 +16,9 @@ import '../styles.css'
 		<div class="mx-auto max-w-lg px-4 py-12">
 			<div class="mb-8 text-center">
 				<h1 class="text-3xl font-bold text-lime-400">fitApp</h1>
-				<p class="mt-2 text-gray-400">Ton profil est prêt !</p>
+				<p class="mt-2 text-gray-400">
+					Bienvenue {user?.name ?? 'sur ton tableau de bord'} !
+				</p>
 			</div>
 			<div class="rounded-lg border border-gray-700 bg-gray-900 p-6 text-center">
 				<p class="text-gray-300">
@@ -21,6 +27,9 @@ import '../styles.css'
 				<p class="mt-2 text-sm text-gray-500">
 					Les fonctionnalités arrivent bientôt.
 				</p>
+			</div>
+			<div class="mt-6 flex justify-center">
+				<LogoutButton client:load />
 			</div>
 		</div>
 	</body>
