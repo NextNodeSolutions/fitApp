@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "lint": "oxlint",
+    "start": "node src/index.ts",
     "test": "vitest run",
     "type-check": "tsc --noEmit"
   },
