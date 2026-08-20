@@ -1,6 +1,8 @@
 import {
 	HTTP_BAD_REQUEST,
 	HTTP_CREATED,
+	HTTP_UNAUTHORIZED,
+	ONBOARDING_UNAUTHORIZED_MESSAGE,
 	OnboardingBodySchema,
 } from '@fitapp/contracts'
 import { vValidator } from '@hono/valibot-validator'
@@ -14,6 +16,8 @@ import type { ProfileRepository } from '../ports/profile-repository'
 export type OnboardingDeps = {
 	createRepository: (db: D1Database) => ProfileRepository
 	generateSessionId: () => string
+	generateApiToken: () => string
+	getUserId: (env: Env, headers: Headers) => Promise<string | null>
 }
 
 export function createOnboardingRoutes(deps: OnboardingDeps): Hono<{
@@ -31,11 +35,20 @@ export function createOnboardingRoutes(deps: OnboardingDeps): Hono<{
 			)
 		}),
 		async res => {
+			const userId = await deps.getUserId(res.env, res.req.raw.headers)
+			if (!userId) {
+				return res.json(
+					{ error: ONBOARDING_UNAUTHORIZED_MESSAGE },
+					HTTP_UNAUTHORIZED,
+				)
+			}
 			const body = res.req.valid('json')
 			const profile = await createProfile(
 				{
 					repository: deps.createRepository(res.env.DB),
 					generateSessionId: deps.generateSessionId,
+					generateApiToken: deps.generateApiToken,
+					userId,
 				},
 				body,
 			)
