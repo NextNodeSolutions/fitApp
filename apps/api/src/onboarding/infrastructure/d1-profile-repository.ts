@@ -3,16 +3,18 @@ import { eq } from 'drizzle-orm'
 import { db } from '../../db'
 import * as schema from '../../db/schema'
 
-import type { Profile } from '../domain/profile'
+import type { OwnedProfile, Profile } from '../domain/profile'
 import type { ProfileRepository } from '../ports/profile-repository'
 
 export function createD1ProfileRepository(d1: D1Database): ProfileRepository {
 	const database = db(d1)
 
 	return {
-		async save(profile: Profile): Promise<void> {
+		async save(profile: OwnedProfile): Promise<void> {
 			await database.insert(schema.profiles).values({
 				sessionId: profile.sessionId,
+				userId: profile.userId,
+				apiToken: profile.apiToken,
 				height: profile.height,
 				weight: profile.weight,
 				age: profile.age,

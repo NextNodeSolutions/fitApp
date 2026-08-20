@@ -1,6 +1,6 @@
-import type { Profile } from '../domain/profile'
+import type { OwnedProfile, Profile } from '../domain/profile'
 
 export interface ProfileRepository {
-	save(profile: Profile): Promise<void>
+	save(profile: OwnedProfile): Promise<void>
 	findBySessionId(sessionId: string): Promise<Profile | null>
 }

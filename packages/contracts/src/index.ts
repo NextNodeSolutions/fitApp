@@ -1,4 +1,6 @@
 export * from './auth'
 export * from './errors'
 export * from './http'
+export * from './ingest'
 export * from './onboarding'
+export * from './settings'

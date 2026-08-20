@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm'
 import {
 	index,
 	integer,
+	real,
 	sqliteTable,
 	text,
 	uniqueIndex,
@@ -83,27 +84,48 @@ export const verification = sqliteTable(
 	table => [index('verification_identifier_idx').on(table.identifier)],
 )
 
-export const profiles = sqliteTable(
-	'profiles',
+export const profiles = sqliteTable('profiles', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	sessionId: text('session_id').notNull().unique(),
+	height: integer('height').notNull(),
+	weight: integer('weight').notNull(),
+	age: integer('age').notNull(),
+	sex: text('sex', { enum: ['male', 'female'] }).notNull(),
+	activityLevel: text('activity_level', {
+		enum: ['sedentary', 'light', 'moderate', 'active', 'very_active'],
+	}).notNull(),
+	userId: text('user_id')
+		.unique()
+		.references(() => user.id, { onDelete: 'set null' }),
+	apiToken: text('api_token').unique(),
+	createdAt: integer('created_at', { mode: 'timestamp_ms' })
+		.notNull()
+		.default(sql`(unixepoch() * 1000)`),
+	updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+		.notNull()
+		.default(sql`(unixepoch() * 1000)`),
+})
+
+export const foodEntries = sqliteTable(
+	'food_entries',
 	{
 		id: integer('id').primaryKey({ autoIncrement: true }),
-		sessionId: text('session_id').notNull().unique(),
-		height: integer('height').notNull(),
-		weight: integer('weight').notNull(),
-		age: integer('age').notNull(),
-		sex: text('sex', { enum: ['male', 'female'] }).notNull(),
-		activityLevel: text('activity_level', {
-			enum: ['sedentary', 'light', 'moderate', 'active', 'very_active'],
-		}).notNull(),
-		userId: text('user_id').references(() => user.id, {
-			onDelete: 'set null',
-		}),
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		entryDate: text('entry_date').notNull(),
+		name: text('name').notNull(),
+		calories: real('calories').notNull(),
+		proteinG: real('protein_g').notNull().default(0),
+		carbsG: real('carbs_g').notNull().default(0),
+		fatG: real('fat_g').notNull().default(0),
+		source: text('source', { enum: ['ai'] }).notNull(),
 		createdAt: integer('created_at', { mode: 'timestamp_ms' })
 			.notNull()
 			.default(sql`(unixepoch() * 1000)`),
-		updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
-			.notNull()
-			.default(sql`(unixepoch() * 1000)`),
 	},
-	table => [index('profiles_user_id_idx').on(table.userId)],
+	table => [
+		index('food_entries_user_id_idx').on(table.userId),
+		index('food_entries_entry_date_idx').on(table.entryDate),
+	],
 )

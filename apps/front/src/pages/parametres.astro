@@ -1,0 +1,34 @@
+---
+import '../styles.css'
+
+import { env } from 'cloudflare:workers'
+
+import { ApiTokenCard } from '../features/settings/ApiTokenCard'
+import { fetchSettingsToken } from '../features/settings/fetch-settings-token'
+
+const token = await fetchSettingsToken(env, Astro.request.headers.get('cookie'))
+---
+
+<html lang="fr">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<title>Paramètres — fitApp</title>
+	</head>
+	<body class="min-h-screen bg-gray-950 text-white">
+		<div class="mx-auto max-w-lg px-4 py-12">
+			<div class="mb-8 text-center">
+				<h1 class="text-3xl font-bold text-lime-400">Paramètres</h1>
+				<p class="mt-2 text-gray-400">
+					Gère ta clé API pour connecter tes applications
+				</p>
+			</div>
+			<ApiTokenCard client:load token={token} />
+			<p class="mt-6 text-center text-sm text-gray-400">
+				<a href="/dashboard" class="text-lime-400 hover:underline">
+					Retour au tableau de bord
+				</a>
+			</p>
+		</div>
+	</body>
+</html>

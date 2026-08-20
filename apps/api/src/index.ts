@@ -1,9 +1,15 @@
 import { AUTH_BASE_PATH, AppError } from '@fitapp/contracts'
 import { Hono } from 'hono'
 
+import { getAuthSession } from './auth/get-auth-session'
 import { createAuthRoutes } from './auth/http/auth-routes'
+import { createIngestRoutes } from './ingest/http/ingest-routes'
+import { createD1IngestRepository } from './ingest/infrastructure/d1-ingest-repository'
 import { createOnboardingRoutes } from './onboarding/http/onboarding-routes'
 import { createD1ProfileRepository } from './onboarding/infrastructure/d1-profile-repository'
+import { generateApiToken } from './onboarding/infrastructure/generate-api-token'
+import { createSettingsRoutes } from './settings/http/settings-routes'
+import { createD1ApiTokenRepository } from './settings/infrastructure/d1-api-token-repository'
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -18,11 +24,32 @@ app.onError((error, res) => {
 
 app.route(AUTH_BASE_PATH, createAuthRoutes())
 
+const getUserId = async (
+	env: Env,
+	headers: Headers,
+): Promise<string | null> => {
+	const authSession = await getAuthSession(env, headers)
+	return authSession?.user.id ?? null
+}
+
 app.route(
 	'/api/onboarding',
 	createOnboardingRoutes({
 		createRepository: createD1ProfileRepository,
 		generateSessionId: () => crypto.randomUUID(),
+		generateApiToken,
+		getUserId,
+	}),
+)
+app.route(
+	'/api/ingest',
+	createIngestRoutes({ createRepository: createD1IngestRepository }),
+)
+app.route(
+	'/api/settings',
+	createSettingsRoutes({
+		createRepository: createD1ApiTokenRepository,
+		getUserId,
 	}),
 )
 

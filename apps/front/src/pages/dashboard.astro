@@ -28,7 +28,13 @@ const { user } = Astro.locals
 					Les fonctionnalités arrivent bientôt.
 				</p>
 			</div>
-			<div class="mt-6 flex justify-center">
+			<div class="mt-6 flex justify-center gap-3">
+				<a
+					href="/parametres"
+					class="inline-flex h-10 items-center gap-2 rounded-md border border-gray-700 px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-gray-800"
+				>
+					Paramètres
+				</a>
 				<LogoutButton client:load />
 			</div>
 		</div>
