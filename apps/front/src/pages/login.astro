@@ -1,0 +1,30 @@
+---
+import '../styles.css'
+
+import { SignInForm } from '../features/auth/SignInForm'
+---
+
+<html lang="fr">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<title>Connexion — fitApp</title>
+	</head>
+	<body class="min-h-screen bg-gray-950 text-white">
+		<div class="mx-auto max-w-lg px-4 py-12">
+			<div class="mb-8 text-center">
+				<h1 class="text-3xl font-bold text-lime-400">fitApp</h1>
+				<p class="mt-2 text-gray-400">
+					Connecte-toi pour retrouver ton suivi personnalisé
+				</p>
+			</div>
+			<SignInForm client:load />
+			<p class="mt-6 text-center text-sm text-gray-400">
+				Pas encore de compte ?
+				<a href="/signup" class="text-lime-400 hover:underline">
+					Créer un compte
+				</a>
+			</p>
+		</div>
+	</body>
+</html>
