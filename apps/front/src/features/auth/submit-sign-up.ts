@@ -1,5 +1,6 @@
 import {
 	AUTH_SIGN_UP_PATH,
+	AuthErrorResponseSchema,
 	AuthSuccessResponseSchema,
 	AuthenticationError,
 	ConnectionError,
@@ -39,15 +40,9 @@ export async function submitSignUp(
 }
 
 function readSignUpError(payload: unknown): AppError {
-	const code = readErrorCode(payload)
-	if (code === EMAIL_ALREADY_USED_CODE) return new EmailAlreadyUsedError()
+	const parsed = v.safeParse(AuthErrorResponseSchema, payload)
+	if (parsed.success && parsed.output.code === EMAIL_ALREADY_USED_CODE) {
+		return new EmailAlreadyUsedError()
+	}
 	return new AuthenticationError()
-}
-
-function readErrorCode(payload: unknown): string | null {
-	if (typeof payload !== 'object' || payload === null) return null
-	if (!('code' in payload)) return null
-	const { code } = payload
-	if (typeof code !== 'string') return null
-	return code
 }

@@ -3,12 +3,11 @@ import {
 	EmailAlreadyUsedError,
 	InvalidServerResponseError,
 	AUTH_SIGN_UP_PATH,
+	HTTP_BAD_REQUEST,
 } from '@fitapp/contracts'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { submitSignUp } from './submit-sign-up'
-
-const HTTP_BAD_REQUEST = 400
 
 const VALUES = {
 	email: 'jean@example.com',

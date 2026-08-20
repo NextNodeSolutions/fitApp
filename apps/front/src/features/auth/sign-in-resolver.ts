@@ -1,15 +1,12 @@
 import { getSignInFormErrors, isSignInFormField } from '@fitapp/contracts'
 
+import { toFieldErrors } from './to-field-errors'
+
 import type { SignInFormValues } from '@fitapp/contracts'
-import type { FieldErrors, Resolver } from 'react-hook-form'
+import type { Resolver } from 'react-hook-form'
 
 export const signInResolver: Resolver<SignInFormValues> = values => {
-	const messages = getSignInFormErrors(values)
-	const errors: FieldErrors<SignInFormValues> = {}
-	for (const [field, message] of Object.entries(messages)) {
-		if (!message || !isSignInFormField(field)) continue
-		errors[field] = { type: 'validate', message }
-	}
+	const errors = toFieldErrors(getSignInFormErrors(values), isSignInFormField)
 	if (!Object.keys(errors).length) {
 		return { values, errors: {} }
 	}
