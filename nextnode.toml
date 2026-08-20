@@ -16,6 +16,7 @@ entry = "apps/front/dist/server/entry.mjs"
 url = "api-fitapp.nextnode.fr"
 needs = ["d1"]
 entry = "apps/api/src/index.ts"
+secrets = ["BETTER_AUTH_SECRET"]
 
 [services.d1]
 migrations_folder = "apps/api/drizzle"

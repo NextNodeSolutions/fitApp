@@ -10,8 +10,10 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@better-auth/drizzle-adapter": "^1.7.1",
     "@fitapp/contracts": "workspace:*",
     "@hono/valibot-validator": "^0.6.1",
+    "better-auth": "^1.7.1",
     "drizzle-orm": "^0.45.2",
     "hono": "^4.13.2",
     "valibot": "^1.4.2"
