@@ -1,20 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 
 import { scheduleCopiedReset } from './copied-reset-timer'
 
 export function useApiTokenCopy(): {
 	copied: boolean
+	copyButtonRef: (
+		button: HTMLButtonElement | null,
+	) => (() => void) | undefined
 	copyToken: (token: string) => Promise<void>
 } {
 	const [copied, setCopied] = useState(false)
 	const cancelReset = useRef<(() => void) | null>(null)
-
-	useEffect(
-		() => () => {
-			cancelReset.current?.()
-		},
-		[],
-	)
+	const copyButtonRef = useCallback((button: HTMLButtonElement | null) => {
+		if (!button) return
+		return () => cancelReset.current?.()
+	}, [])
 
 	const copyToken = async (token: string): Promise<void> => {
 		try {
@@ -31,5 +31,5 @@ export function useApiTokenCopy(): {
 		})
 	}
 
-	return { copied, copyToken }
+	return { copied, copyButtonRef, copyToken }
 }

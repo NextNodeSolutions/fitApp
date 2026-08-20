@@ -10,7 +10,7 @@ type ApiTokenCardProps = {
 }
 
 export function ApiTokenCard({ token }: ApiTokenCardProps): ReactElement {
-	const { copied, copyToken } = useApiTokenCopy()
+	const { copied, copyButtonRef, copyToken } = useApiTokenCopy()
 
 	return (
 		<div className="rounded-lg border border-gray-700 bg-gray-900 p-6">
@@ -22,6 +22,7 @@ export function ApiTokenCard({ token }: ApiTokenCardProps): ReactElement {
 					</code>
 					<div className="mt-4 flex justify-end">
 						<Button
+							ref={copyButtonRef}
 							type="button"
 							variant="outline"
 							onClick={() => {
