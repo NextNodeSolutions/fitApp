@@ -1,10 +1,9 @@
+import { HTTP_UNAUTHORIZED } from '@fitapp/contracts'
 import { describe, expect, it } from 'vitest'
 
 import { getSession } from './get-session'
 
 import type { FrontSession } from './get-session'
-
-const HTTP_UNAUTHORIZED = 401
 
 function createFetcher(
 	impl: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,

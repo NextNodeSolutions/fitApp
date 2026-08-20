@@ -7,6 +7,9 @@ import * as schema from '../db/schema'
 
 export type Auth = {
 	handler: (request: Request) => Promise<Response>
+	api: {
+		getSession: (context: { headers: Headers }) => Promise<unknown>
+	}
 }
 
 export function createAuth(env: Env): Auth {

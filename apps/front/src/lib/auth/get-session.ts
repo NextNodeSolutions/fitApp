@@ -1,28 +1,16 @@
-import {
-	AUTH_BASE_PATH,
-	AuthSessionSchema,
-	AuthUserSchema,
-} from '@fitapp/contracts'
+import { AUTH_BASE_PATH, AuthSessionResponseSchema } from '@fitapp/contracts'
 import * as v from 'valibot'
 
 import { fetchFromApi } from '../api'
 
-import type { AuthSession, AuthUser } from '@fitapp/contracts'
+import type { AuthSessionResponse } from '@fitapp/contracts'
 
-const GetSessionResponseSchema = v.object({
-	user: AuthUserSchema,
-	session: AuthSessionSchema,
-})
-
-export type FrontSession = {
-	user: AuthUser
-	session: AuthSession
-}
+export type FrontSession = AuthSessionResponse
 
 export async function getSession(
 	env: Pick<Env, 'API'>,
 	cookie: string | null,
-): Promise<FrontSession | null> {
+): Promise<AuthSessionResponse | null> {
 	if (!cookie) return null
 	try {
 		const response = await fetchFromApi(
@@ -32,7 +20,7 @@ export async function getSession(
 		)
 		if (!response.ok) return null
 		const payload: unknown = await response.json()
-		const parsed = v.safeParse(GetSessionResponseSchema, payload)
+		const parsed = v.safeParse(AuthSessionResponseSchema, payload)
 		if (!parsed.success) return null
 		return parsed.output
 	} catch {

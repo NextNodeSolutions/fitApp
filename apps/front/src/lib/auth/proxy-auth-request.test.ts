@@ -1,8 +1,7 @@
+import { HTTP_UNAUTHORIZED } from '@fitapp/contracts'
 import { describe, expect, it } from 'vitest'
 
 import { proxyAuthRequest } from './proxy-auth-request'
-
-const HTTP_UNAUTHORIZED = 401
 
 function createEnv(
 	fetchImpl: (

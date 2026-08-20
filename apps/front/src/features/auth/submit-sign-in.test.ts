@@ -2,12 +2,11 @@ import {
 	AuthenticationError,
 	ConnectionError,
 	AUTH_SIGN_IN_PATH,
+	HTTP_UNAUTHORIZED,
 } from '@fitapp/contracts'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { submitSignIn } from './submit-sign-in'
-
-const HTTP_UNAUTHORIZED = 401
 
 const VALUES = {
 	email: 'jean@example.com',

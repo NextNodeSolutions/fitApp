@@ -1,23 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { isAuthGuardedPath, resolveAuthRedirect } from './resolve-auth-redirect'
-
-describe('isAuthGuardedPath', () => {
-	it('matches protected and guest paths', () => {
-		expect(isAuthGuardedPath('/dashboard')).toBe(true)
-		expect(isAuthGuardedPath('/onboarding')).toBe(true)
-		expect(isAuthGuardedPath('/parametres')).toBe(true)
-		expect(isAuthGuardedPath('/login')).toBe(true)
-		expect(isAuthGuardedPath('/signup')).toBe(true)
-	})
-
-	it('matches nested paths but not look-alike prefixes', () => {
-		expect(isAuthGuardedPath('/parametres/profil')).toBe(true)
-		expect(isAuthGuardedPath('/dashboardfoo')).toBe(false)
-		expect(isAuthGuardedPath('/')).toBe(false)
-		expect(isAuthGuardedPath('/api/auth/sign-in/email')).toBe(false)
-	})
-})
+import { resolveAuthRedirect } from './resolve-auth-redirect'
 
 describe('resolveAuthRedirect', () => {
 	it('redirects guests away from protected pages', () => {

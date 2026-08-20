@@ -3,8 +3,8 @@ import { useForm } from 'react-hook-form'
 import { signUpResolver } from './sign-up-resolver'
 import { submitSignUp } from './submit-sign-up'
 
+import type { SignUpFormValues } from '@fitapp/contracts'
 import type { UseFormReturn } from 'react-hook-form'
-import type { SignUpFormValues } from './sign-up-resolver'
 
 const ONBOARDING_PATH = '/onboarding'
 

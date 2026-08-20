@@ -15,6 +15,11 @@ export const AuthSessionSchema = v.object({
 	expiresAt: v.union([v.string(), v.date()]),
 })
 
+export const AuthSessionResponseSchema = v.object({
+	user: AuthUserSchema,
+	session: AuthSessionSchema,
+})
+
 export const AuthSuccessResponseSchema = v.object({
 	user: AuthUserSchema,
 	token: v.optional(v.nullable(v.string())),
@@ -27,6 +32,9 @@ export const AuthErrorResponseSchema = v.object({
 
 export type AuthUser = v.InferOutput<typeof AuthUserSchema>
 export type AuthSession = v.InferOutput<typeof AuthSessionSchema>
+export type AuthSessionResponse = v.InferOutput<
+	typeof AuthSessionResponseSchema
+>
 export type AuthSuccessResponse = v.InferOutput<
 	typeof AuthSuccessResponseSchema
 >

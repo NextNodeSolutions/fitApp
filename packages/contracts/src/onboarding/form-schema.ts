@@ -1,5 +1,7 @@
 import * as v from 'valibot'
 
+import { firstFieldMessages } from '../auth/first-field-messages'
+
 import { OnboardingBodySchema } from './body-schema'
 import {
 	ACTIVITY_LEVEL_VALUES,
@@ -79,15 +81,7 @@ export function getOnboardingFormErrors(
 ): Partial<Record<OnboardingFormField, string>> {
 	const result = v.safeParse(OnboardingFormSchema, values)
 	if (result.success) return {}
-	const errors: Partial<Record<OnboardingFormField, string>> = {}
-	for (const issue of result.issues) {
-		const key = issue.path?.[0]?.key
-		if (typeof key !== 'string') continue
-		if (!isOnboardingFormField(key)) continue
-		if (errors[key]) continue
-		errors[key] = issue.message
-	}
-	return errors
+	return firstFieldMessages(result.issues, isOnboardingFormField)
 }
 
 export function toOnboardingBody(values: OnboardingFormValues): OnboardingBody {

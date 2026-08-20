@@ -1,12 +1,12 @@
-import { describe, expect, it } from 'vitest'
-
 import {
 	PASSWORD_CONFIRMATION_MISMATCH,
 	PASSWORD_CONFIRMATION_REQUIRED,
-	signUpResolver,
-} from './sign-up-resolver'
+} from '@fitapp/contracts'
+import { describe, expect, it } from 'vitest'
 
-import type { SignUpFormValues } from './sign-up-resolver'
+import { signUpResolver } from './sign-up-resolver'
+
+import type { SignUpFormValues } from '@fitapp/contracts'
 
 const VALID_VALUES: SignUpFormValues = {
 	email: 'jean@example.com',
