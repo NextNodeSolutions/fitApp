@@ -2,10 +2,10 @@ import { AUTH_BASE_PATH } from '@fitapp/contracts'
 
 import { fetchFromApi } from '../api'
 
-const FORWARDED_REQUEST_HEADERS = ['content-type', 'cookie'] as const
+const FORWARDED_REQUEST_HEADERS = ['content-type', 'cookie', 'origin'] as const
 const BODILESS_METHODS = new Set(['GET', 'HEAD'])
 
-// Fresh headers only: the browser Origin is never forwarded to the service binding.
+// Fresh headers only: only allowlisted headers are forwarded to the service binding.
 function buildRequestHeaders(request: Request): Headers {
 	const headers = new Headers()
 	for (const name of FORWARDED_REQUEST_HEADERS) {

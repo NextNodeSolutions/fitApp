@@ -61,7 +61,7 @@ describe('proxyAuthRequest', () => {
 		expect(receivedMethod).toBe('POST')
 		expect(receivedContentType).toBe('application/json')
 		expect(receivedCookie).toBe('session=abc')
-		expect(receivedOrigin).toBeNull()
+		expect(receivedOrigin).toBe('https://front.fitapp.dev')
 		expect(receivedBody).toBe('{"email":"jean@example.com"}')
 	})
 
