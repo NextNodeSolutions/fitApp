@@ -8,8 +8,6 @@ import { EmailAlreadyUsedError } from '../errors/business/email-already-used-err
 import {
 	AUTH_SIGN_IN_PATH,
 	AUTH_SIGN_UP_PATH,
-	getSignInFormErrors,
-	getSignUpFormErrors,
 	PASSWORD_MIN_LENGTH,
 	SIGN_IN_FIELDS,
 	SIGN_UP_FIELDS,
@@ -66,21 +64,6 @@ describe('SignUpFormSchema', () => {
 			'Les mots de passe ne correspondent pas',
 		)
 	})
-
-	it('maps issues to field messages', () => {
-		expect(
-			getSignUpFormErrors({
-				email: 'bad',
-				password: '',
-				passwordConfirmation: '',
-			}),
-		).toEqual({
-			email: "L'email n'est pas valide",
-			password: 'Le mot de passe est obligatoire',
-			passwordConfirmation:
-				'La confirmation du mot de passe est obligatoire',
-		})
-	})
 })
 
 describe('SignInFormSchema', () => {
@@ -96,17 +79,6 @@ describe('SignInFormSchema', () => {
 		expect(result.success).toBe(false)
 		if (result.success) return
 		expect(result.issues[0]?.message).toBe("L'email est obligatoire")
-	})
-
-	it('maps issues to field messages', () => {
-		expect(
-			getSignInFormErrors({
-				email: 'jean@example.com',
-				password: 'short',
-			}),
-		).toEqual({
-			password: `Le mot de passe doit contenir au moins ${PASSWORD_MIN_LENGTH} caractères`,
-		})
 	})
 })
 

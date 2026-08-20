@@ -1,18 +1,12 @@
-const PROTECTED_PATHS = ['/dashboard', '/onboarding', '/parametres'] as const
-const GUEST_PATHS = ['/login', '/signup'] as const
+import { PROTECTED_PATHS } from './protected-paths'
 
 const LOGIN_PATH = '/login'
+const SIGNUP_PATH = '/signup'
 const DASHBOARD_PATH = '/dashboard'
+const GUEST_PATHS = [LOGIN_PATH, SIGNUP_PATH] as const
 
 function matchesPath(pathname: string, base: string): boolean {
 	return pathname === base || pathname.startsWith(`${base}/`)
-}
-
-export function isAuthGuardedPath(pathname: string): boolean {
-	return (
-		PROTECTED_PATHS.some(base => matchesPath(pathname, base)) ||
-		GUEST_PATHS.some(base => matchesPath(pathname, base))
-	)
 }
 
 export function resolveAuthRedirect(

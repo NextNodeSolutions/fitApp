@@ -1,5 +1,6 @@
 import {
 	AUTH_SIGN_UP_PATH,
+	BETTER_AUTH_USER_ALREADY_EXISTS_CODE,
 	AuthErrorResponseSchema,
 	AuthSuccessResponseSchema,
 	AuthenticationError,
@@ -11,8 +12,6 @@ import * as v from 'valibot'
 
 import type { AppError, SignUpFormValues } from '@fitapp/contracts'
 import type { SubmitAuthResult } from './submit-auth-result'
-
-const EMAIL_ALREADY_USED_CODE = 'USER_ALREADY_EXISTS'
 
 export async function submitSignUp(
 	values: SignUpFormValues,
@@ -41,7 +40,10 @@ export async function submitSignUp(
 
 function readSignUpError(payload: unknown): AppError {
 	const parsed = v.safeParse(AuthErrorResponseSchema, payload)
-	if (parsed.success && parsed.output.code === EMAIL_ALREADY_USED_CODE) {
+	if (
+		parsed.success &&
+		parsed.output.code === BETTER_AUTH_USER_ALREADY_EXISTS_CODE
+	) {
 		return new EmailAlreadyUsedError()
 	}
 	return new AuthenticationError()

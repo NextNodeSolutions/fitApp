@@ -1,10 +1,9 @@
-import { API_TOKEN_HEX_LENGTH } from '@fitapp/contracts'
+import { API_TOKEN_HEX_LENGTH, HTTP_UNAUTHORIZED } from '@fitapp/contracts'
 import { describe, expect, it } from 'vitest'
 
 import { fetchSettingsToken } from './fetch-settings-token'
 
 const VALID_TOKEN = 'a'.repeat(API_TOKEN_HEX_LENGTH)
-const HTTP_UNAUTHORIZED = 401
 
 function createEnv(
 	fetchImpl: (

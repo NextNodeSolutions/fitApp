@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 
-import { scheduleCopiedReset } from './copied-reset-timer'
+const COPIED_RESET_DELAY_MS = 2000
 
 export function useApiTokenCopy(): {
 	copied: boolean
@@ -25,10 +25,11 @@ export function useApiTokenCopy(): {
 		}
 		setCopied(true)
 		cancelReset.current?.()
-		cancelReset.current = scheduleCopiedReset(() => {
+		const timer = window.setTimeout(() => {
 			setCopied(false)
 			cancelReset.current = null
-		})
+		}, COPIED_RESET_DELAY_MS)
+		cancelReset.current = () => window.clearTimeout(timer)
 	}
 
 	return { copied, copyButtonRef, copyToken }
