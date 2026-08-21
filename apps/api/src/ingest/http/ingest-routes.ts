@@ -28,7 +28,7 @@ const describeIngestRoute = describeRoute({
 	tags: ['Ingest'],
 	security: [{ bearerAuth: [] }],
 	responses: {
-		200: {
+		[HTTP_OK]: {
 			description: 'Entries ingested',
 			content: {
 				'application/json': {
@@ -36,7 +36,7 @@ const describeIngestRoute = describeRoute({
 				},
 			},
 		},
-		400: {
+		[HTTP_BAD_REQUEST]: {
 			description: 'Invalid body',
 			content: {
 				'application/json': {
@@ -44,7 +44,7 @@ const describeIngestRoute = describeRoute({
 				},
 			},
 		},
-		401: {
+		[HTTP_UNAUTHORIZED]: {
 			description: 'Invalid API token',
 			content: {
 				'application/json': {

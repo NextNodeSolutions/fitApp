@@ -1,6 +1,7 @@
 import {
 	HTTP_BAD_REQUEST,
 	HTTP_CREATED,
+	HTTP_OK,
 	HTTP_UNAUTHORIZED,
 	ONBOARDING_UNAUTHORIZED_MESSAGE,
 	OnboardingBodySchema,
@@ -32,7 +33,7 @@ const describeCreateProfileRoute = describeRoute({
 	tags: ['Onboarding'],
 	security: [{ cookieAuth: [] }],
 	responses: {
-		201: {
+		[HTTP_CREATED]: {
 			description: 'Profile created',
 			content: {
 				'application/json': {
@@ -40,7 +41,7 @@ const describeCreateProfileRoute = describeRoute({
 				},
 			},
 		},
-		400: {
+		[HTTP_BAD_REQUEST]: {
 			description: 'Invalid body',
 			content: {
 				'application/json': {
@@ -48,7 +49,7 @@ const describeCreateProfileRoute = describeRoute({
 				},
 			},
 		},
-		401: {
+		[HTTP_UNAUTHORIZED]: {
 			description: 'Missing session',
 			content: {
 				'application/json': {
@@ -71,7 +72,7 @@ const describeGetProfileRoute = describeRoute({
 		},
 	],
 	responses: {
-		200: {
+		[HTTP_OK]: {
 			description: 'Profile found',
 			content: {
 				'application/json': {

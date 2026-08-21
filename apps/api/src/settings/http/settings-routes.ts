@@ -22,7 +22,7 @@ const describeSettingsTokenRoute = describeRoute({
 	tags: ['Settings'],
 	security: [{ cookieAuth: [] }],
 	responses: {
-		200: {
+		[HTTP_OK]: {
 			description: 'API token for the current user',
 			content: {
 				'application/json': {
@@ -30,7 +30,7 @@ const describeSettingsTokenRoute = describeRoute({
 				},
 			},
 		},
-		401: {
+		[HTTP_UNAUTHORIZED]: {
 			description: 'Missing session',
 			content: {
 				'application/json': {

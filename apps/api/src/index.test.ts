@@ -1,7 +1,13 @@
-import { AUTH_SIGN_UP_PATH, HTTP_BAD_REQUEST } from '@fitapp/contracts'
+import {
+	AUTH_BASE_PATH,
+	AUTH_SIGN_UP_PATH,
+	HTTP_BAD_REQUEST,
+} from '@fitapp/contracts'
 import { describe, expect, it } from 'vitest'
 
 import { app } from './index'
+
+const AUTH_OPENAPI_PATH = `${AUTH_BASE_PATH}/open-api/generate-schema`
 
 function isD1Database(database: object): database is D1Database {
 	return 'prepare' in database && typeof database.prepare === 'function'
@@ -66,7 +72,7 @@ describe('GET /docs', () => {
 		const html = await response.text()
 		expect(html.toLowerCase()).toContain('scalar')
 		expect(html).toContain('/openapi.json')
-		expect(html).toContain('/api/auth/open-api/generate-schema')
+		expect(html).toContain(AUTH_OPENAPI_PATH)
 	})
 })
 
@@ -137,10 +143,10 @@ describe('GET /openapi.json', () => {
 	})
 })
 
-describe('GET /api/auth/open-api/generate-schema', () => {
+describe(`GET ${AUTH_OPENAPI_PATH}`, () => {
 	it('returns the Better Auth OpenAPI document', async () => {
 		const response = await app.request(
-			'/api/auth/open-api/generate-schema',
+			AUTH_OPENAPI_PATH,
 			{ method: 'GET' },
 			createAuthTestEnv(),
 		)

@@ -1,4 +1,4 @@
-import { AUTH_BASE_PATH, AppError } from '@fitapp/contracts'
+import { AUTH_BASE_PATH, AppError, HTTP_OK } from '@fitapp/contracts'
 import { Hono } from 'hono'
 import { describeRoute, resolver } from 'hono-openapi'
 import * as v from 'valibot'
@@ -23,7 +23,7 @@ const describeHealthzRoute = describeRoute({
 	summary: 'Health check',
 	tags: ['Health'],
 	responses: {
-		200: {
+		[HTTP_OK]: {
 			description: 'Service is healthy',
 			content: {
 				'application/json': {

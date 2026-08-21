@@ -31,7 +31,11 @@ export function mountApiDocumentation(app: Hono<{ Bindings: Env }>): void {
 					},
 				},
 			},
-			exclude: ['/docs', APPLICATION_OPENAPI_PATH, /^\/api\/auth/],
+			exclude: [
+				'/docs',
+				APPLICATION_OPENAPI_PATH,
+				new RegExp(`^${AUTH_BASE_PATH}`),
+			],
 		}),
 	)
 	app.get(
