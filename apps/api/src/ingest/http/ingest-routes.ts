@@ -5,58 +5,125 @@ import {
 	INGEST_INVALID_BODY_MESSAGE,
 	INGEST_INVALID_TOKEN_MESSAGE,
 	IngestBodySchema,
+	IngestInsertedResponseSchema,
+	IngestInvalidBodyResponseSchema,
+	IngestInvalidTokenResponseSchema,
 } from '@fitapp/contracts'
 import { Hono } from 'hono'
-import * as v from 'valibot'
+import { describeRoute, resolver, validator } from 'hono-openapi'
 
 import { ingestEntries } from '../application/ingest-entries'
 
 import { readBearerToken } from './bearer-token'
 
+import type { Context, Next } from 'hono'
 import type { IngestRepository } from '../ports/ingest-repository'
 
 export type IngestDeps = {
 	createRepository: (db: D1Database) => IngestRepository
 }
 
+const describeIngestRoute = describeRoute({
+	summary: 'Ingest meal entries',
+	tags: ['Ingest'],
+	security: [{ bearerAuth: [] }],
+	responses: {
+		200: {
+			description: 'Entries ingested',
+			content: {
+				'application/json': {
+					schema: resolver(IngestInsertedResponseSchema),
+				},
+			},
+		},
+		400: {
+			description: 'Invalid body',
+			content: {
+				'application/json': {
+					schema: resolver(IngestInvalidBodyResponseSchema),
+				},
+			},
+		},
+		401: {
+			description: 'Invalid API token',
+			content: {
+				'application/json': {
+					schema: resolver(IngestInvalidTokenResponseSchema),
+				},
+			},
+		},
+	},
+})
+
+const validateIngestBody = validator(
+	'json',
+	IngestBodySchema,
+	(parseResult, res) => {
+		if (parseResult.success) return
+		return res.json(
+			{ error: INGEST_INVALID_BODY_MESSAGE },
+			HTTP_BAD_REQUEST,
+		)
+	},
+)
+
 export function createIngestRoutes(deps: IngestDeps): Hono<{ Bindings: Env }> {
 	const routes = new Hono<{ Bindings: Env }>()
-	routes.post('/', async res => {
-		const apiToken = readBearerToken(res.req.header('Authorization'))
-		if (!apiToken) {
-			return res.json(
-				{ error: INGEST_INVALID_TOKEN_MESSAGE },
-				HTTP_UNAUTHORIZED,
+	routes.post(
+		'/',
+		describeIngestRoute,
+		requireBearerToken,
+		validateJsonSyntax,
+		validateIngestBody,
+		async res => {
+			const apiToken = readBearerToken(res.req.header('Authorization'))
+			if (!apiToken) {
+				return res.json(
+					{ error: INGEST_INVALID_TOKEN_MESSAGE },
+					HTTP_UNAUTHORIZED,
+				)
+			}
+			const inserted = await ingestEntries(
+				deps.createRepository(res.env.DB),
+				apiToken,
+				res.req.valid('json'),
 			)
-		}
-		const payload = await readJson(res.req.raw)
-		const parsed = v.safeParse(IngestBodySchema, payload)
-		if (!parsed.success) {
-			return res.json(
-				{ error: INGEST_INVALID_BODY_MESSAGE },
-				HTTP_BAD_REQUEST,
-			)
-		}
-		const inserted = await ingestEntries(
-			deps.createRepository(res.env.DB),
-			apiToken,
-			parsed.output,
-		)
-		if (inserted === null) {
-			return res.json(
-				{ error: INGEST_INVALID_TOKEN_MESSAGE },
-				HTTP_UNAUTHORIZED,
-			)
-		}
-		return res.json({ inserted }, HTTP_OK)
-	})
+			if (inserted === null) {
+				return res.json(
+					{ error: INGEST_INVALID_TOKEN_MESSAGE },
+					HTTP_UNAUTHORIZED,
+				)
+			}
+			return res.json({ inserted }, HTTP_OK)
+		},
+	)
 	return routes
 }
 
-async function readJson(request: Request): Promise<unknown> {
+async function validateJsonSyntax(
+	res: Context<{ Bindings: Env }>,
+	next: Next,
+): Promise<Response | void> {
 	try {
-		return await request.json()
+		await res.req.json()
 	} catch {
-		return null
+		return res.json(
+			{ error: INGEST_INVALID_BODY_MESSAGE },
+			HTTP_BAD_REQUEST,
+		)
 	}
+	return next()
+}
+
+function requireBearerToken(
+	res: Context<{ Bindings: Env }>,
+	next: Next,
+): Response | Promise<void> {
+	if (!readBearerToken(res.req.header('Authorization'))) {
+		return res.json(
+			{ error: INGEST_INVALID_TOKEN_MESSAGE },
+			HTTP_UNAUTHORIZED,
+		)
+	}
+	return next()
 }

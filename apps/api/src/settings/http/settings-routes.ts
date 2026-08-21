@@ -2,8 +2,11 @@ import {
 	HTTP_OK,
 	HTTP_UNAUTHORIZED,
 	SETTINGS_UNAUTHORIZED_MESSAGE,
+	SettingsTokenResponseSchema,
+	SettingsUnauthorizedResponseSchema,
 } from '@fitapp/contracts'
 import { Hono } from 'hono'
+import { describeRoute, resolver } from 'hono-openapi'
 
 import { getApiToken } from '../application/get-api-token'
 
@@ -14,11 +17,35 @@ export type SettingsDeps = {
 	getUserId: (env: Env, headers: Headers) => Promise<string | null>
 }
 
+const describeSettingsTokenRoute = describeRoute({
+	summary: 'Get current API token',
+	tags: ['Settings'],
+	security: [{ cookieAuth: [] }],
+	responses: {
+		200: {
+			description: 'API token for the current user',
+			content: {
+				'application/json': {
+					schema: resolver(SettingsTokenResponseSchema),
+				},
+			},
+		},
+		401: {
+			description: 'Missing session',
+			content: {
+				'application/json': {
+					schema: resolver(SettingsUnauthorizedResponseSchema),
+				},
+			},
+		},
+	},
+})
+
 export function createSettingsRoutes(
 	deps: SettingsDeps,
 ): Hono<{ Bindings: Env }> {
 	const routes = new Hono<{ Bindings: Env }>()
-	routes.get('/token', async res => {
+	routes.get('/token', describeSettingsTokenRoute, async res => {
 		const userId = await deps.getUserId(res.env, res.req.raw.headers)
 		if (!userId) {
 			return res.json(
