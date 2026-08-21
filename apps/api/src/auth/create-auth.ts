@@ -1,6 +1,7 @@
 import { drizzleAdapter } from '@better-auth/drizzle-adapter'
 import { AUTH_BASE_PATH, PASSWORD_MIN_LENGTH } from '@fitapp/contracts'
 import { betterAuth } from 'better-auth/minimal'
+import { openAPI } from 'better-auth/plugins'
 
 import { db } from '../db'
 import * as schema from '../db/schema'
@@ -31,6 +32,7 @@ export function createAuth(env: Env): Auth {
 			enabled: true,
 			minPasswordLength: PASSWORD_MIN_LENGTH,
 		},
+		plugins: [openAPI({ disableDefaultReference: true })],
 		advanced: {
 			trustedProxyHeaders: true,
 			defaultCookieAttributes: {

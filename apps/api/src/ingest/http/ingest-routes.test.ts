@@ -78,6 +78,29 @@ describe('POST /api/ingest', () => {
 		})
 	})
 
+	it('returns the ingest error contract for malformed JSON', async () => {
+		const routes = createIngestRoutes({
+			createRepository: () => createRepository('user-1'),
+		})
+		const response = await routes.request(
+			'/',
+			{
+				method: 'POST',
+				headers: {
+					Authorization: 'Bearer token',
+					'Content-Type': 'application/json',
+				},
+				body: '{',
+			},
+			createTestEnv(),
+		)
+
+		expect(response.status).toBe(HTTP_BAD_REQUEST)
+		await expect(response.json()).resolves.toEqual({
+			error: INGEST_INVALID_BODY_MESSAGE,
+		})
+	})
+
 	it('returns 401 for an unknown token', async () => {
 		const routes = createIngestRoutes({
 			createRepository: () => createRepository(null),
