@@ -57,6 +57,101 @@ describe('POST /api/auth/sign-up/email', () => {
 	})
 })
 
+describe('GET /docs', () => {
+	it('returns Scalar HTML with application and auth sources', async () => {
+		const response = await app.request('/docs')
+
+		expect(response.status).toBe(200)
+		expect(response.headers.get('content-type')).toMatch(/html/)
+		const html = await response.text()
+		expect(html.toLowerCase()).toContain('scalar')
+		expect(html).toContain('/openapi.json')
+		expect(html).toContain('/api/auth/open-api/generate-schema')
+	})
+})
+
+describe('GET /openapi.json', () => {
+	it('is OpenAPI 3.1 and documents every non-auth contract', async () => {
+		const response = await app.request('/openapi.json')
+
+		expect(response.status).toBe(200)
+		const specification = await response.text()
+		expect(specification).not.toContain('"/api/auth')
+		expect(JSON.parse(specification)).toMatchObject({
+			openapi: expect.stringMatching(/^3\.1/),
+			components: {
+				securitySchemes: {
+					bearerAuth: { type: 'http', scheme: 'bearer' },
+					cookieAuth: { type: 'apiKey', in: 'cookie' },
+				},
+			},
+			paths: {
+				'/healthz': {
+					get: {
+						tags: ['Health'],
+						responses: { 200: expect.any(Object) },
+					},
+				},
+				'/api/onboarding': {
+					post: {
+						requestBody: expect.any(Object),
+						responses: {
+							201: expect.any(Object),
+							400: expect.any(Object),
+							401: expect.any(Object),
+						},
+						security: [{ cookieAuth: [] }],
+					},
+				},
+				'/api/onboarding/{sessionId}': {
+					get: {
+						parameters: expect.any(Array),
+						responses: {
+							200: expect.any(Object),
+							404: expect.any(Object),
+						},
+					},
+				},
+				'/api/ingest': {
+					post: {
+						requestBody: expect.any(Object),
+						responses: {
+							200: expect.any(Object),
+							400: expect.any(Object),
+							401: expect.any(Object),
+						},
+						security: [{ bearerAuth: [] }],
+					},
+				},
+				'/api/settings/token': {
+					get: {
+						responses: {
+							200: expect.any(Object),
+							401: expect.any(Object),
+						},
+						security: [{ cookieAuth: [] }],
+					},
+				},
+			},
+		})
+	})
+})
+
+describe('GET /api/auth/open-api/generate-schema', () => {
+	it('returns the Better Auth OpenAPI document', async () => {
+		const response = await app.request(
+			'/api/auth/open-api/generate-schema',
+			{ method: 'GET' },
+			createAuthTestEnv(),
+		)
+
+		expect(response.status).toBe(200)
+		expect(await response.json()).toMatchObject({
+			openapi: expect.stringMatching(/^3\.1/),
+		})
+	})
+})
+
 describe('POST /api/onboarding', () => {
 	it('rejects invalid height', async () => {
 		const response = await app.request('/api/onboarding', {
