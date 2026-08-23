@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "lint": "oxlint",
-    "start": "node src/index.ts",
+    "start": "tsx src/index.ts",
     "test": "vitest run",
     "type-check": "tsc --noEmit"
   },
@@ -11,6 +11,7 @@
     "@fitapp/contracts": "workspace:*",
     "@js-temporal/polyfill": "^0.5.1",
     "@modelcontextprotocol/server": "2.0.0",
+    "tsx": "^4.23.12",
     "valibot": "^1.4.2",
     "zod": "^4.3.6"
   },
