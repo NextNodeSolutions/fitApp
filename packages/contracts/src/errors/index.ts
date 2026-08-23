@@ -1,5 +1,7 @@
 export { AppError } from './app-error'
 export type { AppErrorStatus } from './app-error'
+export { AuthenticationError } from './business/authentication-error'
+export { EmailAlreadyUsedError } from './business/email-already-used-error'
 export { OnboardingSaveError } from './business/onboarding-save-error'
 export { OnboardingValidationError } from './business/onboarding-validation-error'
 export { ProfileNotFoundError } from './business/profile-not-found-error'

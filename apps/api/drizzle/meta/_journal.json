@@ -15,6 +15,20 @@
 			"when": 1787049845173,
 			"tag": "0001_purple_silver_fox",
 			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "6",
+			"when": 1787181600000,
+			"tag": "0002_auth",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "6",
+			"when": 1787214726229,
+			"tag": "0003_kind_maddog",
+			"breakpoints": true
 		}
 	]
 }

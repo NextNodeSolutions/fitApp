@@ -1,0 +1,49 @@
+import { SignUpFormSchema } from '@fitapp/contracts'
+import { valibotResolver } from '@hookform/resolvers/valibot'
+import { useForm } from 'react-hook-form'
+
+import { submitSignUp } from './submit-sign-up'
+
+import type { SignUpFormValues } from '@fitapp/contracts'
+import type { UseFormReturn } from 'react-hook-form'
+
+const ONBOARDING_PATH = '/onboarding'
+
+const EMPTY_VALUES: SignUpFormValues = {
+	email: '',
+	password: '',
+	passwordConfirmation: '',
+}
+
+export type SignUpFormApi = UseFormReturn<
+	SignUpFormValues,
+	undefined,
+	SignUpFormValues
+>
+
+export function useSignUpForm(): {
+	form: SignUpFormApi
+	onSubmit: ReturnType<SignUpFormApi['handleSubmit']>
+} {
+	const form = useForm<SignUpFormValues, undefined, SignUpFormValues>({
+		resolver: valibotResolver<
+			SignUpFormValues,
+			undefined,
+			SignUpFormValues
+		>(SignUpFormSchema),
+		defaultValues: EMPTY_VALUES,
+		mode: 'onChange',
+	})
+
+	const onSubmit = form.handleSubmit(async values => {
+		form.clearErrors('root')
+		const submission = await submitSignUp(values)
+		if (!submission.ok) {
+			form.setError('root', { message: submission.error.message })
+			return
+		}
+		window.location.href = ONBOARDING_PATH
+	})
+
+	return { form, onSubmit }
+}

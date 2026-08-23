@@ -16,3 +16,5 @@ export const ACTIVITY_LEVEL_VALUES = [
 
 export type Sex = (typeof SEX_VALUES)[number]
 export type ActivityLevel = (typeof ACTIVITY_LEVEL_VALUES)[number]
+
+export const ONBOARDING_UNAUTHORIZED_MESSAGE = 'Unauthorized'

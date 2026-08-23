@@ -60,36 +60,6 @@ export const OnboardingFormSchema = v.object({
 export type OnboardingFormValues = v.InferInput<typeof OnboardingFormSchema>
 export type OnboardingFormField = keyof OnboardingFormValues
 
-const FORM_FIELDS = [
-	'height',
-	'weight',
-	'age',
-	'sex',
-	'activityLevel',
-] as const satisfies readonly OnboardingFormField[]
-
-export function isOnboardingFormField(
-	field: string,
-): field is OnboardingFormField {
-	return FORM_FIELDS.some(name => name === field)
-}
-
-export function getOnboardingFormErrors(
-	values: OnboardingFormValues,
-): Partial<Record<OnboardingFormField, string>> {
-	const result = v.safeParse(OnboardingFormSchema, values)
-	if (result.success) return {}
-	const errors: Partial<Record<OnboardingFormField, string>> = {}
-	for (const issue of result.issues) {
-		const key = issue.path?.[0]?.key
-		if (typeof key !== 'string') continue
-		if (!isOnboardingFormField(key)) continue
-		if (errors[key]) continue
-		errors[key] = issue.message
-	}
-	return errors
-}
-
 export function toOnboardingBody(values: OnboardingFormValues): OnboardingBody {
 	return v.parse(OnboardingBodySchema, {
 		height: Number(values.height),

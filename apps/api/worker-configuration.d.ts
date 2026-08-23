@@ -5,6 +5,7 @@
 
 declare namespace Cloudflare {
 	interface Env {
+		readonly BETTER_AUTH_SECRET: string
 		readonly D1_DATABASE_ID: string
 		readonly DB: D1Database
 		readonly SITE_URL: string
