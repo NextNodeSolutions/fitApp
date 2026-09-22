@@ -2,5 +2,7 @@ packages:
     - 'apps/*'
     - 'packages/*'
 allowBuilds:
+    # Sentry CLI binary (sourcemap upload) — not used: no Sentry project/token wired yet
+    '@sentry/cli': false
     esbuild: true
     workerd: true
