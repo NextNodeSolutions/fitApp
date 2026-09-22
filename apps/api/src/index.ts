@@ -1,4 +1,5 @@
 import { AUTH_BASE_PATH, AppError, HTTP_OK } from '@fitapp/contracts'
+import { sentry } from '@sentry/hono/cloudflare'
 import { Hono } from 'hono'
 import { describeRoute, resolver } from 'hono-openapi'
 import * as v from 'valibot'
@@ -35,6 +36,16 @@ const describeHealthzRoute = describeRoute({
 })
 
 const app = new Hono<{ Bindings: Env }>()
+
+// Sentry must be the first middleware: it captures unhandled errors from Hono's
+// onError chain (4xx responses are excluded) and builds a trace per request.
+// The DSN comes from the SENTRY_DSN secret - without it the SDK stays disabled.
+app.use(
+	sentry(app, env => ({
+		dsn: env.SENTRY_DSN,
+		tracesSampleRate: 1.0,
+	})),
+)
 
 app.get('/healthz', describeHealthzRoute, res =>
 	res.json({ status: 'ok', service: 'api' }),

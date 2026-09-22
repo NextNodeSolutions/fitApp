@@ -26,6 +26,7 @@ function createAuthTestEnv(): Env {
 	return {
 		DB: database,
 		BETTER_AUTH_SECRET: 'test-better-auth-secret-32chars!',
+		SENTRY_DSN: '',
 		SITE_URL: 'http://localhost:4321',
 		D1_DATABASE_ID: 'test-d1',
 	}
@@ -33,7 +34,11 @@ function createAuthTestEnv(): Env {
 
 describe('GET /healthz', () => {
 	it('returns 200 with service info', async () => {
-		const response = await app.request('/healthz')
+		const response = await app.request(
+			'/healthz',
+			undefined,
+			createAuthTestEnv(),
+		)
 
 		expect(response.status).toBe(200)
 		await expect(response.json()).resolves.toEqual({
@@ -65,7 +70,11 @@ describe('POST /api/auth/sign-up/email', () => {
 
 describe('GET /docs', () => {
 	it('returns Scalar HTML with application and auth sources', async () => {
-		const response = await app.request('/docs')
+		const response = await app.request(
+			'/docs',
+			undefined,
+			createAuthTestEnv(),
+		)
 
 		expect(response.status).toBe(200)
 		expect(response.headers.get('content-type')).toMatch(/html/)
@@ -78,7 +87,11 @@ describe('GET /docs', () => {
 
 describe('GET /openapi.json', () => {
 	it('is OpenAPI 3.1 and documents every non-auth contract', async () => {
-		const response = await app.request('/openapi.json')
+		const response = await app.request(
+			'/openapi.json',
+			undefined,
+			createAuthTestEnv(),
+		)
 
 		expect(response.status).toBe(200)
 		const specification = await response.text()
@@ -160,17 +173,21 @@ describe(`GET ${AUTH_OPENAPI_PATH}`, () => {
 
 describe('POST /api/onboarding', () => {
 	it('rejects invalid height', async () => {
-		const response = await app.request('/api/onboarding', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				height: 50,
-				weight: 72,
-				age: 28,
-				sex: 'male',
-				activityLevel: 'moderate',
-			}),
-		})
+		const response = await app.request(
+			'/api/onboarding',
+			{
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					height: 50,
+					weight: 72,
+					age: 28,
+					sex: 'male',
+					activityLevel: 'moderate',
+				}),
+			},
+			createAuthTestEnv(),
+		)
 
 		expect(response.status).toBe(HTTP_BAD_REQUEST)
 		const body: { errors: string[] } = await response.json()
@@ -178,27 +195,35 @@ describe('POST /api/onboarding', () => {
 	})
 
 	it('rejects missing fields', async () => {
-		const response = await app.request('/api/onboarding', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ height: 175 }),
-		})
+		const response = await app.request(
+			'/api/onboarding',
+			{
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ height: 175 }),
+			},
+			createAuthTestEnv(),
+		)
 
 		expect(response.status).toBe(HTTP_BAD_REQUEST)
 	})
 
 	it('rejects invalid sex value', async () => {
-		const response = await app.request('/api/onboarding', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				height: 175,
-				weight: 72,
-				age: 28,
-				sex: 'other',
-				activityLevel: 'moderate',
-			}),
-		})
+		const response = await app.request(
+			'/api/onboarding',
+			{
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					height: 175,
+					weight: 72,
+					age: 28,
+					sex: 'other',
+					activityLevel: 'moderate',
+				}),
+			},
+			createAuthTestEnv(),
+		)
 
 		expect(response.status).toBe(HTTP_BAD_REQUEST)
 	})
