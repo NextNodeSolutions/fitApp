@@ -7,6 +7,7 @@ declare namespace Cloudflare {
 	interface Env {
 		readonly API: Fetcher
 		readonly ASSETS: Fetcher
+		readonly SENTRY_DSN: string
 		readonly SITE_URL: string
 	}
 }
