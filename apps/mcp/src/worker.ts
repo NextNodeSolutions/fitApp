@@ -30,6 +30,12 @@ function unauthorizedResponse(): Response {
 // oxlint-disable-next-line import/no-default-export
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
+		if (
+			request.method === 'GET' &&
+			new URL(request.url).pathname === '/healthz'
+		) {
+			return Response.json({ status: 'ok', service: 'mcp' })
+		}
 		const apiToken = readBearerToken(request.headers.get('Authorization'))
 		if (!apiToken) return unauthorizedResponse()
 		const handler = createMcpHandler(() =>
