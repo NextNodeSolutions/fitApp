@@ -1,16 +1,13 @@
 import {
 	AUTH_SIGN_UP_PATH,
-	BETTER_AUTH_USER_ALREADY_EXISTS_CODE,
-	AuthErrorResponseSchema,
 	AuthSuccessResponseSchema,
-	AuthUnavailableError,
 	ConnectionError,
-	EmailAlreadyUsedError,
 	InvalidServerResponseError,
+	readAuthError,
 } from '@fitapp/contracts'
 import * as v from 'valibot'
 
-import type { AppError, SignUpFormValues } from '@fitapp/contracts'
+import type { SignUpFormValues } from '@fitapp/contracts'
 import type { SubmitAuthResult } from './submit-auth-result'
 
 export async function submitSignUp(
@@ -27,7 +24,7 @@ export async function submitSignUp(
 			}),
 		})
 		const payload: unknown = await response.json()
-		if (!response.ok) return { ok: false, error: readSignUpError(payload) }
+		if (!response.ok) return { ok: false, error: readAuthError(payload) }
 		const created = v.safeParse(AuthSuccessResponseSchema, payload)
 		if (!created.success) {
 			return { ok: false, error: new InvalidServerResponseError() }
@@ -36,15 +33,4 @@ export async function submitSignUp(
 	} catch {
 		return { ok: false, error: new ConnectionError() }
 	}
-}
-
-function readSignUpError(payload: unknown): AppError {
-	const parsed = v.safeParse(AuthErrorResponseSchema, payload)
-	if (
-		parsed.success &&
-		parsed.output.code === BETTER_AUTH_USER_ALREADY_EXISTS_CODE
-	) {
-		return new EmailAlreadyUsedError()
-	}
-	return new AuthUnavailableError()
 }
