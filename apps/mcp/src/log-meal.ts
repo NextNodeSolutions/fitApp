@@ -8,12 +8,12 @@ import type { IngestBody } from '@fitapp/contracts'
 import type { CallToolResult } from '@modelcontextprotocol/server'
 import type { IngestMealsOutcome } from './ingest-meals.ts'
 import type { LogMealInput } from './log-meal-input-schema.ts'
-import type { FitAppConfig } from './read-fitapp-config.ts'
+import type { ApiFetch, FitAppConfig } from './read-fitapp-config.ts'
 
 export async function logMeal(
 	config: FitAppConfig,
 	input: LogMealInput,
-	fetchImpl: typeof fetch = fetch,
+	fetchImpl: ApiFetch = config.apiFetch,
 ): Promise<CallToolResult> {
 	const body = toIngestBody(input)
 	const outcome = await ingestMeals(config, body, fetchImpl)

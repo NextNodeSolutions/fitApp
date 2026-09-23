@@ -18,6 +18,9 @@ describe('readFitAppConfig', () => {
 	it('returns the trimmed API token', () => {
 		vi.stubEnv('FITAPP_API_TOKEN', ' token ')
 
-		expect(readFitAppConfig()).toEqual({ apiToken: 'token' })
+		expect(readFitAppConfig()).toEqual({
+			apiToken: 'token',
+			apiFetch: expect.any(Function),
+		})
 	})
 })

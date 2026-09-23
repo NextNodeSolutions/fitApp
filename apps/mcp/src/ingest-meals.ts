@@ -2,7 +2,7 @@ import { INGEST_PATH } from '@fitapp/contracts'
 import { HTTP_UNAUTHORIZED } from '@fitapp/contracts/http'
 
 import type { IngestBody } from '@fitapp/contracts'
-import type { FitAppConfig } from './read-fitapp-config.ts'
+import type { ApiFetch, FitAppConfig } from './read-fitapp-config.ts'
 
 export type IngestMealsOutcome =
 	| { kind: 'success' }
@@ -13,20 +13,17 @@ export type IngestMealsOutcome =
 export async function ingestMeals(
 	config: FitAppConfig,
 	body: IngestBody,
-	fetchImpl: typeof fetch = fetch,
+	fetchImpl: ApiFetch = config.apiFetch,
 ): Promise<IngestMealsOutcome> {
 	try {
-		const response = await fetchImpl(
-			`https://api-fitapp.nextnode.fr${INGEST_PATH}`,
-			{
-				method: 'POST',
-				headers: {
-					Authorization: `Bearer ${config.apiToken}`,
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(body),
+		const response = await fetchImpl(INGEST_PATH, {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${config.apiToken}`,
+				'Content-Type': 'application/json',
 			},
-		)
+			body: JSON.stringify(body),
+		})
 		return await mapIngestResponse(response)
 	} catch (caught: unknown) {
 		return { kind: 'network', message: networkErrorMessage(caught) }
