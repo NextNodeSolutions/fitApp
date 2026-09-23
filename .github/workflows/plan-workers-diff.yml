@@ -9,7 +9,7 @@ jobs:
     plan-infra:
         uses: NextNodeSolutions/core/.github/workflows/plan-workers-diff.yml@main
         with:
-            environment: development
+            environment: production
         secrets: inherit
         permissions:
             pull-requests: write
