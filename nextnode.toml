@@ -3,6 +3,9 @@ name = "fitapp"
 type = "app"
 domain = "nextnode.fr"
 
+[environment]
+development = false
+
 [deploy]
 target = "cloudflare-workers"
 secrets = []
@@ -11,13 +14,19 @@ secrets = []
 url = "front-fitapp.nextnode.fr"
 needs = ["api"]
 entry = "apps/front/dist/server/entry.mjs"
-secrets = ["SENTRY_DSN"]
+secrets = ["FRONT_SENTRY_DSN"]
 
 [deploy.services.api]
 url = "api-fitapp.nextnode.fr"
 needs = ["d1"]
 entry = "apps/api/src/index.ts"
 secrets = ["BETTER_AUTH_SECRET", "SENTRY_DSN"]
+
+[deploy.services.mcp]
+url = "mcp-fitapp.nextnode.fr"
+needs = ["api"]
+entry = "apps/mcp/src/worker.ts"
+secrets = []
 
 [services.d1]
 migrations_folder = "apps/api/drizzle"

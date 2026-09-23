@@ -1,6 +1,6 @@
 {
 	"extends": "@nextnode-solutions/standards/typescript/library",
-	"include": ["src"],
+	"include": ["src", "worker-configuration.d.ts"],
 	"exclude": ["node_modules", "dist", "vitest.config.ts"],
 	"compilerOptions": {
 		"types": ["node"],

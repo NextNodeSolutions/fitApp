@@ -3,6 +3,7 @@ import {
 	HTTP_OK,
 	HTTP_UNAUTHORIZED,
 	INGEST_INVALID_BODY_MESSAGE,
+	INGEST_PATH,
 } from '@fitapp/contracts'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -13,6 +14,7 @@ import type { FitAppConfig } from './read-fitapp-config.ts'
 
 const CONFIG = {
 	apiToken: 'test-token',
+	apiFetch: vi.fn(),
 } satisfies FitAppConfig
 
 const BODY: IngestBody = {
@@ -51,17 +53,14 @@ describe('ingestMeals', () => {
 		await expect(ingestMeals(CONFIG, BODY, fetchImpl)).resolves.toEqual({
 			kind: 'success',
 		})
-		expect(fetchImpl).toHaveBeenCalledWith(
-			'https://api-fitapp.nextnode.fr/api/ingest',
-			{
-				method: 'POST',
-				headers: {
-					Authorization: 'Bearer test-token',
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(BODY),
+		expect(fetchImpl).toHaveBeenCalledWith(INGEST_PATH, {
+			method: 'POST',
+			headers: {
+				Authorization: 'Bearer test-token',
+				'Content-Type': 'application/json',
 			},
-		)
+			body: JSON.stringify(BODY),
+		})
 	})
 
 	it('maps 401 to an invalid-token outcome', async () => {

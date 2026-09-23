@@ -3,6 +3,7 @@ import {
 	HTTP_OK,
 	HTTP_UNAUTHORIZED,
 	INGEST_INVALID_BODY_MESSAGE,
+	INGEST_PATH,
 } from '@fitapp/contracts'
 import { Temporal } from '@js-temporal/polyfill'
 import { describe, expect, it, vi } from 'vitest'
@@ -14,6 +15,7 @@ import type { FitAppConfig } from './read-fitapp-config.ts'
 
 const CONFIG = {
 	apiToken: 'test-token',
+	apiFetch: vi.fn(),
 } satisfies FitAppConfig
 
 const FOODS = [
@@ -46,7 +48,7 @@ describe('logMeal', () => {
 		await logMeal(CONFIG, input, fetchImpl)
 
 		expect(fetchImpl).toHaveBeenCalledWith(
-			'https://api-fitapp.nextnode.fr/api/ingest',
+			INGEST_PATH,
 			expect.objectContaining({
 				body: JSON.stringify({
 					date: Temporal.Now.plainDateISO().toString(),
