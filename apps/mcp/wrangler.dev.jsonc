@@ -1,0 +1,12 @@
+{
+	"name": "fitapp-dev-mcp-local",
+	"main": "src/worker.ts",
+	"compatibility_date": "2026-06-01",
+	"compatibility_flags": ["nodejs_compat"],
+	"services": [
+		{
+			"binding": "API",
+			"service": "fitapp-dev-api-local",
+		},
+	],
+}

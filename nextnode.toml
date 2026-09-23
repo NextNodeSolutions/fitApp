@@ -19,6 +19,12 @@ needs = ["d1"]
 entry = "apps/api/src/index.ts"
 secrets = ["BETTER_AUTH_SECRET", "SENTRY_DSN"]
 
+[deploy.services.mcp]
+url = "mcp-fitapp.nextnode.fr"
+needs = ["api"]
+entry = "apps/mcp/src/worker.ts"
+secrets = []
+
 [services.d1]
 migrations_folder = "apps/api/drizzle"
 check_command = "pnpm --filter @fitapp/api exec drizzle-kit check"
