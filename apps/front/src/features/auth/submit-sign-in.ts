@@ -1,9 +1,9 @@
 import {
 	AUTH_SIGN_IN_PATH,
 	AuthSuccessResponseSchema,
-	AuthenticationError,
 	ConnectionError,
 	InvalidServerResponseError,
+	readAuthError,
 } from '@fitapp/contracts'
 import * as v from 'valibot'
 
@@ -21,7 +21,7 @@ export async function submitSignIn(
 		})
 		const payload: unknown = await response.json()
 		if (!response.ok) {
-			return { ok: false, error: new AuthenticationError() }
+			return { ok: false, error: readAuthError(payload) }
 		}
 		const created = v.safeParse(AuthSuccessResponseSchema, payload)
 		if (!created.success) {
