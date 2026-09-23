@@ -2,6 +2,17 @@ import * as v from 'valibot'
 
 export const BETTER_AUTH_USER_ALREADY_EXISTS_CODE = 'USER_ALREADY_EXISTS'
 
+// Better Auth codes meaning the credentials themselves are wrong. Any other
+// code (INVALID_ORIGIN, FAILED_TO_CREATE_USER, ...) is a server-side problem,
+// not a credentials problem — it must not surface as a credentials error.
+export const BETTER_AUTH_INVALID_CREDENTIALS_CODES = [
+	'INVALID_EMAIL_OR_PASSWORD',
+	'INVALID_EMAIL',
+	'INVALID_PASSWORD',
+	'USER_NOT_FOUND',
+	'CREDENTIAL_ACCOUNT_NOT_FOUND',
+] as const
+
 export const AuthUserSchema = v.object({
 	id: v.string(),
 	name: v.string(),

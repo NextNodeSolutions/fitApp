@@ -3,7 +3,7 @@ import {
 	BETTER_AUTH_USER_ALREADY_EXISTS_CODE,
 	AuthErrorResponseSchema,
 	AuthSuccessResponseSchema,
-	AuthenticationError,
+	AuthUnavailableError,
 	ConnectionError,
 	EmailAlreadyUsedError,
 	InvalidServerResponseError,
@@ -46,5 +46,5 @@ function readSignUpError(payload: unknown): AppError {
 	) {
 		return new EmailAlreadyUsedError()
 	}
-	return new AuthenticationError()
+	return new AuthUnavailableError()
 }
