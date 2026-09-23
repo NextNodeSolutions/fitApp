@@ -3,6 +3,9 @@ name = "fitapp"
 type = "app"
 domain = "nextnode.fr"
 
+[environment]
+development = false
+
 [deploy]
 target = "cloudflare-workers"
 secrets = []
