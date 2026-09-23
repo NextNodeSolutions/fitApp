@@ -11,7 +11,7 @@ secrets = []
 url = "front-fitapp.nextnode.fr"
 needs = ["api"]
 entry = "apps/front/dist/server/entry.mjs"
-secrets = ["SENTRY_DSN"]
+secrets = ["FRONT_SENTRY_DSN"]
 
 [deploy.services.api]
 url = "api-fitapp.nextnode.fr"
