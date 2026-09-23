@@ -20,6 +20,7 @@ function createTestEnv(): Env {
 	return {
 		DB: database,
 		BETTER_AUTH_SECRET: 'test-better-auth-secret-32chars!',
+		SENTRY_DSN: '',
 		SITE_URL: 'http://localhost:8787',
 		D1_DATABASE_ID: 'test-d1',
 	}

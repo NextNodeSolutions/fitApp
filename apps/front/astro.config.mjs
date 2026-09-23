@@ -3,6 +3,8 @@ import { defineConfig } from 'astro/config'
 
 import cloudflare from '@astrojs/cloudflare'
 import react from '@astrojs/react'
+// oxlint-disable-next-line import(default): the exports map routes to a runtime module where the default export is dynamic
+import sentry from '@sentry/astro'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
@@ -10,7 +12,7 @@ export default defineConfig({
 	adapter: cloudflare({
 		configPath: 'wrangler.dev.jsonc',
 	}),
-	integrations: [react()],
+	integrations: [react(), sentry()],
 	vite: {
 		plugins: [tailwindcss()],
 	},

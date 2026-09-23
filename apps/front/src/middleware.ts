@@ -2,6 +2,10 @@ import { defineMiddleware } from 'astro:middleware'
 
 import { env } from 'cloudflare:workers'
 
+// Initialize Sentry before any route, including API routes that render no page.
+// oxlint-disable-next-line import/no-unassigned-import
+import '../sentry.server.config'
+
 import { getSession } from './lib/auth/get-session'
 import { resolveAuthRedirect } from './lib/auth/resolve-auth-redirect'
 

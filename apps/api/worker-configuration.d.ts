@@ -8,6 +8,7 @@ declare namespace Cloudflare {
 		readonly BETTER_AUTH_SECRET: string
 		readonly D1_DATABASE_ID: string
 		readonly DB: D1Database
+		readonly SENTRY_DSN: string
 		readonly SITE_URL: string
 	}
 }

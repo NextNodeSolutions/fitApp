@@ -11,12 +11,13 @@ secrets = []
 url = "front-fitapp.nextnode.fr"
 needs = ["api"]
 entry = "apps/front/dist/server/entry.mjs"
+secrets = ["SENTRY_DSN"]
 
 [deploy.services.api]
 url = "api-fitapp.nextnode.fr"
 needs = ["d1"]
 entry = "apps/api/src/index.ts"
-secrets = ["BETTER_AUTH_SECRET"]
+secrets = ["BETTER_AUTH_SECRET", "SENTRY_DSN"]
 
 [services.d1]
 migrations_folder = "apps/api/drizzle"
