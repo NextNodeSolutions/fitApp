@@ -13,19 +13,36 @@ export type Auth = {
 	}
 }
 
-export function createAuth(env: Env): Auth {
-	// The infra injects only SITE_URL on the Workers target (no sibling URLs),
-	// and the front lives on a subdomain of the project domain
-	// (front-fitapp.nextnode.fr for domain nextnode.fr). Trust the site origin
-	// itself plus any of its subdomains, never a hardcoded hostname. In local
-	// dev SITE_URL is http://localhost:4321, which is the proxied origin.
-	const site = new URL(env.SITE_URL)
+const FRONT_HOST = 'front-fitapp.nextnode.fr'
+const API_HOST = 'api-fitapp.nextnode.fr'
+// Must stay byte-equal to API_ORIGIN in apps/front/src/lib/api.ts: the service
+// binding subrequest's Host header is this dummy origin
+const PROXY_BINDING_HOST = 'api.internal'
+const LOCAL_HOST = 'localhost:4321'
 
+const DEPLOYED_HOSTS = ['', 'dev.'].flatMap(prefix => [
+	`${prefix}${FRONT_HOST}`,
+	`${prefix}${API_HOST}`,
+])
+const TRUSTED_HOSTS = [...DEPLOYED_HOSTS, PROXY_BINDING_HOST, LOCAL_HOST]
+const trustedOrigins = DEPLOYED_HOSTS.concat(LOCAL_HOST).map(
+	host => `${host === LOCAL_HOST ? 'http' : 'https'}://${host}`,
+)
+
+export function createAuth(env: Env): Auth {
+	// Infra injects only SITE_URL, the services' own urls never travel to the
+	// worker: hosts above mirror nextnode.toml's [deploy.services.*].url values
 	return betterAuth({
 		secret: env.BETTER_AUTH_SECRET,
-		baseURL: env.SITE_URL,
+		// fallback: an unknown host silently resolves to SITE_URL (hides a misconfig
+		// instead of failing loudly) so auth keeps working on an unexpected host
+		baseURL: {
+			allowedHosts: TRUSTED_HOSTS,
+			protocol: 'auto',
+			fallback: env.SITE_URL,
+		},
 		basePath: AUTH_BASE_PATH,
-		trustedOrigins: [site.origin, `*.${site.hostname}`],
+		trustedOrigins,
 		database: drizzleAdapter(db(env.DB), {
 			provider: 'sqlite',
 			schema: {
