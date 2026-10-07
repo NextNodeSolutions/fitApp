@@ -1,6 +1,7 @@
 import { UNITS_OPTIONS } from '@fitapp/contracts'
-import { Label, RadioGroup, RadioGroupItem } from '@fitapp/ui'
+import { Card, CardTitle, RadioGroup } from '@fitapp/ui'
 
+import { ProfileRadioOptionRow } from './profile-radio-option-row'
 import { useUnits } from './use-units'
 
 import type { Units } from '@fitapp/contracts'
@@ -26,35 +27,29 @@ export function UnitsToggle({ units }: UnitsToggleProps): ReactElement {
 	}
 
 	return (
-		<div className="rounded-lg border border-gray-700 bg-gray-900 p-6">
-			<h2 className="text-lg font-semibold">Unités d'affichage</h2>
+		<Card>
+			<CardTitle id="units-title">Unités</CardTitle>
 			<RadioGroup
+				aria-labelledby="units-title"
 				value={selectedUnits}
 				onValueChange={handleValueChange}
 				aria-invalid={!!errorMessage}
-				className="mt-4"
+				className="mt-5 sm:grid-cols-2"
 			>
 				{UNITS_OPTIONS.map(option => (
-					<Label
-						key={option.value}
-						className="border-input has-[[data-checked]]:border-primary has-[[data-checked]]:bg-primary/10 cursor-pointer items-start gap-3 rounded-md border p-3"
-					>
-						<RadioGroupItem
-							value={option.value}
-							className="mt-0.5"
-						/>
-						<span>{option.label}</span>
-					</Label>
+					<ProfileRadioOptionRow key={option.value} option={option} />
 				))}
 			</RadioGroup>
 			{pending ? (
-				<p className="mt-3 text-sm text-gray-400">Enregistrement…</p>
+				<p role="status" className="text-muted-foreground mt-3 text-sm">
+					Enregistrement…
+				</p>
 			) : null}
 			{errorMessage ? (
 				<p role="alert" className="text-destructive mt-3 text-sm">
 					{errorMessage}
 				</p>
 			) : null}
-		</div>
+		</Card>
 	)
 }

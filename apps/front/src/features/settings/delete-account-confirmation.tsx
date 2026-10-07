@@ -16,11 +16,11 @@ export function DeleteAccountConfirmation({
 }: DeleteAccountConfirmationProps): ReactElement {
 	return (
 		<>
-			<p className="mt-2 text-sm text-gray-300">
+			<p className="text-muted-foreground mt-1 text-sm">
 				Le profil, les pesées, le journal alimentaire et ta clé API
 				seront supprimés définitivement. Cette action est irréversible.
 			</p>
-			<div className="mt-4 flex gap-3">
+			<div className="mt-4 flex flex-wrap gap-2">
 				<Button
 					variant="destructive"
 					disabled={pending}

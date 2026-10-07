@@ -1,0 +1,48 @@
+---
+import { Card, CardDescription, CardHeader, CardTitle } from '@fitapp/ui'
+
+import { formatMealTime } from '../../lib/format/format-meal-time'
+import { formatNumber } from '../../lib/format/format-number'
+
+import type { MealEntry } from '@fitapp/contracts'
+
+interface Props {
+	meals: MealEntry[]
+}
+
+// Already in logging order: the API sorts by date, then creation time.
+const { meals } = Astro.props
+---
+
+<Card>
+	<CardHeader>
+		<CardTitle>Repas</CardTitle>
+		<CardDescription>Notés par ton assistant</CardDescription>
+	</CardHeader>
+	{
+		meals.length === 0 ? (
+			<p class="mt-4 text-[15px] text-muted-foreground">
+				Aucun repas ce jour-là. Dis à ton assistant par exemple&nbsp;:
+				<span class="mt-2 block text-foreground">
+					«&nbsp;Ce matin, un café au lait et deux tartines.&nbsp;»
+				</span>
+			</p>
+		) : (
+			<ul class="mt-2 divide-y divide-secondary">
+				{meals.map(meal => (
+					<li class="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1 py-3.5 last:pb-1">
+						<span class="font-medium">{meal.name}</span>
+						<span class="font-medium tabular-nums">
+							{formatNumber(Math.round(meal.calories))} kcal
+						</span>
+						<span class="col-span-2 text-[13px] text-muted-foreground">
+							<span class="font-mono text-xs">{formatMealTime(meal.loggedAt)}</span>
+							{' · '}P {formatNumber(meal.proteinG)} · G {formatNumber(meal.carbsG)} · L{' '}
+							{formatNumber(meal.fatG)}
+						</span>
+					</li>
+				))}
+			</ul>
+		)
+	}
+</Card>

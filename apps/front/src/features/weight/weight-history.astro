@@ -1,6 +1,14 @@
 ---
+import { Card, CardDescription, CardTitle } from '@fitapp/ui'
+
+import { formatEntryDate } from './format-entry-date'
+import { formatWeight } from './format-weight'
+
+import type { DisplayWeightEntry } from './display-weight-entry'
+
 type Props = {
-	entries: { entryDate: string; weight: number }[]
+	/** Newest first, as the API returns them. */
+	entries: readonly DisplayWeightEntry[]
 	unitLabel: string
 }
 
@@ -8,37 +16,29 @@ const MAX_HISTORY_ROWS = 10
 
 const { entries, unitLabel } = Astro.props
 const shownEntries = entries.slice(0, MAX_HISTORY_ROWS)
-
-const formatDisplayDate = (entryDate: string): string =>
-	new Date(`${entryDate}T00:00:00Z`).toLocaleDateString('fr-FR', {
-		timeZone: 'UTC',
-		day: 'numeric',
-		month: 'long',
-		year: 'numeric',
-	})
 ---
 
-<div class="rounded-lg border border-gray-700 bg-gray-900 p-6">
-	<h2 class="text-lg font-semibold">Historique</h2>
-	<p class="mt-1 text-sm text-gray-400">Tes dernières pesées</p>
+<Card>
+	<CardTitle>Historique</CardTitle>
+	<CardDescription className="mt-1">Tes dernières pesées</CardDescription>
 	{
-		shownEntries.length === 0 ? (
-			<p class="mt-4 text-center text-gray-400">
-				Aucune pesée enregistrée pour la période sélectionnée.
-			</p>
-		) : (
-			<ul class="mt-4 divide-y divide-gray-700">
+		shownEntries.length ? (
+			<ul class="mt-3 divide-y divide-secondary">
 				{shownEntries.map(entry => (
-					<li class="flex items-center justify-between gap-4 py-2 text-sm">
-						<span class="text-gray-300">
-							{formatDisplayDate(entry.entryDate)}
+					<li class="flex min-h-12 items-center justify-between gap-4 py-3 text-[15px]">
+						<span class="text-muted-foreground">
+							{formatEntryDate(entry.entryDate, 'long')}
 						</span>
-						<span class="font-medium whitespace-nowrap text-lime-400">
-							{entry.weight} {unitLabel}
+						<span class="font-medium whitespace-nowrap tabular-nums">
+							{formatWeight(entry.weight, unitLabel)}
 						</span>
 					</li>
 				))}
 			</ul>
+		) : (
+			<p class="mt-4 text-sm text-muted-foreground">
+				Aucune pesée enregistrée sur cette période.
+			</p>
 		)
 	}
-</div>
+</Card>

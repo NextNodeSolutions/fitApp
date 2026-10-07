@@ -1,0 +1,38 @@
+---
+import { APP_NAME } from '@fitapp/contracts'
+import { buttonVariants, Card, CardTitle } from '@fitapp/ui'
+
+import { ROUTES } from '../../lib/routes'
+
+interface Props {
+	hasMealsThisWeek: boolean
+}
+
+const { hasMealsThisWeek } = Astro.props
+---
+
+{
+	hasMealsThisWeek ? (
+		<Card tone="outline">
+			<CardTitle>Un repas oublié&nbsp;?</CardTitle>
+			<p class="mt-1.5 text-[15px] text-muted-foreground">
+				Dis-le simplement à ton assistant&nbsp;: «&nbsp;J'ai pris un café au
+				lait et deux tartines ce matin.&nbsp;»
+			</p>
+		</Card>
+	) : (
+		<Card tone="inverse">
+			<CardTitle className="text-lg">Branche ton assistant</CardTitle>
+			<p class="mt-1.5 text-[15px] text-background/70">
+				Ajoute {APP_NAME} à ChatGPT, Claude ou Gemini, puis dis-lui simplement ce
+				que tu manges. Tes repas apparaîtront ici.
+			</p>
+			<a
+				href={`${ROUTES.settings}#assistant`}
+				class:list={[buttonVariants(), 'mt-5']}
+			>
+				Brancher mon assistant
+			</a>
+		</Card>
+	)
+}

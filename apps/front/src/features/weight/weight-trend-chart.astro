@@ -1,82 +1,48 @@
 ---
+import { Badge, Card, CardTitle } from '@fitapp/ui'
+
+import { buildWeightTrend } from './build-weight-trend'
+import { formatEntryDate } from './format-entry-date'
+import { formatWeight } from './format-weight'
+import { formatWeightDelta } from './format-weight-delta'
+import WeightTrendPlot from './weight-trend-plot.astro'
+
+import type { DisplayWeightEntry } from './display-weight-entry'
+
 type Props = {
-	entries: { entryDate: string; weight: number }[]
+	/** Newest first, as the API returns them. */
+	entries: readonly DisplayWeightEntry[]
 	unitLabel: string
 }
 
 const { entries, unitLabel } = Astro.props
-
-const MIN_CHART_POINTS = 2
-const MIN_WEIGHT_SPAN = 1
-const VIEW_WIDTH = 100
-const VIEW_HEIGHT = 40
-const PAD = 5
-const INSET = PAD + PAD
-
-const hasEnoughData = entries.length >= MIN_CHART_POINTS
-
-const weights = entries.map(entry => entry.weight)
-const minWeight = Math.min(...weights)
-const maxWeight = Math.max(...weights)
-const weightSpan = maxWeight - minWeight
-const scaleWeight = (weight: number): number =>
-	VIEW_HEIGHT -
-	INSET -
-	(weight - minWeight) /
-		(weightSpan || MIN_WEIGHT_SPAN) *
-		(VIEW_HEIGHT - INSET)
-
-const points = entries.map((entry, index) => ({
-	x:
-		((index / (entries.length - 1 || MIN_WEIGHT_SPAN)) *
-			(VIEW_WIDTH - INSET)) +
-		PAD,
-	y: scaleWeight(entry.weight),
-}))
-
-const formatWeight = (weight: number): string => `${weight} ${unitLabel}`
-const minLabel = formatWeight(minWeight)
-const maxLabel = formatWeight(maxWeight)
+const [latest] = entries
+const trend = buildWeightTrend(entries)
+const missingDataHint = latest
+	? 'Ajoute une deuxième pesée pour voir ta tendance.'
+	: 'Ajoute ta première pesée pour voir ta tendance.'
 ---
 
-<div class="rounded-lg border border-gray-700 bg-gray-900 p-6">
-	<h2 class="text-lg font-semibold">Évolution</h2>
+<Card>
+	<CardTitle>Tendance</CardTitle>
 	{
-		hasEnoughData ? (
-			<svg
-				viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
-				class="mt-4 w-full"
-				role="img"
-				aria-label="Courbe d'évolution du poids"
-			>
-				<polyline
-					points={points.map(point => `${point.x},${point.y}`).join(' ')}
-					fill="none"
-					stroke="#a3e635"
-					stroke-width="2"
-					vector-effect="non-scaling-stroke"
-					stroke-linejoin="round"
-					stroke-linecap="round"
-				/>
-				<text
-					x="0"
-					y={VIEW_HEIGHT}
-					fill="#9ca3af"
-					font-size="4">{maxLabel}</text
-				>
-				<text
-					x="0"
-					y={VIEW_HEIGHT - 5}
-					fill="#9ca3af"
-					font-size="4">{minLabel}</text
-				>
-			</svg>
-		) : (
-			<p class="mt-4 text-center text-gray-400">
-				{entries.length === 0
-					? 'Ajoute ta première pesée pour voir l\u2019évolution.'
-					: 'Ajoute une deuxième pesée pour voir l\u2019évolution.'}
+		latest ? (
+			<p class="mt-3 text-4xl font-medium tracking-tight tabular-nums">
+				{formatWeight(latest.weight, unitLabel)}
 			</p>
+		) : null
+	}
+	{
+		trend ? (
+			<>
+				<p class="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+					<Badge>{formatWeightDelta(trend.delta, unitLabel)}</Badge>
+					depuis le {formatEntryDate(trend.start.entryDate, 'long')}
+				</p>
+				<WeightTrendPlot trend={trend} unitLabel={unitLabel} />
+			</>
+		) : (
+			<p class="mt-2 text-sm text-muted-foreground">{missingDataHint}</p>
 		)
 	}
-</div>
+</Card>

@@ -1,0 +1,23 @@
+---
+import { cn } from '@fitapp/ui'
+
+interface Props {
+	href: string
+	isCurrent?: boolean
+	class?: string
+}
+
+const { href, isCurrent = false, class: className } = Astro.props
+---
+
+<a
+	href={href}
+	aria-current={isCurrent ? 'page' : undefined}
+	class={cn(
+		'relative inline-flex py-2 text-[15px] text-muted-foreground transition-colors duration-200 hover:text-foreground aria-[current=page]:text-foreground',
+		'after:absolute after:inset-x-0 after:bottom-1 after:h-px after:origin-right after:scale-x-0 after:bg-current after:transition-transform after:duration-300 after:ease-out hover:after:origin-left hover:after:scale-x-100 aria-[current=page]:after:scale-x-100',
+		className,
+	)}
+>
+	<slot />
+</a>

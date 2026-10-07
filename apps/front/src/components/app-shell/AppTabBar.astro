@@ -1,0 +1,38 @@
+---
+import { APP_NAV_ITEMS } from './app-nav-items'
+
+import type { AppNavKey } from './app-nav-items'
+
+interface Props {
+	current: AppNavKey
+}
+
+const { current } = Astro.props
+---
+
+<nav
+	aria-label="Navigation"
+	class="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/90 backdrop-blur-lg md:hidden"
+>
+	<ul
+		class="mx-auto grid max-w-md grid-cols-3 px-3 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))]"
+	>
+		{
+			APP_NAV_ITEMS.map(item => {
+				const Icon = item.icon
+				return (
+					<li>
+						<a
+							href={item.href}
+							aria-current={item.key === current ? 'page' : undefined}
+							class="flex flex-col items-center gap-1 rounded-xl py-1.5 text-[11.5px] font-medium text-muted-foreground transition-colors aria-[current=page]:text-foreground"
+						>
+							<Icon className="size-[22px]" strokeWidth={1.8} />
+							{item.label}
+						</a>
+					</li>
+				)
+			})
+		}
+	</ul>
+</nav>

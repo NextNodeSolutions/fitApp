@@ -13,6 +13,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const { locals } = context
 	locals.user = null
 	locals.session = null
+	// Prerendered pages (the landing) are built once, without a visitor session.
+	if (context.isPrerendered) return next()
 	const session = await getSession(env, context.request.headers.get('cookie'))
 	if (session) {
 		locals.user = session.user

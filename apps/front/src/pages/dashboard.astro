@@ -1,48 +1,75 @@
 ---
-import '../styles.css'
+import { env } from 'cloudflare:workers'
 
-import { LogoutButton } from '../features/auth/LogoutButton'
+import {
+	buildDaySummary,
+	computeDailyCalorieTarget,
+	todayIsoDate,
+	weightUnitLabel,
+} from '@fitapp/contracts'
 
-const { user } = Astro.locals
+import AssistantCard from '../features/dashboard/AssistantCard.astro'
+import { buildWeekDays } from '../features/dashboard/build-week-days'
+import CaloriesCard from '../features/dashboard/CaloriesCard.astro'
+import DayHeading from '../features/dashboard/DayHeading.astro'
+import DayPicker from '../features/dashboard/DayPicker.astro'
+import { loadDashboardData } from '../features/dashboard/load-dashboard-data'
+import MacrosCard from '../features/dashboard/MacrosCard.astro'
+import MealsCard from '../features/dashboard/MealsCard.astro'
+import { resolveDashboardDate } from '../features/dashboard/resolve-dashboard-date'
+import WeightCard from '../features/dashboard/WeightCard.astro'
+import ProfileMissingCard from '../features/onboarding/ProfileMissingCard.astro'
+import { toDisplayWeightEntries } from '../features/weight/to-display-weight-entries'
+import AppLayout from '../layouts/AppLayout.astro'
+
+const today = todayIsoDate()
+const date = resolveDashboardDate(Astro.url.searchParams.get('date'), today)
+const { profile, weekMeals, weights, week } = await loadDashboardData(
+	env,
+	Astro.request.headers.get('cookie'),
+	date,
+)
+const dayMeals = weekMeals.filter(meal => meal.entryDate === date)
+const weightKg = weights[0]?.weightKg ?? profile?.weight
+const summary =
+	profile && weightKg
+		? buildDaySummary(
+				computeDailyCalorieTarget(profile, weightKg),
+				weightKg,
+				dayMeals,
+			)
+		: null
+const days = buildWeekDays({
+	week,
+	weekMeals,
+	targetKcal: summary?.targetKcal ?? 0,
+	selected: date,
+	today,
+})
+const units = profile?.units ?? 'metric'
 ---
 
-<html lang="fr">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<title>Tableau de bord — fitApp</title>
-	</head>
-	<body class="min-h-screen bg-gray-950 text-white">
-		<div class="mx-auto max-w-lg px-4 py-12">
-			<div class="mb-8 text-center">
-				<h1 class="text-3xl font-bold text-lime-400">fitApp</h1>
-				<p class="mt-2 text-gray-400">
-					Bienvenue {user?.name ?? 'sur ton tableau de bord'} !
-				</p>
+<AppLayout title="Aujourd'hui" current="today">
+	<DayHeading date={date} today={today} mealCount={dayMeals.length} />
+	<DayPicker days={days} />
+	{
+		summary ? (
+			<div class="mt-5 grid gap-3 lg:grid-cols-[1.1fr_1fr] lg:items-start lg:gap-4">
+				<div class="grid gap-3 lg:gap-4">
+					<CaloriesCard summary={summary} />
+					<MacrosCard macros={summary.macros} />
+				</div>
+				<div class="grid gap-3 lg:gap-4">
+					<MealsCard meals={dayMeals} />
+					<WeightCard
+							entries={toDisplayWeightEntries(weights, units)}
+							unitLabel={weightUnitLabel(units)}
+						/>
+					<AssistantCard hasMealsThisWeek={weekMeals.length > 0} />
+				</div>
 			</div>
-			<div class="rounded-lg border border-gray-700 bg-gray-900 p-6 text-center">
-				<p class="text-gray-300">
-					Bienvenue dans ton suivi personnalisé.
-				</p>
-				<p class="mt-2 text-sm text-gray-500">
-					Les fonctionnalités arrivent bientôt.
-				</p>
-			</div>
-			<div class="mt-6 flex justify-center gap-3">
-				<a
-					href="/poids"
-					class="inline-flex h-10 items-center gap-2 rounded-md border border-gray-700 px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-gray-800"
-				>
-					Mon poids
-				</a>
-				<a
-					href="/parametres"
-					class="inline-flex h-10 items-center gap-2 rounded-md border border-gray-700 px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-gray-800"
-				>
-					Paramètres
-				</a>
-				<LogoutButton client:load />
-			</div>
-		</div>
-	</body>
-</html>
+		) : (
+			<ProfileMissingCard title="Il manque ton profil" class="mt-6" />
+		)
+	}
+</AppLayout>

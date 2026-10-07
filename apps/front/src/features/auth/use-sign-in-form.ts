@@ -2,12 +2,12 @@ import { SignInFormSchema } from '@fitapp/contracts'
 import { valibotResolver } from '@hookform/resolvers/valibot'
 import { useForm } from 'react-hook-form'
 
+import { ROUTES } from '../../lib/routes'
+
 import { submitSignIn } from './submit-sign-in'
 
 import type { SignInFormValues } from '@fitapp/contracts'
 import type { UseFormReturn } from 'react-hook-form'
-
-const DASHBOARD_PATH = '/dashboard'
 
 const EMPTY_VALUES: SignInFormValues = {
 	email: '',
@@ -41,7 +41,7 @@ export function useSignInForm(): {
 			form.setError('root', { message: submission.error.message })
 			return
 		}
-		window.location.href = DASHBOARD_PATH
+		window.location.href = ROUTES.dashboard
 	})
 
 	return { form, onSubmit }

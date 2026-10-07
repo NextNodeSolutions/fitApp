@@ -9,7 +9,12 @@ export function SubmitButton({
 	submitting: boolean
 }): ReactElement {
 	return (
-		<Button type="submit" disabled={submitting} className="w-full">
+		<Button
+			type="submit"
+			size="lg"
+			disabled={submitting}
+			className="mt-2 w-full"
+		>
 			{submitting ? (
 				<>
 					<LoaderCircle className="animate-spin" />

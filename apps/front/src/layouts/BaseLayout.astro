@@ -1,0 +1,31 @@
+---
+import '../styles.css'
+
+import { APP_NAME } from '@fitapp/contracts'
+
+interface Props {
+	title?: string
+}
+
+const DESCRIPTION = `${APP_NAME}, ton suivi nutrition et poids piloté depuis ton assistant IA.`
+
+const { title } = Astro.props
+const fullTitle = title ? `${title} · ${APP_NAME}` : APP_NAME
+---
+
+<html lang="fr">
+	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, viewport-fit=cover"
+		/>
+		<meta name="description" content={DESCRIPTION} />
+		<meta name="theme-color" content="#ffffff" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>{fullTitle}</title>
+	</head>
+	<body class="min-h-svh">
+		<slot />
+	</body>
+</html>

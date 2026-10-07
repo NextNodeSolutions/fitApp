@@ -6,3 +6,5 @@ dist/
 *.local
 .env*
 !.env.example
+.DS_Store
+.impeccable/

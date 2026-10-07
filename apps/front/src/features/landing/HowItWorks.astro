@@ -1,0 +1,63 @@
+---
+import { APP_NAME } from '@fitapp/contracts'
+
+import ComposeBar from './ComposeBar.astro'
+import { HOW_STEPS } from './how-steps'
+import HowStep from './HowStep.astro'
+import { HOW_IT_WORKS_SECTION } from './landing-sections'
+import PhoneScreen from './PhoneScreen.astro'
+import PhoneStage from './PhoneStage.astro'
+import SuggestionChips from './SuggestionChips.astro'
+---
+
+<section
+	id={HOW_IT_WORKS_SECTION.id}
+	class="mx-auto max-w-6xl scroll-mt-16 px-4 pt-24 sm:px-6 lg:grid lg:grid-cols-2 lg:gap-16 lg:px-8 lg:pt-36"
+>
+	<div>
+		<h2
+			class="max-w-[16ch] text-[2.1rem] leading-[1.02] font-medium tracking-[-0.04em] sm:text-5xl lg:text-6xl"
+		>
+			Trois phrases. Zéro formulaire.
+		</h2>
+		<p class="mt-3 max-w-[40ch] text-muted-foreground lg:text-lg">
+			Ce que tu manges, tu le dis. Ton IA fait les comptes, {APP_NAME} les garde.
+		</p>
+		<ol class="mt-12 grid gap-14 lg:mt-0 lg:gap-0">
+			{
+				HOW_STEPS.map((step, index) => {
+					const Screen = step.Screen
+					return (
+						<HowStep index={index} title={step.title} text={step.text}>
+							<Screen />
+							{'suggestions' in step ? (
+								<SuggestionChips suggestions={step.suggestions} />
+							) : null}
+						</HowStep>
+					)
+				})
+			}
+		</ol>
+	</div>
+	<div class="hidden lg:block" aria-hidden="true">
+		<PhoneStage count={HOW_STEPS.length}>
+			{
+				HOW_STEPS.map((step, index) => {
+					const Screen = step.Screen
+					return (
+						<PhoneScreen index={index}>
+							<Screen />
+							{step.kind === 'chat' ? <ComposeBar /> : null}
+						</PhoneScreen>
+					)
+				})
+			}
+		</PhoneStage>
+	</div>
+</section>
+
+<script>
+	import { initHowItWorks } from './init-how-it-works'
+
+	initHowItWorks()
+</script>

@@ -1,0 +1,62 @@
+---
+import { WEIGHT_PERIOD_LABELS } from '@fitapp/contracts'
+import { Badge, Card, CardHeader, CardTitle } from '@fitapp/ui'
+
+import { ROUTES } from '../../lib/routes'
+import { buildWeightTrend } from '../weight/build-weight-trend'
+import { formatWeight } from '../weight/format-weight'
+import { formatWeightDelta } from '../weight/format-weight-delta'
+
+import { DASHBOARD_WEIGHT_PERIOD } from './load-dashboard-data'
+import WeightSparkline from './WeightSparkline.astro'
+
+import type { DisplayWeightEntry } from '../weight/display-weight-entry'
+
+interface Props {
+	/** Newest first, as the API returns them. */
+	entries: readonly DisplayWeightEntry[]
+	unitLabel: string
+}
+
+const { entries, unitLabel } = Astro.props
+const [latest] = entries
+const trend = buildWeightTrend(entries)
+const periodLabel = WEIGHT_PERIOD_LABELS[DASHBOARD_WEIGHT_PERIOD]
+const deltaLabel = trend
+	? `${formatWeightDelta(trend.delta, unitLabel)} en ${periodLabel}`
+	: ''
+---
+
+<Card>
+	<CardHeader>
+		<CardTitle>Poids</CardTitle>
+		<a
+			href={ROUTES.weight}
+			class="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+		>
+			Ajouter une pesée
+		</a>
+	</CardHeader>
+	{
+		latest ? (
+			<>
+				<p class="mt-3 flex flex-wrap items-baseline gap-3">
+					<span class="text-4xl font-medium tracking-[-0.045em] tabular-nums">
+						{formatWeight(latest.weight, unitLabel)}
+					</span>
+					{trend ? <Badge>{deltaLabel}</Badge> : null}
+				</p>
+				{trend ? (
+					<WeightSparkline
+						trend={trend}
+						label={`Évolution du poids sur ${periodLabel}, ${deltaLabel}`}
+					/>
+				) : null}
+			</>
+		) : (
+			<p class="mt-3 text-[15px] text-muted-foreground">
+				Aucune pesée sur {periodLabel}. Note-la ici ou dis-la à ton assistant.
+			</p>
+		)
+	}
+</Card>

@@ -1,6 +1,4 @@
 ---
-import '../styles.css'
-
 import { env } from 'cloudflare:workers'
 
 import {
@@ -8,82 +6,78 @@ import {
 	todayIsoDate,
 	WEIGHT_PERIODS,
 	WEIGHT_PERIOD_OPTIONS,
-	weightToDisplayUnit,
 	weightUnitLabel,
 } from '@fitapp/contracts'
+import { SegmentedControl, SegmentedControlItem } from '@fitapp/ui'
 
 import { fetchSettingsProfile } from '../features/settings/fetch-settings-profile'
 import { fetchWeightEntries } from '../features/weight/fetch-weight-entries'
+import { toDisplayWeightEntries } from '../features/weight/to-display-weight-entries'
 import { WeightEntryForm } from '../features/weight/WeightEntryForm'
 import WeightHistory from '../features/weight/weight-history.astro'
 import WeightTrendChart from '../features/weight/weight-trend-chart.astro'
+import AppLayout from '../layouts/AppLayout.astro'
+import { ROUTES } from '../lib/routes'
 
 const cookie = Astro.request.headers.get('cookie')
-const profile = await fetchSettingsProfile(env, cookie)
-const units = profile?.units ?? 'metric'
-
 const requestedPeriod = Astro.url.searchParams.get('period')
 const period =
 	WEIGHT_PERIODS.find(candidate => candidate === requestedPeriod) ??
 	DEFAULT_WEIGHT_PERIOD
 
-const entries = await fetchWeightEntries(env, cookie, period)
-const displayEntries = entries.map(entry => ({
-	entryDate: entry.entryDate,
-	weight: weightToDisplayUnit(entry.weightKg, units),
-}))
+const [profile, entries] = await Promise.all([
+	fetchSettingsProfile(env, cookie),
+	fetchWeightEntries(env, cookie, period),
+])
+const units = profile?.units ?? 'metric'
+const displayEntries = toDisplayWeightEntries(entries, units)
 const unitLabel = weightUnitLabel(units)
 
-const todayEntry = entries.find(entry => entry.entryDate === todayIsoDate())
-const todayWeightDisplay = todayEntry
-	? String(weightToDisplayUnit(todayEntry.weightKg, units))
-	: undefined
+const todayEntry = displayEntries.find(
+	entry => entry.entryDate === todayIsoDate(),
+)
+const todayWeightDisplay = todayEntry ? String(todayEntry.weight) : undefined
 ---
 
-<html lang="fr">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<title>Poids — fitApp</title>
-	</head>
-	<body class="min-h-screen bg-gray-950 text-white">
-		<div class="mx-auto max-w-lg px-4 py-12">
-			<div class="mb-8 text-center">
-				<h1 class="text-3xl font-bold text-lime-400">Suivi du poids</h1>
-				<p class="mt-2 text-gray-400">
-					Note tes pesées et suis ton évolution
-				</p>
-			</div>
-			<div class="mb-6 flex flex-wrap justify-center gap-4 text-sm">
-				{
-					WEIGHT_PERIOD_OPTIONS.map(option => (
-						<a
-							href={`/poids?period=${option.value}`}
-							class={
-								option.value === period
-									? 'text-lime-400 underline'
-									: 'text-gray-400 hover:text-gray-200'
-							}
-						>
-							{option.label}
-						</a>
-					))
-				}
-			</div>
-			<div class="space-y-6">
-				<WeightEntryForm
-					client:load
-					units={units}
-					todayWeightDisplay={todayWeightDisplay}
-				/>
-				<WeightTrendChart entries={displayEntries} unitLabel={unitLabel} />
-				<WeightHistory entries={displayEntries} unitLabel={unitLabel} />
-			</div>
-			<p class="mt-6 text-center text-sm text-gray-400">
-				<a href="/dashboard" class="text-lime-400 hover:underline">
-					Retour au tableau de bord
-				</a>
+<AppLayout title="Poids" current="weight">
+	<div
+		class="mb-6 flex flex-col gap-5 sm:mb-8 sm:flex-row sm:items-end sm:justify-between"
+	>
+		<div>
+			<h1 class="text-3xl font-medium tracking-tight sm:text-4xl">Poids</h1>
+			<p class="mt-2 text-muted-foreground">
+				Note tes pesées et suis ta tendance.
 			</p>
 		</div>
-	</body>
-</html>
+		<SegmentedControl
+			aria-label="Période affichée"
+			className="w-full sm:w-auto"
+		>
+			{
+				WEIGHT_PERIOD_OPTIONS.map(option => (
+					<SegmentedControlItem
+						href={`${ROUTES.weight}?period=${option.value}`}
+						aria-current={option.value === period ? 'page' : undefined}
+					>
+						{option.label}
+					</SegmentedControlItem>
+				))
+			}
+		</SegmentedControl>
+	</div>
+	<div
+		class="grid gap-3 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start lg:gap-4"
+	>
+		<div class="lg:sticky lg:top-6">
+			<WeightEntryForm
+				client:load
+				units={units}
+				todayWeightDisplay={todayWeightDisplay}
+			/>
+		</div>
+		<div class="grid gap-3 lg:gap-4">
+			<WeightTrendChart entries={displayEntries} unitLabel={unitLabel} />
+			<WeightHistory entries={displayEntries} unitLabel={unitLabel} />
+		</div>
+	</div>
+</AppLayout>

@@ -1,0 +1,12 @@
+---
+interface Props {
+	time: string
+}
+
+const { time } = Astro.props
+---
+
+<div class="flex items-center justify-between px-1 pb-3 text-xs">
+	<span class="font-semibold">Ton assistant</span>
+	<span class="text-muted-foreground">{time}</span>
+</div>

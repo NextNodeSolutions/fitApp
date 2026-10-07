@@ -1,61 +1,59 @@
 ---
-import '../styles.css'
-
 import { env } from 'cloudflare:workers'
 
+import { CardDescription, CardTitle, cardVariants } from '@fitapp/ui'
+
+import { LogoutButton } from '../features/auth/LogoutButton'
+import ProfileMissingCard from '../features/onboarding/ProfileMissingCard.astro'
 import { ApiTokenCard } from '../features/settings/ApiTokenCard'
 import { DeleteAccountCard } from '../features/settings/DeleteAccountCard'
 import { ProfilePatchForm } from '../features/settings/ProfilePatchForm'
 import { UnitsToggle } from '../features/settings/UnitsToggle'
 import { fetchSettingsProfile } from '../features/settings/fetch-settings-profile'
 import { fetchSettingsToken } from '../features/settings/fetch-settings-token'
+import AppLayout from '../layouts/AppLayout.astro'
 
+const { user } = Astro.locals
 const cookie = Astro.request.headers.get('cookie')
-const token = await fetchSettingsToken(env, cookie)
-const profile = await fetchSettingsProfile(env, cookie)
+const [token, profile] = await Promise.all([
+	fetchSettingsToken(env, cookie),
+	fetchSettingsProfile(env, cookie),
+])
 ---
 
-<html lang="fr">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<title>Paramètres — fitApp</title>
-	</head>
-	<body class="min-h-screen bg-gray-950 text-white">
-		<div class="mx-auto max-w-lg px-4 py-12">
-			<div class="mb-8 text-center">
-				<h1 class="text-3xl font-bold text-lime-400">Paramètres</h1>
-				<p class="mt-2 text-gray-400">
-					Gère ton profil, tes unités et ta clé API
-				</p>
-			</div>
-			<div class="space-y-6">
+<AppLayout title="Réglages" current="settings">
+	<h1
+		class="mb-6 text-3xl font-medium tracking-tight sm:mb-8 sm:text-4xl"
+	>
+		Réglages
+	</h1>
+	<div class="grid gap-3 lg:grid-cols-2 lg:items-start lg:gap-4">
+		{
+			profile ? (
+				<ProfilePatchForm client:load profile={profile} />
+			) : (
+				<ProfileMissingCard title="Profil" />
+			)
+		}
+		<div class="grid gap-3 lg:gap-4">
+			{profile ? <UnitsToggle client:load units={profile.units} /> : null}
+			<ApiTokenCard client:load token={token} />
+			<section class={cardVariants()}>
+				<CardTitle>Compte</CardTitle>
 				{
-					profile ? (
-						<>
-							<ProfilePatchForm client:load profile={profile} />
-							<UnitsToggle client:load units={profile.units} />
-						</>
-					) : (
-						<div class="rounded-lg border border-gray-700 bg-gray-900 p-6 text-center">
-							<p class="text-gray-400">Aucun profil trouvé.</p>
-							<a
-								href="/onboarding"
-								class="mt-2 inline-block text-lime-400 hover:underline"
-							>
-								Complète ton onboarding
-							</a>
-						</div>
-					)
+					user ? (
+						<CardDescription className="mt-1 wrap-anywhere">
+							Connecté avec {user.email}
+						</CardDescription>
+					) : null
 				}
-				<ApiTokenCard client:load token={token} />
-				<DeleteAccountCard client:load />
-			</div>
-			<p class="mt-6 text-center text-sm text-gray-400">
-				<a href="/dashboard" class="text-lime-400 hover:underline">
-					Retour au tableau de bord
-				</a>
-			</p>
+				<div class="mt-4">
+					<LogoutButton client:load />
+				</div>
+				<div class="mt-6 border-t border-secondary pt-6">
+					<DeleteAccountCard client:load />
+				</div>
+			</section>
 		</div>
-	</body>
-</html>
+	</div>
+</AppLayout>

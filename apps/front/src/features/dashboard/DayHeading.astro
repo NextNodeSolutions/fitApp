@@ -1,0 +1,52 @@
+---
+import { addDaysIso, DAYS_PER_WEEK } from '@fitapp/contracts'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+
+import { formatLongDate } from '../../lib/format/format-long-date'
+
+import { dashboardHref } from './dashboard-href'
+import PagerLink from './PagerLink.astro'
+
+interface Props {
+	date: string
+	today: string
+	mealCount: number
+}
+
+const { date, today, mealCount } = Astro.props
+const isToday = date === today
+const nextWeek = addDaysIso(date, DAYS_PER_WEEK)
+const canGoForward = nextWeek <= today
+const mealLine =
+	mealCount === 0
+		? "Rien de noté pour l'instant"
+		: `${mealCount} repas noté${mealCount > 1 ? 's' : ''} par ton assistant`
+---
+
+<div class="flex items-end justify-between gap-4 pt-4">
+	<div>
+		<h1
+			class="text-[2rem] leading-tight font-medium tracking-[-0.04em] sm:text-4xl"
+		>
+			{isToday ? "Aujourd'hui" : formatLongDate(date)}
+		</h1>
+		<p class="mt-1 text-[15px] text-muted-foreground">
+			{isToday ? `${formatLongDate(date)} · ${mealLine}` : mealLine}
+		</p>
+	</div>
+	<nav aria-label="Changer de semaine" class="flex shrink-0 gap-2">
+		<PagerLink
+			href={dashboardHref(addDaysIso(date, -DAYS_PER_WEEK), today)}
+			label="Semaine précédente"
+		>
+			<ChevronLeft className="size-5" strokeWidth={1.8} />
+		</PagerLink>
+		{
+			canGoForward ? (
+				<PagerLink href={dashboardHref(nextWeek, today)} label="Semaine suivante">
+					<ChevronRight className="size-5" strokeWidth={1.8} />
+				</PagerLink>
+			) : null
+		}
+	</nav>
+</div>

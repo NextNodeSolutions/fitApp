@@ -9,12 +9,12 @@ export function ProfileRadioOptionRow({
 	option: RadioOption
 }): ReactElement {
 	return (
-		<Label className="border-input has-[[data-checked]]:border-primary has-[[data-checked]]:bg-primary/10 cursor-pointer items-start gap-3 rounded-md border p-3">
-			<RadioGroupItem value={option.value} className="mt-0.5" />
-			<span className="flex flex-col">
+		<Label className="bg-background hover:border-foreground/30 has-[[data-checked]]:border-foreground min-h-14 cursor-pointer gap-3 rounded-2xl border border-transparent px-4 py-3 text-[15px] leading-snug transition-colors">
+			<RadioGroupItem value={option.value} />
+			<span className="flex flex-col gap-0.5">
 				<span>{option.label}</span>
 				{option.hint ? (
-					<span className="text-muted-foreground text-xs font-normal">
+					<span className="text-muted-foreground text-[13px] font-normal">
 						{option.hint}
 					</span>
 				) : null}

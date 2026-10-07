@@ -1,0 +1,39 @@
+---
+import { ROUTES } from '../../lib/routes'
+import Wordmark from '../brand/Wordmark.astro'
+import NavLink from '../navigation/NavLink.astro'
+
+import { APP_NAV_ITEMS } from './app-nav-items'
+
+import type { AppNavKey } from './app-nav-items'
+
+interface Props {
+	current: AppNavKey
+	userInitial: string
+}
+
+const { current, userInitial } = Astro.props
+---
+
+<header class="flex h-16 items-center justify-between gap-6">
+	<Wordmark href={ROUTES.dashboard} />
+	<nav
+		aria-label="Navigation principale"
+		class="hidden items-center gap-8 md:flex"
+	>
+		{
+			APP_NAV_ITEMS.map(item => (
+				<NavLink href={item.href} isCurrent={item.key === current}>
+					{item.label}
+				</NavLink>
+			))
+		}
+	</nav>
+	<a
+		href={ROUTES.settings}
+		class="grid size-9 place-items-center rounded-full bg-card text-[13px] font-semibold transition-colors hover:bg-secondary"
+		aria-label="Mon compte"
+	>
+		{userInitial}
+	</a>
+</header>

@@ -1,0 +1,15 @@
+---
+interface Props {
+	index: number
+}
+
+const { index } = Astro.props
+---
+
+<div
+	data-phone-step={index}
+	data-active={index === 0 ? '' : undefined}
+	class="absolute inset-0 translate-y-4 px-3.5 pt-14 pb-4 opacity-0 transition-[opacity,translate] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] data-[active]:translate-y-0 data-[active]:opacity-100"
+>
+	<slot />
+</div>

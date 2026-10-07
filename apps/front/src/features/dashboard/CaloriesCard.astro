@@ -1,0 +1,43 @@
+---
+import { Badge, Card, CardHeader, CardTitle, Progress } from '@fitapp/ui'
+
+import CalorieStatusBadge from '../../components/nutrition/CalorieStatusBadge.astro'
+import { formatNumber } from '../../lib/format/format-number'
+
+import type { DaySummary } from '@fitapp/contracts'
+
+interface Props {
+	summary: DaySummary
+}
+
+const { summary } = Astro.props
+const consumedKcal = summary.consumed.calories
+---
+
+<Card>
+	<CardHeader>
+		<CardTitle>Calories</CardTitle>
+		<span class="text-sm text-muted-foreground">
+			Objectif {formatNumber(summary.targetKcal)} kcal
+		</span>
+	</CardHeader>
+	<p class="mt-4 flex items-baseline gap-2">
+		<span
+			class="text-6xl leading-[0.9] font-medium tracking-[-0.055em] tabular-nums"
+		>
+			{formatNumber(consumedKcal)}
+		</span>
+		<span class="text-[15px] text-muted-foreground">kcal consommées</span>
+	</p>
+	<Progress
+		value={consumedKcal / summary.targetKcal}
+		label="Calories consommées par rapport à l'objectif"
+		size="lg"
+		tone={summary.status === 'surplus' ? 'warning' : 'brand'}
+		className="mt-5"
+	/>
+	<div class="mt-4 flex flex-wrap gap-2">
+		<CalorieStatusBadge status={summary.status} />
+		<Badge>{summary.remainingMessage}</Badge>
+	</div>
+</Card>
