@@ -5,7 +5,10 @@ import type {
 	SettingsTokenResponse,
 } from '../settings/responses'
 import type { WeightPeriod } from '../weight/constants'
-import type { WeightListResponse } from '../weight/responses'
+import type {
+	WeightEntryResponse,
+	WeightListResponse,
+} from '../weight/responses'
 
 /**
  * Reads the API worker serves over RPC, through a service binding only (the
@@ -20,6 +23,8 @@ export type ApiRpc = {
 		userId: string,
 		period: WeightPeriod,
 	): Promise<WeightListResponse>
+	/** The most recent weigh-in whatever its age, null when there is none. */
+	getLatestWeightEntry(userId: string): Promise<WeightEntryResponse | null>
 	listMealEntries(
 		userId: string,
 		range: MealsRangeQuery,

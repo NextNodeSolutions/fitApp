@@ -1,5 +1,3 @@
-import { captureException } from '@sentry/astro'
-
 import { callApiRpc } from '../../lib/call-api-rpc'
 
 import { parseMealListResponse } from './parse-meal-list-response'
@@ -12,11 +10,6 @@ export async function fetchMealEntries(
 	range: MealsRangeQuery,
 ): Promise<MealEntry[]> {
 	if (!userId) return []
-	try {
-		const payload = await callApiRpc(env, 'listMealEntries', userId, range)
-		return parseMealListResponse(payload)
-	} catch (error) {
-		captureException(error)
-		return []
-	}
+	const payload = await callApiRpc(env, 'listMealEntries', userId, range)
+	return parseMealListResponse(payload)
 }

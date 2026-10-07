@@ -48,11 +48,13 @@ describe('fetchSettingsToken', () => {
 		await expect(fetchSettingsToken(env, USER_ID)).resolves.toBeNull()
 	})
 
-	it('returns null when the RPC call throws', async () => {
+	it('lets an RPC failure through, so the page can show it', async () => {
 		const env = createEnv(async () => {
 			throw new Error('binding down')
 		})
 
-		await expect(fetchSettingsToken(env, USER_ID)).resolves.toBeNull()
+		await expect(fetchSettingsToken(env, USER_ID)).rejects.toThrow(
+			'binding down',
+		)
 	})
 })

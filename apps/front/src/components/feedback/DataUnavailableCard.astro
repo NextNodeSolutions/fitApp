@@ -1,0 +1,31 @@
+---
+import {
+	buttonVariants,
+	cardDescriptionVariants,
+	cardTitleVariants,
+	cardVariants,
+	cn,
+} from '@fitapp/ui'
+
+interface Props {
+	class?: string
+}
+
+const { class: className } = Astro.props
+const retryHref = `${Astro.url.pathname}${Astro.url.search}`
+---
+
+<section role="alert" class={cn(cardVariants({ tone: 'outline' }), className)}>
+	<h2 class={cn(cardTitleVariants(), 'text-lg')}>
+		Impossible de charger tes données
+	</h2>
+	<p class={cn(cardDescriptionVariants(), 'mt-1.5 text-[15px]')}>
+		Rien n'est perdu : réessaie dans un instant.
+	</p>
+	<a
+		href={retryHref}
+		class={cn(buttonVariants({ variant: 'outline' }), 'mt-5')}
+	>
+		Réessayer
+	</a>
+</section>

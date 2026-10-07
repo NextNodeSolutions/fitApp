@@ -2,6 +2,7 @@ import { weekRangeIso } from '@fitapp/contracts'
 
 import { fetchMealEntries } from '../meals/fetch-meal-entries'
 import { fetchSettingsProfile } from '../settings/fetch-settings-profile'
+import { fetchLatestWeightEntry } from '../weight/fetch-latest-weight-entry'
 import { fetchWeightEntries } from '../weight/fetch-weight-entries'
 
 import type {
@@ -18,6 +19,7 @@ export type DashboardData = {
 	profile: SettingsProfile | null
 	weekMeals: MealEntry[]
 	weights: WeightEntry[]
+	latestWeight: WeightEntry | null
 	week: IsoDateRange
 }
 
@@ -27,10 +29,11 @@ export async function loadDashboardData(
 	date: string,
 ): Promise<DashboardData> {
 	const week = weekRangeIso(date)
-	const [profile, weekMeals, weights] = await Promise.all([
+	const [profile, weekMeals, weights, latestWeight] = await Promise.all([
 		fetchSettingsProfile(env, userId),
 		fetchMealEntries(env, userId, week),
 		fetchWeightEntries(env, userId, DASHBOARD_WEIGHT_PERIOD),
+		fetchLatestWeightEntry(env, userId),
 	])
-	return { profile, weekMeals, weights, week }
+	return { profile, weekMeals, weights, latestWeight, week }
 }

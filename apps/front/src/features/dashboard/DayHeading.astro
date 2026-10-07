@@ -1,5 +1,5 @@
 ---
-import { addDaysIso, DAYS_PER_WEEK } from '@fitapp/contracts'
+import { addDaysIso, DAYS_PER_WEEK, weekRangeIso } from '@fitapp/contracts'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { formatLongDate } from '../../lib/format/format-long-date'
@@ -16,7 +16,8 @@ interface Props {
 const { date, today, mealCount } = Astro.props
 const isToday = date === today
 const nextWeek = addDaysIso(date, DAYS_PER_WEEK)
-const canGoForward = nextWeek <= today
+// A later week exists as soon as the displayed one ends before today.
+const canGoForward = weekRangeIso(date).to < today
 const mealLine =
 	mealCount === 0
 		? "Rien de noté pour l'instant"

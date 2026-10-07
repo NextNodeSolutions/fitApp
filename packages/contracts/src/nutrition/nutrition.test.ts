@@ -58,11 +58,26 @@ describe('computeMacroTargets', () => {
 		})
 	})
 
-	it('floors carbs at 0 when protein and fat exceed the target', () => {
-		expect(computeMacroTargets(1000, 150)).toEqual({
-			proteinG: 300,
+	it('keeps every goal inside a very small target, protein first', () => {
+		// Sedentary woman, 80 y, 30 kg, 100 cm: 437 kcal. P 60 g (240 kcal), then
+		// F (437 - 240) / 9 = 21.9 g instead of 24 g, nothing left for carbs.
+		const target = computeDailyCalorieTarget(
+			{ height: 100, age: 80, sex: 'female', activityLevel: 'sedentary' },
+			30,
+		)
+		expect(target).toBe(437)
+		expect(computeMacroTargets(target, 30)).toEqual({
+			proteinG: 60,
 			carbsG: 0,
-			fatG: 120,
+			fatG: 22,
+		})
+	})
+
+	it('caps protein at the whole target when it alone exceeds it', () => {
+		expect(computeMacroTargets(1000, 150)).toEqual({
+			proteinG: 250,
+			carbsG: 0,
+			fatG: 0,
 		})
 	})
 })

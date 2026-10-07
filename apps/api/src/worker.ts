@@ -8,6 +8,7 @@ import type {
 	MealsRangeQuery,
 	SettingsProfileResponse,
 	SettingsTokenResponse,
+	WeightEntryResponse,
 	WeightListResponse,
 	WeightPeriod,
 } from '@fitapp/contracts'
@@ -35,6 +36,10 @@ export default class ApiWorker extends WorkerEntrypoint<Env> implements ApiRpc {
 		period: WeightPeriod,
 	): Promise<WeightListResponse> {
 		return apiRpc(this.env).listWeightEntries(userId, period)
+	}
+
+	getLatestWeightEntry(userId: string): Promise<WeightEntryResponse | null> {
+		return apiRpc(this.env).getLatestWeightEntry(userId)
 	}
 
 	listMealEntries(

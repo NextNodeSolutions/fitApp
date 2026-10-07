@@ -1,15 +1,11 @@
 ---
 import { env } from 'cloudflare:workers'
 
-import {
-	buildDaySummary,
-	computeDailyCalorieTarget,
-	todayIsoDate,
-	weightUnitLabel,
-} from '@fitapp/contracts'
+import { todayIsoDate } from '@fitapp/contracts'
 
+import DataUnavailableCard from '../components/feedback/DataUnavailableCard.astro'
 import AssistantCard from '../features/dashboard/AssistantCard.astro'
-import { buildWeekDays } from '../features/dashboard/build-week-days'
+import { buildDashboardView } from '../features/dashboard/build-dashboard-view'
 import CaloriesCard from '../features/dashboard/CaloriesCard.astro'
 import DayHeading from '../features/dashboard/DayHeading.astro'
 import DayPicker from '../features/dashboard/DayPicker.astro'
@@ -19,57 +15,50 @@ import MealsCard from '../features/dashboard/MealsCard.astro'
 import { resolveDashboardDate } from '../features/dashboard/resolve-dashboard-date'
 import WeightCard from '../features/dashboard/WeightCard.astro'
 import ProfileMissingCard from '../features/onboarding/ProfileMissingCard.astro'
-import { toDisplayWeightEntries } from '../features/weight/to-display-weight-entries'
 import AppLayout from '../layouts/AppLayout.astro'
+import { loadPageData } from '../lib/load-page-data'
 
 const today = todayIsoDate()
 const date = resolveDashboardDate(Astro.url.searchParams.get('date'), today)
-const { profile, weekMeals, weights, week } = await loadDashboardData(
-	env,
-	Astro.locals.user?.id ?? null,
-	date,
+const dashboardData = await loadPageData(() =>
+	loadDashboardData(env, Astro.locals.user?.id ?? null, date),
 )
-const dayMeals = weekMeals.filter(meal => meal.entryDate === date)
-const weightKg = weights[0]?.weightKg ?? profile?.weight
-const summary =
-	profile && weightKg
-		? buildDaySummary(
-				computeDailyCalorieTarget(profile, weightKg),
-				weightKg,
-				dayMeals,
-			)
-		: null
-const days = buildWeekDays({
-	week,
-	weekMeals,
-	targetKcal: summary?.targetKcal ?? 0,
-	selected: date,
-	today,
-})
-const units = profile?.units ?? 'metric'
+const view = dashboardData
+	? buildDashboardView(dashboardData, date, today)
+	: null
 ---
 
 <AppLayout title="Aujourd'hui" current="today">
-	<DayHeading date={date} today={today} mealCount={dayMeals.length} />
-	<DayPicker days={days} />
 	{
-		summary ? (
-			<div class="mt-5 grid gap-3 lg:grid-cols-[1.1fr_1fr] lg:items-start lg:gap-4">
-				<div class="grid gap-3 lg:gap-4">
-					<CaloriesCard summary={summary} />
-					<MacrosCard macros={summary.macros} />
-				</div>
-				<div class="grid gap-3 lg:gap-4">
-					<MealsCard meals={dayMeals} />
-					<WeightCard
-							entries={toDisplayWeightEntries(weights, units)}
-							unitLabel={weightUnitLabel(units)}
-						/>
-					<AssistantCard hasMealsThisWeek={weekMeals.length > 0} />
-				</div>
-			</div>
+		view ? (
+			<>
+				<DayHeading
+					date={date}
+					today={today}
+					mealCount={view.dayMeals.length}
+				/>
+				<DayPicker days={view.days} />
+				{view.summary ? (
+					<div class="mt-5 grid gap-3 lg:grid-cols-[1.1fr_1fr] lg:items-start lg:gap-4">
+						<div class="grid gap-3 lg:gap-4">
+							<CaloriesCard summary={view.summary} />
+							<MacrosCard macros={view.summary.macros} />
+						</div>
+						<div class="grid gap-3 lg:gap-4">
+							<MealsCard meals={view.dayMeals} />
+							<WeightCard
+								entries={view.weightEntries}
+								unitLabel={view.unitLabel}
+							/>
+							<AssistantCard hasMealsThisWeek={view.hasMealsThisWeek} />
+						</div>
+					</div>
+				) : (
+					<ProfileMissingCard title="Il manque ton profil" class="mt-6" />
+				)}
+			</>
 		) : (
-			<ProfileMissingCard title="Il manque ton profil" class="mt-6" />
+			<DataUnavailableCard />
 		)
 	}
 </AppLayout>

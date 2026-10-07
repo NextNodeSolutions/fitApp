@@ -1,5 +1,3 @@
-import { captureException } from '@sentry/astro'
-
 import { callApiRpc } from '../../lib/call-api-rpc'
 
 import { parseSettingsProfileResponse } from './parse-settings-profile-response'
@@ -11,11 +9,6 @@ export async function fetchSettingsProfile(
 	userId: string | null,
 ): Promise<SettingsProfile | null> {
 	if (!userId) return null
-	try {
-		const payload = await callApiRpc(env, 'getSettingsProfile', userId)
-		return parseSettingsProfileResponse(payload)
-	} catch (error) {
-		captureException(error)
-		return null
-	}
+	const payload = await callApiRpc(env, 'getSettingsProfile', userId)
+	return parseSettingsProfileResponse(payload)
 }

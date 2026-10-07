@@ -14,6 +14,7 @@ import {
 	segmentedControlVariants,
 } from '@fitapp/ui'
 
+import DataUnavailableCard from '../components/feedback/DataUnavailableCard.astro'
 import { fetchSettingsProfile } from '../features/settings/fetch-settings-profile'
 import { fetchWeightEntries } from '../features/weight/fetch-weight-entries'
 import { toDisplayWeightEntries } from '../features/weight/to-display-weight-entries'
@@ -21,6 +22,7 @@ import { WeightEntryForm } from '../features/weight/WeightEntryForm'
 import WeightHistory from '../features/weight/weight-history.astro'
 import WeightTrendChart from '../features/weight/weight-trend-chart.astro'
 import AppLayout from '../layouts/AppLayout.astro'
+import { loadPageData } from '../lib/load-page-data'
 import { ROUTES } from '../lib/routes'
 
 const userId = Astro.locals.user?.id ?? null
@@ -29,10 +31,13 @@ const period =
 	WEIGHT_PERIODS.find(candidate => candidate === requestedPeriod) ??
 	DEFAULT_WEIGHT_PERIOD
 
-const [profile, entries] = await Promise.all([
-	fetchSettingsProfile(env, userId),
-	fetchWeightEntries(env, userId, period),
-])
+const weightData = await loadPageData(() =>
+	Promise.all([
+		fetchSettingsProfile(env, userId),
+		fetchWeightEntries(env, userId, period),
+	]),
+)
+const [profile, entries] = weightData ?? [null, []]
 const units = profile?.units ?? 'metric'
 const displayEntries = toDisplayWeightEntries(entries, units)
 const unitLabel = weightUnitLabel(units)
@@ -70,19 +75,25 @@ const todayWeightDisplay = todayEntry ? String(todayEntry.weight) : undefined
 			}
 		</nav>
 	</div>
-	<div
-		class="grid gap-3 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start lg:gap-4"
-	>
-		<div class="lg:sticky lg:top-6">
-			<WeightEntryForm
-				client:load
-				units={units}
-				todayWeightDisplay={todayWeightDisplay}
-			/>
-		</div>
-		<div class="grid gap-3 lg:gap-4">
-			<WeightTrendChart entries={displayEntries} unitLabel={unitLabel} />
-			<WeightHistory entries={displayEntries} unitLabel={unitLabel} />
-		</div>
-	</div>
+	{
+		weightData ? (
+			<div
+				class="grid gap-3 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start lg:gap-4"
+			>
+				<div class="lg:sticky lg:top-6">
+					<WeightEntryForm
+						client:load
+						units={units}
+						todayWeightDisplay={todayWeightDisplay}
+					/>
+				</div>
+				<div class="grid gap-3 lg:gap-4">
+					<WeightTrendChart entries={displayEntries} unitLabel={unitLabel} />
+					<WeightHistory entries={displayEntries} unitLabel={unitLabel} />
+				</div>
+			</div>
+		) : (
+			<DataUnavailableCard />
+		)
+	}
 </AppLayout>

@@ -8,6 +8,7 @@ import {
 	cn,
 } from '@fitapp/ui'
 
+import DataUnavailableCard from '../components/feedback/DataUnavailableCard.astro'
 import { LogoutButton } from '../features/auth/LogoutButton'
 import ProfileMissingCard from '../features/onboarding/ProfileMissingCard.astro'
 import { ApiTokenCard } from '../features/settings/ApiTokenCard'
@@ -17,13 +18,17 @@ import { UnitsToggle } from '../features/settings/UnitsToggle'
 import { fetchSettingsProfile } from '../features/settings/fetch-settings-profile'
 import { fetchSettingsToken } from '../features/settings/fetch-settings-token'
 import AppLayout from '../layouts/AppLayout.astro'
+import { loadPageData } from '../lib/load-page-data'
 
 const { user } = Astro.locals
 const userId = user?.id ?? null
-const [token, profile] = await Promise.all([
-	fetchSettingsToken(env, userId),
-	fetchSettingsProfile(env, userId),
-])
+const settingsData = await loadPageData(() =>
+	Promise.all([
+		fetchSettingsToken(env, userId),
+		fetchSettingsProfile(env, userId),
+	]),
+)
+const [token, profile] = settingsData ?? [null, null]
 ---
 
 <AppLayout title="Réglages" current="settings">
@@ -34,7 +39,9 @@ const [token, profile] = await Promise.all([
 	</h1>
 	<div class="grid gap-3 lg:grid-cols-2 lg:items-start lg:gap-4">
 		{
-			profile ? (
+			!settingsData ? (
+				<DataUnavailableCard />
+			) : profile ? (
 				<ProfilePatchForm client:load profile={profile} />
 			) : (
 				<ProfileMissingCard title="Profil" />
@@ -42,7 +49,7 @@ const [token, profile] = await Promise.all([
 		}
 		<div class="grid gap-3 lg:gap-4">
 			{profile ? <UnitsToggle client:load units={profile.units} /> : null}
-			<ApiTokenCard client:load token={token} />
+			{settingsData ? <ApiTokenCard client:load token={token} /> : null}
 			<section class={cardVariants()}>
 				<h2 class={cardTitleVariants()}>Compte</h2>
 				{

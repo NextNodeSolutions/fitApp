@@ -1,5 +1,3 @@
-import { captureException } from '@sentry/astro'
-
 import { callApiRpc } from '../../lib/call-api-rpc'
 
 import { parseWeightListResponse } from './parse-weight-list-response'
@@ -12,16 +10,6 @@ export async function fetchWeightEntries(
 	period: WeightPeriod,
 ): Promise<WeightEntry[]> {
 	if (!userId) return []
-	try {
-		const payload = await callApiRpc(
-			env,
-			'listWeightEntries',
-			userId,
-			period,
-		)
-		return parseWeightListResponse(payload)
-	} catch (error) {
-		captureException(error)
-		return []
-	}
+	const payload = await callApiRpc(env, 'listWeightEntries', userId, period)
+	return parseWeightListResponse(payload)
 }

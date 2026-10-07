@@ -1,3 +1,4 @@
+import { MEALS_RANGE_MAX_ENTRIES } from '@fitapp/contracts'
 import { and, asc, between, eq } from 'drizzle-orm'
 
 import { db } from '../../db'
@@ -45,6 +46,7 @@ export function createD1MealRepository(d1: D1Database): MealRepository {
 					asc(schema.foodEntries.createdAt),
 					asc(schema.foodEntries.id),
 				)
+				.limit(MEALS_RANGE_MAX_ENTRIES)
 			return rows.map(toMealEntry)
 		},
 	}

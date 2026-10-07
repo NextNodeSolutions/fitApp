@@ -4,6 +4,7 @@ import * as v from 'valibot'
 import { listMealEntries } from '../meals/application/list-meal-entries'
 import { getApiToken } from '../settings/application/get-api-token'
 import { getSettingsProfile } from '../settings/application/get-settings-profile'
+import { getLatestWeightEntry } from '../weight/application/get-latest-weight-entry'
 import { listWeightEntries } from '../weight/application/list-weight-entries'
 import { getPeriodStartDate } from '../weight/application/period-start-date'
 
@@ -46,6 +47,14 @@ export function createApiRpc(deps: ApiRpcDeps): (env: Env) => ApiRpc {
 				getPeriodStartDate(v.parse(WeightPeriodSchema, period)),
 			)
 			return { entries }
+		},
+		async getLatestWeightEntry(userId) {
+			const entry = await getLatestWeightEntry(
+				deps.createWeightRepository(env.DB),
+				userId,
+			)
+			if (!entry) return null
+			return { entry }
 		},
 		async listMealEntries(userId, range) {
 			const { from, to } = v.parse(MealsRangeQuerySchema, range)
