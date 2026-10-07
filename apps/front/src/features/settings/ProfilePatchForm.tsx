@@ -1,9 +1,15 @@
 import { RADIO_FIELDS, TEXT_FIELDS } from '@fitapp/contracts'
-import { Alert, Card, CardDescription, CardTitle } from '@fitapp/ui'
+import {
+	Alert,
+	Card,
+	CardDescription,
+	CardTitle,
+	SubmitButton,
+} from '@fitapp/ui'
 
-import { ProfileRadioField } from './profile-radio-field'
-import { ProfileSaveButton } from './profile-save-button'
-import { ProfileTextField } from './profile-text-field'
+import { RadioField } from '../../components/form/radio-field'
+import { TextField } from '../../components/form/text-field'
+
 import { useProfileForm } from './use-profile-form'
 
 import type { SettingsProfile } from '@fitapp/contracts'
@@ -34,21 +40,24 @@ export function ProfilePatchForm({
 				) : null}
 				<div className="grid gap-5 sm:grid-cols-3 sm:gap-3">
 					{TEXT_FIELDS.map(spec => (
-						<ProfileTextField
-							key={spec.id}
-							spec={spec}
-							form={form}
-						/>
+						<TextField key={spec.id} spec={spec} form={form} />
 					))}
 				</div>
 				{RADIO_FIELDS.map(spec => (
-					<ProfileRadioField
+					<RadioField
 						key={spec.name}
 						spec={spec}
 						form={form}
+						surface="card"
 					/>
 				))}
-				<ProfileSaveButton submitting={form.formState.isSubmitting} />
+				<SubmitButton
+					pending={form.formState.isSubmitting}
+					pendingLabel="Enregistrement…"
+					className="w-full sm:w-auto"
+				>
+					Enregistrer
+				</SubmitButton>
 			</form>
 		</Card>
 	)

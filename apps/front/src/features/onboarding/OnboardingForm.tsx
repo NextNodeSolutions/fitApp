@@ -1,9 +1,9 @@
 import { RADIO_FIELDS, TEXT_FIELDS } from '@fitapp/contracts'
-import { Alert } from '@fitapp/ui'
+import { Alert, SubmitButton } from '@fitapp/ui'
 
-import { RadioField } from './radio-field'
-import { SubmitButton } from './submit-button'
-import { TextField } from './text-field'
+import { RadioField } from '../../components/form/radio-field'
+import { TextField } from '../../components/form/text-field'
+
 import { useOnboardingForm } from './use-onboarding-form'
 
 import type { ReactElement } from 'react'
@@ -21,9 +21,21 @@ export function OnboardingForm(): ReactElement {
 				))}
 			</div>
 			{RADIO_FIELDS.map(spec => (
-				<RadioField key={spec.name} spec={spec} form={form} />
+				<RadioField
+					key={spec.name}
+					spec={spec}
+					form={form}
+					surface="page"
+				/>
 			))}
-			<SubmitButton submitting={form.formState.isSubmitting} />
+			<SubmitButton
+				pending={form.formState.isSubmitting}
+				pendingLabel="Enregistrement…"
+				size="lg"
+				className="mt-2 w-full"
+			>
+				Commencer mon suivi
+			</SubmitButton>
 		</form>
 	)
 }

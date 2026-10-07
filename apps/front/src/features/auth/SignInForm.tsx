@@ -1,7 +1,6 @@
 import { SIGN_IN_FIELDS } from '@fitapp/contracts'
-import { Alert } from '@fitapp/ui'
+import { Alert, SubmitButton } from '@fitapp/ui'
 
-import { AuthSubmitButton } from './auth-submit-button'
 import { AuthTextField } from './auth-text-field'
 import { useSignInForm } from './use-sign-in-form'
 
@@ -22,11 +21,14 @@ export function SignInForm(): ReactElement {
 					error={form.formState.errors[spec.id]?.message}
 				/>
 			))}
-			<AuthSubmitButton
-				submitting={form.formState.isSubmitting}
-				label="Se connecter"
-				loadingLabel="Connexion…"
-			/>
+			<SubmitButton
+				pending={form.formState.isSubmitting}
+				pendingLabel="Connexion…"
+				size="lg"
+				className="mt-2 w-full"
+			>
+				Se connecter
+			</SubmitButton>
 		</form>
 	)
 }

@@ -2,16 +2,19 @@ import { Input, Label } from '@fitapp/ui'
 
 import type { TextFieldSpec } from '@fitapp/contracts'
 import type { ReactElement } from 'react'
-import type { OnboardingFormApi } from './use-onboarding-form'
+import type { FieldPath, FieldValues, UseFormReturn } from 'react-hook-form'
 
-export function TextField({
+export function TextField<TFieldValues extends FieldValues>({
 	spec,
 	form,
 }: {
-	spec: TextFieldSpec
-	form: OnboardingFormApi
+	spec: Omit<TextFieldSpec, 'id'> & { id: FieldPath<TFieldValues> }
+	form: Pick<
+		UseFormReturn<TFieldValues>,
+		'register' | 'getFieldState' | 'formState'
+	>
 }): ReactElement {
-	const error = form.formState.errors[spec.id]?.message
+	const error = form.getFieldState(spec.id, form.formState).error?.message
 	return (
 		<div className="space-y-2">
 			<Label htmlFor={spec.id}>
