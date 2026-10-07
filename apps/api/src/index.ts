@@ -16,6 +16,8 @@ import { createSettingsRoutes } from './settings/http/settings-routes'
 import { createD1ApiTokenRepository } from './settings/infrastructure/d1-api-token-repository'
 import { createD1SettingsAccountRepository } from './settings/infrastructure/d1-settings-account-repository'
 import { createD1SettingsProfileRepository } from './settings/infrastructure/d1-settings-profile-repository'
+import { createWeightRoutes } from './weight/http/weight-routes'
+import { createD1WeightRepository } from './weight/infrastructure/d1-weight-repository'
 
 const HealthzResponseSchema = v.object({
 	status: v.literal('ok'),
@@ -89,6 +91,13 @@ app.route(
 		createRepository: createD1ApiTokenRepository,
 		createProfileRepository: createD1SettingsProfileRepository,
 		createAccountRepository: createD1SettingsAccountRepository,
+		getUserId,
+	}),
+)
+app.route(
+	'/api/weight',
+	createWeightRoutes({
+		createRepository: createD1WeightRepository,
 		getUserId,
 	}),
 )

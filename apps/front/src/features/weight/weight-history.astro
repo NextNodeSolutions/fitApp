@@ -1,0 +1,44 @@
+---
+type Props = {
+	entries: { entryDate: string; weight: number }[]
+	unitLabel: string
+}
+
+const MAX_HISTORY_ROWS = 10
+
+const { entries, unitLabel } = Astro.props
+const shownEntries = entries.slice(0, MAX_HISTORY_ROWS)
+
+const formatDisplayDate = (entryDate: string): string =>
+	new Date(`${entryDate}T00:00:00Z`).toLocaleDateString('fr-FR', {
+		timeZone: 'UTC',
+		day: 'numeric',
+		month: 'long',
+		year: 'numeric',
+	})
+---
+
+<div class="rounded-lg border border-gray-700 bg-gray-900 p-6">
+	<h2 class="text-lg font-semibold">Historique</h2>
+	<p class="mt-1 text-sm text-gray-400">Tes dernières pesées</p>
+	{
+		shownEntries.length === 0 ? (
+			<p class="mt-4 text-center text-gray-400">
+				Aucune pesée enregistrée pour la période sélectionnée.
+			</p>
+		) : (
+			<ul class="mt-4 divide-y divide-gray-700">
+				{shownEntries.map(entry => (
+					<li class="flex items-center justify-between gap-4 py-2 text-sm">
+						<span class="text-gray-300">
+							{formatDisplayDate(entry.entryDate)}
+						</span>
+						<span class="font-medium whitespace-nowrap text-lime-400">
+							{entry.weight} {unitLabel}
+						</span>
+					</li>
+				))}
+			</ul>
+		)
+	}
+</div>
