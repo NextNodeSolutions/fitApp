@@ -1,0 +1,20 @@
+name: PR checks
+
+on:
+    pull_request:
+
+concurrency:
+    group: pr-checks-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    quality:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: NextNodeSolutions/core/.github/actions/setup@main
+            - name: Lint
+              run: pnpm lint
+            - name: Type-check
+              run: pnpm type-check
+            - name: Test
+              run: pnpm test
