@@ -14,7 +14,7 @@ import {
 
 import type { OnboardingBody } from './body-schema'
 
-function requiredNumericString(label: string, min: number, max: number) {
+export function requiredNumericString(label: string, min: number, max: number) {
 	return v.pipe(
 		v.string(),
 		v.trim(),

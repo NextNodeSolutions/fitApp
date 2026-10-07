@@ -98,6 +98,9 @@ export const profiles = sqliteTable('profiles', {
 		.unique()
 		.references(() => user.id, { onDelete: 'set null' }),
 	apiToken: text('api_token').unique(),
+	units: text('units', { enum: ['metric', 'imperial'] })
+		.notNull()
+		.default('metric'),
 	createdAt: integer('created_at', { mode: 'timestamp_ms' })
 		.notNull()
 		.default(sql`(unixepoch() * 1000)`),

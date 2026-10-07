@@ -8,7 +8,10 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { createSettingsRoutes } from './settings-routes'
 
+import type { SettingsProfile } from '@fitapp/contracts'
+import type { AccountRepository } from '../ports/account-repository'
 import type { ApiTokenRepository } from '../ports/api-token-repository'
+import type { SettingsProfileRepository } from '../ports/settings-profile-repository'
 
 function isD1Database(database: object): database is D1Database {
 	return 'prepare' in database && typeof database.prepare === 'function'
@@ -30,10 +33,25 @@ function createRepository(token: string | null): ApiTokenRepository {
 	return { findByUserId: vi.fn(async () => token) }
 }
 
+function createProfileRepository(
+	profile: SettingsProfile | null,
+): SettingsProfileRepository {
+	return {
+		findByUserId: () => Promise.resolve(profile),
+		updateByUserId: () => Promise.resolve(profile),
+	}
+}
+
+function createAccountRepository(): AccountRepository {
+	return { deleteByUserId: vi.fn(async () => undefined) }
+}
+
 describe('GET /api/settings/token', () => {
 	it('returns 401 without an authenticated user', async () => {
 		const routes = createSettingsRoutes({
 			createRepository: () => createRepository(null),
+			createProfileRepository: () => createProfileRepository(null),
+			createAccountRepository: createAccountRepository,
 			getUserId: vi.fn(async () => null),
 		})
 
@@ -50,6 +68,8 @@ describe('GET /api/settings/token', () => {
 		const repository = createRepository(token)
 		const routes = createSettingsRoutes({
 			createRepository: () => repository,
+			createProfileRepository: () => createProfileRepository(null),
+			createAccountRepository: createAccountRepository,
 			getUserId: vi.fn(async () => 'user-1'),
 		})
 
