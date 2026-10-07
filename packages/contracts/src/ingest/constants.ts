@@ -13,6 +13,3 @@ export const INGEST_INVALID_BODY_MESSAGE = 'Invalid body schema'
 export const INGEST_INVALID_TOKEN_MESSAGE = 'Invalid API token'
 
 export const INGEST_PATH = '/api/ingest'
-
-// Public address of the remote MCP server assistants connect to (Bearer = API token).
-export const MCP_SERVER_URL = 'https://mcp-fitapp.nextnode.fr'
