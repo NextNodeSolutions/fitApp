@@ -1,14 +1,15 @@
-import { AUTH_BASE_PATH, AppError, HTTP_OK } from '@fitapp/contracts'
+import { AUTH_BASE_PATH, AppError, MEALS_PATH } from '@fitapp/contracts'
 import { sentry } from '@sentry/hono/cloudflare'
 import { Hono } from 'hono'
-import { describeRoute, resolver } from 'hono-openapi'
-import * as v from 'valibot'
 
 import { getAuthSession } from './auth/get-auth-session'
 import { createAuthRoutes } from './auth/http/auth-routes'
 import { mountApiDocumentation } from './docs/api-documentation'
+import { createHealthRoutes } from './health/http/health-routes'
 import { createIngestRoutes } from './ingest/http/ingest-routes'
 import { createD1IngestRepository } from './ingest/infrastructure/d1-ingest-repository'
+import { createMealRoutes } from './meals/http/meal-routes'
+import { createD1MealRepository } from './meals/infrastructure/d1-meal-repository'
 import { createOnboardingRoutes } from './onboarding/http/onboarding-routes'
 import { createD1ProfileRepository } from './onboarding/infrastructure/d1-profile-repository'
 import { generateApiToken } from './onboarding/infrastructure/generate-api-token'
@@ -18,26 +19,6 @@ import { createD1SettingsAccountRepository } from './settings/infrastructure/d1-
 import { createD1SettingsProfileRepository } from './settings/infrastructure/d1-settings-profile-repository'
 import { createWeightRoutes } from './weight/http/weight-routes'
 import { createD1WeightRepository } from './weight/infrastructure/d1-weight-repository'
-
-const HealthzResponseSchema = v.object({
-	status: v.literal('ok'),
-	service: v.literal('api'),
-})
-
-const describeHealthzRoute = describeRoute({
-	summary: 'Health check',
-	tags: ['Health'],
-	responses: {
-		[HTTP_OK]: {
-			description: 'Service is healthy',
-			content: {
-				'application/json': {
-					schema: resolver(HealthzResponseSchema),
-				},
-			},
-		},
-	},
-})
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -51,9 +32,7 @@ app.use(
 	})),
 )
 
-app.get('/healthz', describeHealthzRoute, res =>
-	res.json({ status: 'ok', service: 'api' }),
-)
+app.route('/healthz', createHealthRoutes())
 
 app.onError((error, res) => {
 	if (error instanceof AppError && error.status) {
@@ -98,6 +77,13 @@ app.route(
 	'/api/weight',
 	createWeightRoutes({
 		createRepository: createD1WeightRepository,
+		getUserId,
+	}),
+)
+app.route(
+	MEALS_PATH,
+	createMealRoutes({
+		createRepository: createD1MealRepository,
 		getUserId,
 	}),
 )
