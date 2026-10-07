@@ -14,8 +14,8 @@ export type WeightDisplayRange = { min: number; max: number }
 export function weightDisplayRange(units: Units): WeightDisplayRange {
 	if (units === 'metric') return { min: WEIGHT_MIN, max: WEIGHT_MAX }
 	return {
-		min: Math.round((WEIGHT_MIN / KG_PER_LB) * 10) / 10,
-		max: Math.round((WEIGHT_MAX / KG_PER_LB) * 10) / 10,
+		min: Math.round(WEIGHT_MIN * KG_PER_LB * 10) / 10,
+		max: Math.round(WEIGHT_MAX * KG_PER_LB * 10) / 10,
 	}
 }
 
@@ -25,7 +25,7 @@ export function weightUnitLabel(units: Units): string {
 
 export function weightToDisplayUnit(weightKg: number, units: Units): number {
 	if (units === 'metric') return weightKg
-	return Math.round((weightKg / KG_PER_LB) * 10) / 10
+	return Math.round(weightKg * KG_PER_LB * 10) / 10
 }
 
 export function weightKilogramsFromDisplay(
