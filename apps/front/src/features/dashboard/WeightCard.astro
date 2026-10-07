@@ -1,6 +1,11 @@
 ---
 import { WEIGHT_PERIOD_LABELS } from '@fitapp/contracts'
-import { Badge, Card, CardHeader, CardTitle } from '@fitapp/ui'
+import {
+	badgeVariants,
+	cardHeaderVariants,
+	cardTitleVariants,
+	cardVariants,
+} from '@fitapp/ui'
 
 import { ROUTES } from '../../lib/routes'
 import { buildWeightTrend } from '../weight/build-weight-trend'
@@ -27,16 +32,16 @@ const deltaLabel = trend
 	: ''
 ---
 
-<Card>
-	<CardHeader>
-		<CardTitle>Poids</CardTitle>
+<section class={cardVariants()}>
+	<header class={cardHeaderVariants()}>
+		<h2 class={cardTitleVariants()}>Poids</h2>
 		<a
 			href={ROUTES.weight}
 			class="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
 		>
 			Ajouter une pesée
 		</a>
-	</CardHeader>
+	</header>
 	{
 		latest ? (
 			<>
@@ -44,7 +49,7 @@ const deltaLabel = trend
 					<span class="text-4xl font-medium tracking-[-0.045em] tabular-nums">
 						{formatWeight(latest.weight, unitLabel)}
 					</span>
-					{trend ? <Badge>{deltaLabel}</Badge> : null}
+					{trend ? <span class={badgeVariants()}>{deltaLabel}</span> : null}
 				</p>
 				{trend ? (
 					<WeightSparkline
@@ -59,4 +64,4 @@ const deltaLabel = trend
 			</p>
 		)
 	}
-</Card>
+</section>

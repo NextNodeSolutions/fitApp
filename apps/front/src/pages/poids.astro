@@ -8,7 +8,11 @@ import {
 	WEIGHT_PERIOD_OPTIONS,
 	weightUnitLabel,
 } from '@fitapp/contracts'
-import { SegmentedControl, SegmentedControlItem } from '@fitapp/ui'
+import {
+	cn,
+	segmentedControlItemVariants,
+	segmentedControlVariants,
+} from '@fitapp/ui'
 
 import { fetchSettingsProfile } from '../features/settings/fetch-settings-profile'
 import { fetchWeightEntries } from '../features/weight/fetch-weight-entries'
@@ -19,15 +23,15 @@ import WeightTrendChart from '../features/weight/weight-trend-chart.astro'
 import AppLayout from '../layouts/AppLayout.astro'
 import { ROUTES } from '../lib/routes'
 
-const cookie = Astro.request.headers.get('cookie')
+const userId = Astro.locals.user?.id ?? null
 const requestedPeriod = Astro.url.searchParams.get('period')
 const period =
 	WEIGHT_PERIODS.find(candidate => candidate === requestedPeriod) ??
 	DEFAULT_WEIGHT_PERIOD
 
 const [profile, entries] = await Promise.all([
-	fetchSettingsProfile(env, cookie),
-	fetchWeightEntries(env, cookie, period),
+	fetchSettingsProfile(env, userId),
+	fetchWeightEntries(env, userId, period),
 ])
 const units = profile?.units ?? 'metric'
 const displayEntries = toDisplayWeightEntries(entries, units)
@@ -49,21 +53,22 @@ const todayWeightDisplay = todayEntry ? String(todayEntry.weight) : undefined
 				Note tes pesées et suis ta tendance.
 			</p>
 		</div>
-		<SegmentedControl
+		<nav
 			aria-label="Période affichée"
-			className="w-full sm:w-auto"
+			class={cn(segmentedControlVariants(), 'w-full sm:w-auto')}
 		>
 			{
 				WEIGHT_PERIOD_OPTIONS.map(option => (
-					<SegmentedControlItem
+					<a
 						href={`${ROUTES.weight}?period=${option.value}`}
 						aria-current={option.value === period ? 'page' : undefined}
+						class={segmentedControlItemVariants()}
 					>
 						{option.label}
-					</SegmentedControlItem>
+					</a>
 				))
 			}
-		</SegmentedControl>
+		</nav>
 	</div>
 	<div
 		class="grid gap-3 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start lg:gap-4"

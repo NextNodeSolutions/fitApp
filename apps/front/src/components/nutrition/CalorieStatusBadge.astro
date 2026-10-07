@@ -1,6 +1,6 @@
 ---
 import { CALORIE_STATUS_LABELS } from '@fitapp/contracts'
-import { Badge } from '@fitapp/ui'
+import { badgeVariants } from '@fitapp/ui'
 
 import type { CalorieStatus } from '@fitapp/contracts'
 
@@ -11,6 +11,6 @@ interface Props {
 const { status } = Astro.props
 ---
 
-<Badge tone={status === 'surplus' ? 'warning' : 'positive'}>
+<span class={badgeVariants({ tone: status === 'surplus' ? 'warning' : 'positive' })}>
 	{CALORIE_STATUS_LABELS[status]}
-</Badge>
+</span>

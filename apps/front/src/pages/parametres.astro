@@ -1,7 +1,12 @@
 ---
 import { env } from 'cloudflare:workers'
 
-import { CardDescription, CardTitle, cardVariants } from '@fitapp/ui'
+import {
+	cardDescriptionVariants,
+	cardTitleVariants,
+	cardVariants,
+	cn,
+} from '@fitapp/ui'
 
 import { LogoutButton } from '../features/auth/LogoutButton'
 import ProfileMissingCard from '../features/onboarding/ProfileMissingCard.astro'
@@ -14,10 +19,10 @@ import { fetchSettingsToken } from '../features/settings/fetch-settings-token'
 import AppLayout from '../layouts/AppLayout.astro'
 
 const { user } = Astro.locals
-const cookie = Astro.request.headers.get('cookie')
+const userId = user?.id ?? null
 const [token, profile] = await Promise.all([
-	fetchSettingsToken(env, cookie),
-	fetchSettingsProfile(env, cookie),
+	fetchSettingsToken(env, userId),
+	fetchSettingsProfile(env, userId),
 ])
 ---
 
@@ -39,12 +44,12 @@ const [token, profile] = await Promise.all([
 			{profile ? <UnitsToggle client:load units={profile.units} /> : null}
 			<ApiTokenCard client:load token={token} />
 			<section class={cardVariants()}>
-				<CardTitle>Compte</CardTitle>
+				<h2 class={cardTitleVariants()}>Compte</h2>
 				{
 					user ? (
-						<CardDescription className="mt-1 wrap-anywhere">
+						<p class={cn(cardDescriptionVariants(), 'mt-1 wrap-anywhere')}>
 							Connecté avec {user.email}
-						</CardDescription>
+						</p>
 					) : null
 				}
 				<div class="mt-4">

@@ -1,24 +1,21 @@
-import { fetchFromApi } from '../../lib/api'
+import { captureException } from '@sentry/astro'
+
+import { callApiRpc } from '../../lib/call-api-rpc'
 
 import { parseSettingsProfileResponse } from './parse-settings-profile-response'
 
 import type { SettingsProfile } from '@fitapp/contracts'
 
-const SETTINGS_PROFILE_PATH = '/api/settings/profile'
-
 export async function fetchSettingsProfile(
 	env: Pick<Env, 'API'>,
-	cookie: string | null,
+	userId: string | null,
 ): Promise<SettingsProfile | null> {
-	if (!cookie) return null
+	if (!userId) return null
 	try {
-		const response = await fetchFromApi(env, SETTINGS_PROFILE_PATH, {
-			headers: { cookie },
-		})
-		if (!response.ok) return null
-		const payload: unknown = await response.json()
+		const payload = await callApiRpc(env, 'getSettingsProfile', userId)
 		return parseSettingsProfileResponse(payload)
-	} catch {
+	} catch (error) {
+		captureException(error)
 		return null
 	}
 }

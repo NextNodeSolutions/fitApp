@@ -6,8 +6,11 @@ export { Button, buttonVariants } from './components/button'
 export {
 	Card,
 	CardDescription,
+	cardDescriptionVariants,
 	CardHeader,
+	cardHeaderVariants,
 	CardTitle,
+	cardTitleVariants,
 	cardVariants,
 } from './components/card'
 export { Input } from './components/input'
@@ -17,4 +20,6 @@ export { RadioGroup, RadioGroupItem } from './components/radio-group'
 export {
 	SegmentedControl,
 	SegmentedControlItem,
+	segmentedControlItemVariants,
+	segmentedControlVariants,
 } from './components/segmented-control'

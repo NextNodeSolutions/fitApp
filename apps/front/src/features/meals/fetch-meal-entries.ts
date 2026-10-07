@@ -1,6 +1,6 @@
-import { MEALS_PATH } from '@fitapp/contracts'
+import { captureException } from '@sentry/astro'
 
-import { getApiJson } from '../../lib/api'
+import { callApiRpc } from '../../lib/call-api-rpc'
 
 import { parseMealListResponse } from './parse-meal-list-response'
 
@@ -8,17 +8,15 @@ import type { MealEntry, MealsRangeQuery } from '@fitapp/contracts'
 
 export async function fetchMealEntries(
 	env: Pick<Env, 'API'>,
-	cookie: string | null,
+	userId: string | null,
 	range: MealsRangeQuery,
 ): Promise<MealEntry[]> {
-	if (!cookie) return []
+	if (!userId) return []
 	try {
-		const query = new URLSearchParams(range).toString()
-		const payload = await getApiJson(env, `${MEALS_PATH}?${query}`, {
-			headers: { cookie },
-		})
+		const payload = await callApiRpc(env, 'listMealEntries', userId, range)
 		return parseMealListResponse(payload)
-	} catch {
+	} catch (error) {
+		captureException(error)
 		return []
 	}
 }

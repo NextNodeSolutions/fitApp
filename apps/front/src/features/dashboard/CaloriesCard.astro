@@ -1,5 +1,11 @@
 ---
-import { Badge, Card, CardHeader, CardTitle, Progress } from '@fitapp/ui'
+import {
+	badgeVariants,
+	cardHeaderVariants,
+	cardTitleVariants,
+	cardVariants,
+	Progress,
+} from '@fitapp/ui'
 
 import CalorieStatusBadge from '../../components/nutrition/CalorieStatusBadge.astro'
 import { formatNumber } from '../../lib/format/format-number'
@@ -14,13 +20,13 @@ const { summary } = Astro.props
 const consumedKcal = summary.consumed.calories
 ---
 
-<Card>
-	<CardHeader>
-		<CardTitle>Calories</CardTitle>
+<section class={cardVariants()}>
+	<header class={cardHeaderVariants()}>
+		<h2 class={cardTitleVariants()}>Calories</h2>
 		<span class="text-sm text-muted-foreground">
 			Objectif {formatNumber(summary.targetKcal)} kcal
 		</span>
-	</CardHeader>
+	</header>
 	<p class="mt-4 flex items-baseline gap-2">
 		<span
 			class="text-6xl leading-[0.9] font-medium tracking-[-0.055em] tabular-nums"
@@ -38,6 +44,6 @@ const consumedKcal = summary.consumed.calories
 	/>
 	<div class="mt-4 flex flex-wrap gap-2">
 		<CalorieStatusBadge status={summary.status} />
-		<Badge>{summary.remainingMessage}</Badge>
+		<span class={badgeVariants()}>{summary.remainingMessage}</span>
 	</div>
-</Card>
+</section>

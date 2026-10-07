@@ -17,6 +17,14 @@ const cardVariants = cva('rounded-3xl p-5 sm:p-6', {
 	},
 })
 
+const cardHeaderVariants = cva(
+	'flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1',
+)
+
+const cardTitleVariants = cva('text-[15px] font-medium tracking-tight')
+
+const cardDescriptionVariants = cva('text-sm text-muted-foreground')
+
 function Card({
 	className,
 	tone = 'muted',
@@ -39,10 +47,7 @@ function CardHeader({
 	return (
 		<header
 			data-slot="card-header"
-			className={cn(
-				'flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1',
-				className,
-			)}
+			className={cn(cardHeaderVariants(), className)}
 			{...props}
 		/>
 	)
@@ -55,7 +60,7 @@ function CardTitle({
 	return (
 		<h2
 			data-slot="card-title"
-			className={cn('text-[15px] font-medium tracking-tight', className)}
+			className={cn(cardTitleVariants(), className)}
 			{...props}
 		/>
 	)
@@ -68,10 +73,19 @@ function CardDescription({
 	return (
 		<p
 			data-slot="card-description"
-			className={cn('text-sm text-muted-foreground', className)}
+			className={cn(cardDescriptionVariants(), className)}
 			{...props}
 		/>
 	)
 }
 
-export { Card, CardDescription, CardHeader, CardTitle, cardVariants }
+export {
+	Card,
+	CardDescription,
+	cardDescriptionVariants,
+	CardHeader,
+	cardHeaderVariants,
+	CardTitle,
+	cardTitleVariants,
+	cardVariants,
+}

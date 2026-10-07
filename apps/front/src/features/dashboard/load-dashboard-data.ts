@@ -23,14 +23,14 @@ export type DashboardData = {
 
 export async function loadDashboardData(
 	env: Pick<Env, 'API'>,
-	cookie: string | null,
+	userId: string | null,
 	date: string,
 ): Promise<DashboardData> {
 	const week = weekRangeIso(date)
 	const [profile, weekMeals, weights] = await Promise.all([
-		fetchSettingsProfile(env, cookie),
-		fetchMealEntries(env, cookie, week),
-		fetchWeightEntries(env, cookie, DASHBOARD_WEIGHT_PERIOD),
+		fetchSettingsProfile(env, userId),
+		fetchMealEntries(env, userId, week),
+		fetchWeightEntries(env, userId, DASHBOARD_WEIGHT_PERIOD),
 	])
 	return { profile, weekMeals, weights, week }
 }

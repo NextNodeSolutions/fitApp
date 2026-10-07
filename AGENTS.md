@@ -35,7 +35,7 @@ Tout module métier de `apps/api` vit dans `src/<module>/` avec ce découpage :
 - `infrastructure/` — adapters concrets des ports (D1/Drizzle).
 - `http/` — adapter Hono thin : validation (vValidator) → use case → réponse.
 
-`src/index.ts` est la composition root : seul endroit qui câble les adapters concrets aux ports. Jamais d'import Drizzle/D1 hors de `infrastructure/`, jamais de logique métier dans `http/`.
+`src/index.ts` est la composition root : seul endroit qui câble les adapters concrets aux ports. Jamais d'import Drizzle/D1 hors de `infrastructure/`, jamais de logique métier dans `http/`. `src/worker.ts` est l'entrée du Worker : `fetch` sert l'HTTP (`app`), ses autres méthodes le RPC (`apiRpc`, adapter `src/rpc/` : validation → use case → payload, mêmes formes que l'HTTP).
 
 - Paramètre du context Hono : `res`, jamais `c`.
 
@@ -60,10 +60,14 @@ Tout module métier de `apps/api` vit dans `src/<module>/` avec ce découpage :
 - Tout composant UI générique (Button, Input, Label, RadioGroup...) vit dans `packages/ui`, construit sur `@base-ui/react` + `class-variance-authority` + `tailwind-merge`, icônes `lucide-react`.
 - Jamais de composant UI hand-rolled dans `apps/front` — ajouter le composant à `@fitapp/ui` et l'importer.
 - Le thème est consommé via `@import '@fitapp/ui/index.css'` dans `apps/front/src/styles.css`.
+- Dans un `.astro`, un élément UI statique (Card, Badge, SegmentedControl…) se pose sur du HTML avec son helper de classes (`cardVariants()`, `badgeVariants()`…), jamais via le composant React : chaque composant React rendu par Astro est une racine SSR séparée, rendue deux fois (détection du renderer), facturée en CPU Worker. Seuls les composants avec logique ou état (Progress, formulaires, islands) passent par React.
 
 ### Service binding (front → api)
 
 Le front accède à l'api exclusivement via le service binding `env.API` (Fetcher) — jamais d'URL peer. Configuré par `needs = ["api"]` dans `nextnode.toml`.
+
+- Les pages lisent l'api par RPC sur le service binding (`callApiRpc`, méthodes typées par `ApiRpc` dans contracts, exposées par `apps/api/src/worker.ts`). Le RPC n'est joignable que par binding, jamais depuis internet : l'api fait confiance au `userId` que le middleware du front a vérifié. Une seule vérification de session par page.
+- Les routes `/api/*` du front ne font que proxyfier vers l'api HTTP, qui vérifie la session elle-même : le middleware ne la relit pas.
 
 ### D1 / Drizzle
 

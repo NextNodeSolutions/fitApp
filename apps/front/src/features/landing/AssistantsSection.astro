@@ -1,5 +1,5 @@
 ---
-import { Badge, cn } from '@fitapp/ui'
+import { badgeVariants, cn } from '@fitapp/ui'
 
 import { ASSISTANTS } from './assistants'
 import { ASSISTANTS_SECTION } from './landing-sections'
@@ -39,15 +39,17 @@ import { ASSISTANTS_SECTION } from './landing-sections'
 							{assistant.detail}
 						</p>
 					</div>
-					<Badge
-						tone={assistant.tier === 'primary' ? 'positive' : 'neutral'}
-						className={cn(
+					<span
+						class={cn(
+							badgeVariants({
+								tone: assistant.tier === 'primary' ? 'positive' : 'neutral',
+							}),
 							'font-mono text-xs',
 							assistant.tier === 'secondary' && 'bg-card',
 						)}
 					>
 						{assistant.availability}
-					</Badge>
+					</span>
 				</li>
 			))
 		}

@@ -1,9 +1,9 @@
 ---
 import {
-	Card,
-	CardDescription,
-	CardHeader,
-	CardTitle,
+	cardDescriptionVariants,
+	cardHeaderVariants,
+	cardTitleVariants,
+	cardVariants,
 	Progress,
 } from '@fitapp/ui'
 
@@ -19,11 +19,11 @@ interface Props {
 const { macros } = Astro.props
 ---
 
-<Card>
-	<CardHeader>
-		<CardTitle>Macros</CardTitle>
-		<CardDescription>Cibles calculées pour toi</CardDescription>
-	</CardHeader>
+<section class={cardVariants()}>
+	<header class={cardHeaderVariants()}>
+		<h2 class={cardTitleVariants()}>Macros</h2>
+		<p class={cardDescriptionVariants()}>Cibles calculées pour toi</p>
+	</header>
 	<ul class="mt-2 divide-y divide-secondary">
 		{
 			macros.map(macro => (
@@ -47,4 +47,4 @@ const { macros } = Astro.props
 			))
 		}
 	</ul>
-</Card>
+</section>

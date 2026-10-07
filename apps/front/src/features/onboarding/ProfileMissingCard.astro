@@ -1,5 +1,5 @@
 ---
-import { buttonVariants, Card, CardTitle } from '@fitapp/ui'
+import { buttonVariants, cardTitleVariants, cardVariants, cn } from '@fitapp/ui'
 
 import { ROUTES } from '../../lib/routes'
 
@@ -11,8 +11,8 @@ interface Props {
 const { title, class: className } = Astro.props
 ---
 
-<Card className={className}>
-	<CardTitle className="text-lg">{title}</CardTitle>
+<section class={cn(cardVariants(), className)}>
+	<h2 class={cn(cardTitleVariants(), 'text-lg')}>{title}</h2>
 	<p class="mt-1.5 max-w-[48ch] text-[15px] text-muted-foreground">
 		Ta taille, ton poids, ton âge et ton activité servent à calculer ta cible
 		calorique et tes macros.
@@ -20,4 +20,4 @@ const { title, class: className } = Astro.props
 	<a href={ROUTES.onboarding} class:list={[buttonVariants(), 'mt-5']}>
 		Compléter mon profil
 	</a>
-</Card>
+</section>

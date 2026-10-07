@@ -1,6 +1,6 @@
 ---
 import { CALORIE_STATUS_LABELS } from '@fitapp/contracts'
-import { Badge } from '@fitapp/ui'
+import { badgeVariants } from '@fitapp/ui'
 
 import { formatNumber } from '../../lib/format/format-number'
 
@@ -53,7 +53,9 @@ const stats = [
 		<span>Protéines</span>
 		<span class="flex items-center gap-2">
 			<span class="tabular-nums">{DEMO_WEEK.proteinPerDayG} g/jour</span>
-			<Badge tone="positive">+{DEMO_WEEK.proteinDeltaG} g</Badge>
+			<span class={badgeVariants({ tone: 'positive' })}>
+				+{DEMO_WEEK.proteinDeltaG} g
+			</span>
 		</span>
 	</div>
 </ToolResult>

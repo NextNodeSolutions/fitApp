@@ -1,5 +1,10 @@
 ---
-import { Card, CardDescription, CardHeader, CardTitle } from '@fitapp/ui'
+import {
+	cardDescriptionVariants,
+	cardHeaderVariants,
+	cardTitleVariants,
+	cardVariants,
+} from '@fitapp/ui'
 
 import { formatMealTime } from '../../lib/format/format-meal-time'
 import { formatNumber } from '../../lib/format/format-number'
@@ -14,11 +19,11 @@ interface Props {
 const { meals } = Astro.props
 ---
 
-<Card>
-	<CardHeader>
-		<CardTitle>Repas</CardTitle>
-		<CardDescription>Notés par ton assistant</CardDescription>
-	</CardHeader>
+<section class={cardVariants()}>
+	<header class={cardHeaderVariants()}>
+		<h2 class={cardTitleVariants()}>Repas</h2>
+		<p class={cardDescriptionVariants()}>Notés par ton assistant</p>
+	</header>
 	{
 		meals.length === 0 ? (
 			<p class="mt-4 text-[15px] text-muted-foreground">
@@ -45,4 +50,4 @@ const { meals } = Astro.props
 			</ul>
 		)
 	}
-</Card>
+</section>
