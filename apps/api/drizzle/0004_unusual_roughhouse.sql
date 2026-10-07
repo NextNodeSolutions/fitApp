@@ -1,0 +1,1 @@
+ALTER TABLE `profiles` ADD `units` text DEFAULT 'metric' NOT NULL;

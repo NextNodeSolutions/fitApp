@@ -24,30 +24,36 @@ function requiredNumber(
 	)
 }
 
+export const HeightFieldSchema = requiredNumber(
+	'La taille doit être un nombre valide',
+	`La taille doit être entre ${HEIGHT_MIN} et ${HEIGHT_MAX}`,
+	HEIGHT_MIN,
+	HEIGHT_MAX,
+)
+export const WeightFieldSchema = requiredNumber(
+	'Le poids doit être un nombre valide',
+	`Le poids doit être entre ${WEIGHT_MIN} et ${WEIGHT_MAX}`,
+	WEIGHT_MIN,
+	WEIGHT_MAX,
+)
+export const AgeFieldSchema = requiredNumber(
+	"L'âge doit être un nombre valide",
+	`L'âge doit être entre ${AGE_MIN} et ${AGE_MAX}`,
+	AGE_MIN,
+	AGE_MAX,
+)
+export const SexFieldSchema = v.picklist(SEX_VALUES, 'Le sexe est obligatoire')
+export const ActivityLevelFieldSchema = v.picklist(
+	ACTIVITY_LEVEL_VALUES,
+	"Le niveau d'activité est obligatoire",
+)
+
 export const OnboardingBodySchema = v.object({
-	height: requiredNumber(
-		'La taille doit être un nombre valide',
-		`La taille doit être entre ${HEIGHT_MIN} et ${HEIGHT_MAX}`,
-		HEIGHT_MIN,
-		HEIGHT_MAX,
-	),
-	weight: requiredNumber(
-		'Le poids doit être un nombre valide',
-		`Le poids doit être entre ${WEIGHT_MIN} et ${WEIGHT_MAX}`,
-		WEIGHT_MIN,
-		WEIGHT_MAX,
-	),
-	age: requiredNumber(
-		"L'âge doit être un nombre valide",
-		`L'âge doit être entre ${AGE_MIN} et ${AGE_MAX}`,
-		AGE_MIN,
-		AGE_MAX,
-	),
-	sex: v.picklist(SEX_VALUES, 'Le sexe est obligatoire'),
-	activityLevel: v.picklist(
-		ACTIVITY_LEVEL_VALUES,
-		"Le niveau d'activité est obligatoire",
-	),
+	height: HeightFieldSchema,
+	weight: WeightFieldSchema,
+	age: AgeFieldSchema,
+	sex: SexFieldSchema,
+	activityLevel: ActivityLevelFieldSchema,
 })
 
 export type OnboardingBody = v.InferOutput<typeof OnboardingBodySchema>

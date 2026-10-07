@@ -4,9 +4,15 @@ import '../styles.css'
 import { env } from 'cloudflare:workers'
 
 import { ApiTokenCard } from '../features/settings/ApiTokenCard'
+import { DeleteAccountCard } from '../features/settings/DeleteAccountCard'
+import { ProfilePatchForm } from '../features/settings/ProfilePatchForm'
+import { UnitsToggle } from '../features/settings/UnitsToggle'
+import { fetchSettingsProfile } from '../features/settings/fetch-settings-profile'
 import { fetchSettingsToken } from '../features/settings/fetch-settings-token'
 
-const token = await fetchSettingsToken(env, Astro.request.headers.get('cookie'))
+const cookie = Astro.request.headers.get('cookie')
+const token = await fetchSettingsToken(env, cookie)
+const profile = await fetchSettingsProfile(env, cookie)
 ---
 
 <html lang="fr">
@@ -20,10 +26,31 @@ const token = await fetchSettingsToken(env, Astro.request.headers.get('cookie'))
 			<div class="mb-8 text-center">
 				<h1 class="text-3xl font-bold text-lime-400">Paramètres</h1>
 				<p class="mt-2 text-gray-400">
-					Gère ta clé API pour connecter tes applications
+					Gère ton profil, tes unités et ta clé API
 				</p>
 			</div>
-			<ApiTokenCard client:load token={token} />
+			<div class="space-y-6">
+				{
+					profile ? (
+						<>
+							<ProfilePatchForm client:load profile={profile} />
+							<UnitsToggle client:load units={profile.units} />
+						</>
+					) : (
+						<div class="rounded-lg border border-gray-700 bg-gray-900 p-6 text-center">
+							<p class="text-gray-400">Aucun profil trouvé.</p>
+							<a
+								href="/onboarding"
+								class="mt-2 inline-block text-lime-400 hover:underline"
+							>
+								Complète ton onboarding
+							</a>
+						</div>
+					)
+				}
+				<ApiTokenCard client:load token={token} />
+				<DeleteAccountCard client:load />
+			</div>
 			<p class="mt-6 text-center text-sm text-gray-400">
 				<a href="/dashboard" class="text-lime-400 hover:underline">
 					Retour au tableau de bord
