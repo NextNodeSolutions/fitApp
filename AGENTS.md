@@ -72,7 +72,6 @@ Le front accède à l'api exclusivement via le service binding `env.API` (Fetche
 
 ### Git & CI
 
-- PR : l'agent crée la branche et merge le PR immédiatement, sans demander confirmation.
 - Un merge sur main déclenche le deploy prod (`deploy-prod.yml`)
 - Ne jamais merger un PR via `GITHUB_TOKEN` (job Actions) : ces push_events ne déclenchent pas de workflows
 
