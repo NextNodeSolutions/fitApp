@@ -132,3 +132,24 @@ export const foodEntries = sqliteTable(
 		index('food_entries_entry_date_idx').on(table.entryDate),
 	],
 )
+
+export const weightEntries = sqliteTable(
+	'weight_entries',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		entryDate: text('entry_date').notNull(),
+		weightKg: real('weight_kg').notNull(),
+		createdAt: integer('created_at', { mode: 'timestamp_ms' })
+			.notNull()
+			.default(sql`(unixepoch() * 1000)`),
+	},
+	table => [
+		uniqueIndex('weight_entries_user_date_uidx').on(
+			table.userId,
+			table.entryDate,
+		),
+	],
+)
