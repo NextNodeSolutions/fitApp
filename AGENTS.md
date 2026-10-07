@@ -70,6 +70,12 @@ Le front accède à l'api exclusivement via le service binding `env.API` (Fetche
 - Les migrations sont générées par Drizzle (`pnpm db:generate`) et appliquées en CI par `wrangler d1 migrations apply --remote` — **jamais au démarrage de l'app**.
 - Le schéma est dans `apps/api/src/db/schema.ts`.
 
+### Git & CI
+
+- PR : l'agent crée la branche et merge le PR immédiatement, sans demander confirmation.
+- Un merge sur main déclenche le deploy prod (`deploy-prod.yml`)
+- Ne jamais merger un PR via `GITHUB_TOKEN` (job Actions) : ces push_events ne déclenchent pas de workflows
+
 ### Garde-fous Cloudflare (coût)
 
 - **Plan Workers Free** : pas de bloc `limits` dans la config wrangler (la config est générée par l'infra, aucun `limits` émis).
