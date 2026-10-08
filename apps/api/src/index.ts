@@ -1,12 +1,13 @@
-import { AUTH_BASE_PATH, AppError, HTTP_OK } from '@fitapp/contracts'
+import { AUTH_BASE_PATH, HTTP_OK } from '@fitapp/contracts'
 import { sentry } from '@sentry/hono/cloudflare'
 import { Hono } from 'hono'
 import { describeRoute, resolver } from 'hono-openapi'
 import * as v from 'valibot'
 
-import { getAuthSession } from './auth/get-auth-session'
+import { getUserId } from './auth/get-user-id'
 import { createAuthRoutes } from './auth/http/auth-routes'
 import { mountApiDocumentation } from './docs/api-documentation'
+import { handleAppError } from './http/handle-app-error'
 import { createIngestRoutes } from './ingest/http/ingest-routes'
 import { createD1IngestRepository } from './ingest/infrastructure/d1-ingest-repository'
 import { createOnboardingRoutes } from './onboarding/http/onboarding-routes'
@@ -55,22 +56,9 @@ app.get('/healthz', describeHealthzRoute, res =>
 	res.json({ status: 'ok', service: 'api' }),
 )
 
-app.onError((error, res) => {
-	if (error instanceof AppError && error.status) {
-		return res.json(error.toJSON(), error.status)
-	}
-	throw error
-})
+app.onError(handleAppError)
 
 app.route(AUTH_BASE_PATH, createAuthRoutes())
-
-const getUserId = async (
-	env: Env,
-	headers: Headers,
-): Promise<string | null> => {
-	const authSession = await getAuthSession(env, headers)
-	return authSession?.user.id ?? null
-}
 
 app.route(
 	'/api/onboarding',

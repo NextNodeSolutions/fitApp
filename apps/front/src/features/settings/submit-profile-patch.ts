@@ -3,7 +3,7 @@ import {
 	InvalidServerResponseError,
 	SaveFailedError,
 	SettingsProfileResponseSchema,
-	SettingsValidationErrorResponseSchema,
+	ValidationErrorResponseSchema,
 } from '@fitapp/contracts'
 import * as v from 'valibot'
 
@@ -31,7 +31,7 @@ export async function submitProfilePatch(
 		const payload: unknown = await response.json()
 		if (!response.ok) {
 			const validationErrors = v.safeParse(
-				SettingsValidationErrorResponseSchema,
+				ValidationErrorResponseSchema,
 				payload,
 			)
 			return {

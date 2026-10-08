@@ -3,11 +3,7 @@ import { describe, expect, it } from 'vitest'
 
 import { API_TOKEN_HEX_LENGTH } from '../ingest/constants'
 
-import {
-	SETTINGS_UNAUTHORIZED_MESSAGE,
-	SettingsTokenResponseSchema,
-	SettingsUnauthorizedResponseSchema,
-} from './index'
+import { SettingsTokenResponseSchema } from './index'
 
 describe('SettingsTokenResponseSchema', () => {
 	it('accepts a null token', () => {
@@ -27,14 +23,5 @@ describe('SettingsTokenResponseSchema', () => {
 			token: 'not-a-token',
 		})
 		expect(result.success).toBe(false)
-	})
-})
-
-describe('SettingsUnauthorizedResponseSchema', () => {
-	it('keeps the unauthorized message stable', () => {
-		const result = v.safeParse(SettingsUnauthorizedResponseSchema, {
-			error: SETTINGS_UNAUTHORIZED_MESSAGE,
-		})
-		expect(result.success).toBe(true)
 	})
 })

@@ -3,7 +3,7 @@ import {
 	InvalidServerResponseError,
 	SettingsAccountDeletedResponseSchema,
 	SaveFailedError,
-	SettingsValidationErrorResponseSchema,
+	ValidationErrorResponseSchema,
 } from '@fitapp/contracts'
 import * as v from 'valibot'
 
@@ -24,7 +24,7 @@ export async function submitDeleteAccount(): Promise<SubmitDeleteResult> {
 		const payload: unknown = await response.json()
 		if (!response.ok) {
 			const validationErrors = v.safeParse(
-				SettingsValidationErrorResponseSchema,
+				ValidationErrorResponseSchema,
 				payload,
 			)
 			return {

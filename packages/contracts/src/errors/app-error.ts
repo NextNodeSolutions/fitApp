@@ -1,4 +1,8 @@
-export type AppErrorStatus = 400 | 404 | 500
+export type AppErrorStatus = 400 | 401 | 404 | 500
+
+// Most errors render as `{ code, message }`; `{ error }` is the body 401
+// responses have always sent, which clients already parse.
+export type AppErrorBody = { code: string; message: string } | { error: string }
 
 export abstract class AppError extends Error {
 	abstract readonly code: string
@@ -10,7 +14,7 @@ export abstract class AppError extends Error {
 		Object.setPrototypeOf(this, new.target.prototype)
 	}
 
-	toJSON(): { code: string; message: string } {
+	toJSON(): AppErrorBody {
 		return { code: this.code, message: this.message }
 	}
 }
