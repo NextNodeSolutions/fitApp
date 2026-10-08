@@ -1,0 +1,24 @@
+---
+import { buttonVariants } from '@fitapp/ui'
+import { ArrowRight } from 'lucide-react'
+
+import { ROUTES } from '../../lib/routes'
+---
+
+<section class="mx-auto max-w-6xl px-4 pt-28 text-center sm:px-6 lg:px-8 lg:pt-40">
+	<h2
+		class="mx-auto max-w-[12ch] text-[2.65rem] leading-[1.02] font-medium tracking-[-0.045em] sm:text-6xl lg:text-7xl"
+	>
+		Ton prochain repas, dis-le.
+	</h2>
+	<p class="mx-auto mt-4 max-w-[32ch] text-muted-foreground lg:text-lg">
+		Crée ton compte, branche ton assistant, c'est parti.
+	</p>
+	<a
+		href={ROUTES.signup}
+		class:list={[buttonVariants({ size: 'lg' }), 'mt-7']}
+	>
+		Créer mon compte
+		<ArrowRight className="size-4" strokeWidth={2} />
+	</a>
+</section>

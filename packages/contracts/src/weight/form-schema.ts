@@ -1,9 +1,9 @@
 import * as v from 'valibot'
 
+import { todayIsoDate } from '../dates/iso-dates'
 import { requiredNumericString } from '../onboarding/form-schema'
 
 import { WeightEntryBodySchema } from './body-schema'
-import { todayIsoDate } from './constants'
 import { weightDisplayRange, weightKilogramsFromDisplay } from './units'
 
 import type { Units } from '../settings/units'

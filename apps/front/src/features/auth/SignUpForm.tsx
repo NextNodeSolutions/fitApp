@@ -1,4 +1,5 @@
 import { SIGN_UP_FIELDS } from '@fitapp/contracts'
+import { Alert } from '@fitapp/ui'
 
 import { AuthSubmitButton } from './auth-submit-button'
 import { AuthTextField } from './auth-text-field'
@@ -11,19 +12,8 @@ export function SignUpForm(): ReactElement {
 	const serverError = form.formState.errors.root?.message
 
 	return (
-		<form
-			noValidate
-			onSubmit={onSubmit}
-			className="mx-auto max-w-md space-y-6"
-		>
-			{serverError ? (
-				<div
-					role="alert"
-					className="border-destructive/50 bg-destructive/10 text-destructive rounded-md border p-3 text-sm"
-				>
-					{serverError}
-				</div>
-			) : null}
+		<form noValidate onSubmit={onSubmit} className="space-y-5">
+			{serverError ? <Alert role="alert">{serverError}</Alert> : null}
 			{SIGN_UP_FIELDS.map(spec => (
 				<AuthTextField
 					key={spec.id}

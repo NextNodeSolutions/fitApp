@@ -1,0 +1,65 @@
+---
+import { calorieStatus } from '@fitapp/contracts'
+
+import { formatNumber } from '../../lib/format/format-number'
+import { WEEKDAY_LETTERS } from '../../lib/weekday-letters'
+
+interface Props {
+	/** Monday to Sunday, kcal 0 when nothing was logged. */
+	days: readonly { kcal: number }[]
+	targetKcal: number
+}
+
+const TARGET_HEIGHT_SHARE = 0.78
+const MAX_RATIO = 1.25
+const EMPTY_BAR_PERCENT = 4
+const PERCENT = 100
+
+const { days, targetKcal } = Astro.props
+
+const bars = WEEKDAY_LETTERS.map((letter, index) => {
+	const kcal = days[index]?.kcal ?? 0
+	const ratio = Math.min(MAX_RATIO, kcal / targetKcal)
+	const isEmpty = kcal === 0
+	return {
+		letter,
+		kcal,
+		height: isEmpty ? EMPTY_BAR_PERCENT : ratio * TARGET_HEIGHT_SHARE * PERCENT,
+		tone: isEmpty
+			? 'bg-secondary'
+			: calorieStatus(kcal, targetKcal) === 'surplus'
+				? 'bg-warning/75'
+				: 'bg-brand',
+	}
+})
+const summary = bars
+	.map(bar => `${bar.letter} ${bar.kcal ? `${formatNumber(bar.kcal)} kcal` : 'rien noté'}`)
+	.join(', ')
+---
+
+<figure class="mt-3" role="img" aria-label={`Calories par jour : ${summary}`}>
+	<div class="relative h-24">
+		<span
+			class="absolute inset-x-0 border-t border-dashed border-foreground/35"
+			style={`bottom: ${TARGET_HEIGHT_SHARE * PERCENT}%`}
+			aria-hidden="true"></span>
+		<ol class="grid h-full grid-cols-7 items-end gap-1.5" aria-hidden="true">
+			{
+				bars.map(bar => (
+					<li class="flex h-full items-end">
+						<span
+							class:list={['block w-full rounded-t-md rounded-b-sm', bar.tone]}
+							style={`height: ${bar.height}%`}
+						/>
+					</li>
+				))
+			}
+		</ol>
+	</div>
+	<ol
+		class="mt-1.5 grid grid-cols-7 gap-1.5 text-center font-mono text-[10px] text-muted-foreground"
+		aria-hidden="true"
+	>
+		{bars.map(bar => <li>{bar.letter}</li>)}
+	</ol>
+</figure>

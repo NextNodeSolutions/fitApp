@@ -1,22 +1,12 @@
-import { fetchFromApi } from '../../lib/api'
+import { callApiRpc } from '../../lib/call-api-rpc'
 
 import { parseSettingsTokenResponse } from './parse-settings-token-response'
 
-const SETTINGS_TOKEN_PATH = '/api/settings/token'
-
 export async function fetchSettingsToken(
 	env: Pick<Env, 'API'>,
-	cookie: string | null,
+	userId: string | null,
 ): Promise<string | null> {
-	if (!cookie) return null
-	try {
-		const response = await fetchFromApi(env, SETTINGS_TOKEN_PATH, {
-			headers: { cookie },
-		})
-		if (!response.ok) return null
-		const payload: unknown = await response.json()
-		return parseSettingsTokenResponse(payload)
-	} catch {
-		return null
-	}
+	if (!userId) return null
+	const payload = await callApiRpc(env, 'getApiToken', userId)
+	return parseSettingsTokenResponse(payload)
 }

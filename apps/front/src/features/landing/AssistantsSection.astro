@@ -1,0 +1,57 @@
+---
+import { badgeVariants, cn } from '@fitapp/ui'
+
+import { ASSISTANTS } from './assistants'
+import { ASSISTANTS_SECTION } from './landing-sections'
+---
+
+<section
+	id={ASSISTANTS_SECTION.id}
+	class="mx-auto max-w-6xl scroll-mt-16 px-4 pt-24 sm:px-6 lg:grid lg:grid-cols-[1fr_1.2fr] lg:gap-16 lg:px-8 lg:pt-36"
+>
+	<div>
+		<h2
+			class="text-[2.1rem] leading-[1.02] font-medium tracking-[-0.04em] sm:text-5xl lg:text-6xl"
+		>
+			Branché en un clic.
+		</h2>
+		<p class="mt-3 max-w-[38ch] text-muted-foreground lg:text-lg">
+			Sur l'assistant que tu utilises déjà. Et pour les autres, une adresse
+			suffit.
+		</p>
+	</div>
+	<ul class="mt-10 border-t border-foreground lg:mt-0">
+		{
+			ASSISTANTS.map(assistant => (
+				<li class="flex items-center justify-between gap-4 border-b border-border py-5">
+					<div>
+						<p
+							class:list={[
+								'font-medium tracking-[-0.04em]',
+								assistant.tier === 'primary'
+									? 'text-[2rem] leading-none sm:text-5xl'
+									: 'text-xl tracking-[-0.02em]',
+							]}
+						>
+							{assistant.name}
+						</p>
+						<p class="mt-1.5 text-sm text-muted-foreground">
+							{assistant.detail}
+						</p>
+					</div>
+					<span
+						class={cn(
+							badgeVariants({
+								tone: assistant.tier === 'primary' ? 'positive' : 'neutral',
+							}),
+							'font-mono text-xs',
+							assistant.tier === 'secondary' && 'bg-card',
+						)}
+					>
+						{assistant.availability}
+					</span>
+				</li>
+			))
+		}
+	</ul>
+</section>

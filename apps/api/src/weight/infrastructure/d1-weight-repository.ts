@@ -48,5 +48,14 @@ export function createD1WeightRepository(d1: D1Database): WeightRepository {
 				)
 				.orderBy(desc(schema.weightEntries.entryDate))
 		},
+		async findLatest(userId: string): Promise<WeightEntry | null> {
+			const [latest] = await database
+				.select(WEIGHT_COLUMNS)
+				.from(schema.weightEntries)
+				.where(eq(schema.weightEntries.userId, userId))
+				.orderBy(desc(schema.weightEntries.entryDate))
+				.limit(1)
+			return latest ?? null
+		},
 	}
 }

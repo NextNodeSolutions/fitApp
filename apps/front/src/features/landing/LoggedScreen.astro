@@ -1,0 +1,36 @@
+---
+import { formatNumber } from '../../lib/format/format-number'
+
+import AssistantReply from './AssistantReply.astro'
+import { DEMO_LUNCH, DEMO_LUNCH_KCAL } from './demo-data'
+import PromptScreen from './PromptScreen.astro'
+import ToolResult from './ToolResult.astro'
+
+const { proteinG, carbsG, fatG } = DEMO_LUNCH.macros
+---
+
+<PromptScreen />
+<AssistantReply>C'est noté pour ce midi.</AssistantReply>
+<ToolResult title="repas enregistré" meta="Déjeuner">
+	<ul class="text-sm">
+		{
+			DEMO_LUNCH.items.map(dish => (
+				<li class="flex justify-between gap-3 border-b border-border py-2">
+					<span>{dish.name}</span>
+					<span class="text-muted-foreground tabular-nums">
+						{formatNumber(dish.calories)} kcal
+					</span>
+				</li>
+			))
+		}
+		<li class="flex justify-between gap-3 pt-2 font-semibold">
+			<span>Total</span>
+			<span class="tabular-nums">{formatNumber(DEMO_LUNCH_KCAL)} kcal</span>
+		</li>
+	</ul>
+	<p class="mt-2 flex gap-3 font-mono text-[11px] text-muted-foreground">
+		<span>P {proteinG} g</span>
+		<span>G {carbsG} g</span>
+		<span>L {fatG} g</span>
+	</p>
+</ToolResult>

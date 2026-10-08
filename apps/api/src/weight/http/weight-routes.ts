@@ -10,6 +10,7 @@ import {
 	WeightEntryBodySchema,
 	WeightEntryResponseSchema,
 	WeightListResponseSchema,
+	WeightPeriodSchema,
 } from '@fitapp/contracts'
 import { Hono } from 'hono'
 import { describeRoute, resolver, validator } from 'hono-openapi'
@@ -145,7 +146,7 @@ function registerListWeightsRoute(
 		async res => {
 			const userId = res.get('userId')
 			const period = v.safeParse(
-				v.picklist(WEIGHT_PERIODS, 'La période demandée est invalide'),
+				WeightPeriodSchema,
 				res.req.query('period') ?? DEFAULT_WEIGHT_PERIOD,
 			)
 			if (!period.success) {

@@ -1,44 +1,25 @@
-import { AUTH_BASE_PATH, HTTP_OK } from '@fitapp/contracts'
+import { AUTH_BASE_PATH } from '@fitapp/contracts'
 import { sentry } from '@sentry/hono/cloudflare'
 import { Hono } from 'hono'
-import { describeRoute, resolver } from 'hono-openapi'
-import * as v from 'valibot'
 
 import { getUserId } from './auth/get-user-id'
 import { createAuthRoutes } from './auth/http/auth-routes'
 import { mountApiDocumentation } from './docs/api-documentation'
+import { createHealthRoutes } from './health/http/health-routes'
 import { handleAppError } from './http/handle-app-error'
 import { createIngestRoutes } from './ingest/http/ingest-routes'
 import { createD1IngestRepository } from './ingest/infrastructure/d1-ingest-repository'
+import { createD1MealRepository } from './meals/infrastructure/d1-meal-repository'
 import { createOnboardingRoutes } from './onboarding/http/onboarding-routes'
 import { createD1ProfileRepository } from './onboarding/infrastructure/d1-profile-repository'
 import { generateApiToken } from './onboarding/infrastructure/generate-api-token'
+import { createApiRpc } from './rpc/create-api-rpc'
 import { createSettingsRoutes } from './settings/http/settings-routes'
 import { createD1ApiTokenRepository } from './settings/infrastructure/d1-api-token-repository'
 import { createD1SettingsAccountRepository } from './settings/infrastructure/d1-settings-account-repository'
 import { createD1SettingsProfileRepository } from './settings/infrastructure/d1-settings-profile-repository'
 import { createWeightRoutes } from './weight/http/weight-routes'
 import { createD1WeightRepository } from './weight/infrastructure/d1-weight-repository'
-
-const HealthzResponseSchema = v.object({
-	status: v.literal('ok'),
-	service: v.literal('api'),
-})
-
-const describeHealthzRoute = describeRoute({
-	summary: 'Health check',
-	tags: ['Health'],
-	responses: {
-		[HTTP_OK]: {
-			description: 'Service is healthy',
-			content: {
-				'application/json': {
-					schema: resolver(HealthzResponseSchema),
-				},
-			},
-		},
-	},
-})
 
 const app = new Hono<{ Bindings: Env }>()
 
@@ -52,9 +33,7 @@ app.use(
 	})),
 )
 
-app.get('/healthz', describeHealthzRoute, res =>
-	res.json({ status: 'ok', service: 'api' }),
-)
+app.route('/healthz', createHealthRoutes())
 
 app.onError(handleAppError)
 
@@ -89,10 +68,14 @@ app.route(
 		getUserId,
 	}),
 )
-
 mountApiDocumentation(app)
 
-export { app }
+const apiRpc = createApiRpc({
+	createProfileRepository: createD1SettingsProfileRepository,
+	createApiTokenRepository: createD1ApiTokenRepository,
+	createWeightRepository: createD1WeightRepository,
+	createMealRepository: createD1MealRepository,
+})
 
-// oxlint-disable-next-line import/no-default-export
-export default { fetch: app.fetch } satisfies ExportedHandler<Env>
+// The Worker entry (worker.ts) serves both: HTTP through app, RPC through apiRpc.
+export { apiRpc, app }

@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
-import { submitSignOut } from './submit-sign-out'
+import { ROUTES } from '../../lib/routes'
 
-const LOGIN_PATH = '/login'
+import { submitSignOut } from './submit-sign-out'
 
 export function useSignOut(): {
 	signOut: () => Promise<void>
@@ -18,7 +18,7 @@ export function useSignOut(): {
 			setState({ pending: false, failed: true })
 			return
 		}
-		window.location.href = LOGIN_PATH
+		window.location.href = ROUTES.login
 	}
 
 	return { signOut, pending: state.pending, failed: state.failed }

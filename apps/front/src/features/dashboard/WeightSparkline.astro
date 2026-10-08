@@ -1,0 +1,28 @@
+---
+import type { WeightTrend } from '../weight/build-weight-trend'
+
+interface Props {
+	trend: WeightTrend
+	label: string
+}
+
+const { trend, label } = Astro.props
+---
+
+<svg
+	viewBox="0 0 100 100"
+	preserveAspectRatio="none"
+	class="mt-4 block h-28 w-full overflow-visible"
+	role="img"
+	aria-label={label}
+>
+	<path d={trend.areaPath} class="fill-brand/15"></path>
+	<path
+		d={trend.linePath}
+		fill="none"
+		class="stroke-brand-ink"
+		stroke-width="2"
+		stroke-linejoin="round"
+		stroke-linecap="round"
+		vector-effect="non-scaling-stroke"></path>
+</svg>

@@ -1,11 +1,15 @@
 @import 'tailwindcss';
 @import 'shadcn/tailwind.css';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
 
 @source "../src";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+	--font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+	--font-mono: 'Geist Mono Variable', ui-monospace, monospace;
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
 	--color-card: var(--card);
@@ -24,6 +28,12 @@
 	--color-border: var(--border);
 	--color-input: var(--input);
 	--color-ring: var(--ring);
+	--color-brand: var(--brand);
+	--color-brand-ink: var(--brand-ink);
+	--color-brand-soft: var(--brand-soft);
+	--color-lime: var(--lime);
+	--color-warning: var(--warning);
+	--color-warning-soft: var(--warning-soft);
 	--radius-sm: calc(var(--radius) - 4px);
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-lg: var(--radius);
@@ -31,32 +41,66 @@
 }
 
 :root {
-	--background: oklch(0.145 0 0);
-	--foreground: oklch(0.985 0 0);
-	--card: oklch(0.205 0 0);
-	--card-foreground: oklch(0.985 0 0);
-	--popover: oklch(0.205 0 0);
-	--popover-foreground: oklch(0.985 0 0);
-	--primary: oklch(0.79 0.16 140);
-	--primary-foreground: oklch(0.2 0.04 140);
-	--secondary: oklch(0.269 0 0);
-	--secondary-foreground: oklch(0.985 0 0);
-	--muted: oklch(0.269 0 0);
-	--muted-foreground: oklch(0.708 0 0);
-	--accent: oklch(0.269 0 0);
-	--accent-foreground: oklch(0.985 0 0);
-	--destructive: oklch(0.64 0.22 16);
-	--border: oklch(1 0 0 / 20%);
-	--input: oklch(1 0 0 / 20%);
-	--ring: oklch(0.79 0.17 142);
-	--radius: 0.5rem;
+	color-scheme: light;
+	--background: #ffffff;
+	--foreground: #0b0e0c;
+	--card: #f4f5f3;
+	--card-foreground: #0b0e0c;
+	--popover: #ffffff;
+	--popover-foreground: #0b0e0c;
+	--primary: #2dd068;
+	--primary-foreground: #0b0e0c;
+	--secondary: #eceeea;
+	--secondary-foreground: #0b0e0c;
+	--muted: #f4f5f3;
+	--muted-foreground: #5a625d;
+	--accent: #eceeea;
+	--accent-foreground: #0b0e0c;
+	--destructive: #c42d1f;
+	--border: #e5e7e3;
+	--input: #d9ddd7;
+	--ring: #0b0e0c;
+	--brand: #2dd068;
+	--brand-ink: #0f7a3a;
+	--brand-soft: #e3f8ea;
+	--lime: #b8e986;
+	--warning: #a85513;
+	--warning-soft: #fbeee2;
+	--radius: 0.875rem;
 }
 
 @layer base {
 	* {
-		@apply border-border outline-ring/50;
+		@apply border-border;
+	}
+	html {
+		-webkit-text-size-adjust: 100%;
+		scrollbar-color: var(--input) var(--background);
 	}
 	body {
-		@apply bg-background text-foreground;
+		@apply bg-background text-foreground font-sans antialiased;
+		caret-color: var(--brand-ink);
+	}
+	::selection {
+		background: var(--brand-soft);
+		color: var(--foreground);
+	}
+	:focus-visible {
+		outline: 2px solid var(--ring);
+		outline-offset: 3px;
+	}
+	h1,
+	h2,
+	h3 {
+		text-wrap: balance;
+	}
+	p {
+		text-wrap: pretty;
+	}
+}
+
+@keyframes progress-grow {
+	from {
+		transform: scaleX(0);
 	}
 }

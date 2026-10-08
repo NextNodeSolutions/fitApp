@@ -15,5 +15,18 @@ export default defineConfig({
 	integrations: [react(), sentry()],
 	vite: {
 		plugins: [tailwindcss()],
+		environments: {
+			ssr: {
+				optimizeDeps: {
+					// The dependency scan only crawls pages and components. A dependency
+					// found after startup re-runs the optimizer and leaves two copies of
+					// React in workerd, which breaks hooks: also crawl the middleware
+					// chain (Sentry server config), and list what is injected at runtime
+					// (Sentry's middleware, Astro's JSON logger).
+					entries: ['src/middleware.ts'],
+					include: ['@sentry/astro/middleware', 'astro/logger/json'],
+				},
+			},
+		},
 	},
 })

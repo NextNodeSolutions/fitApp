@@ -2,12 +2,12 @@ import { SignUpFormSchema } from '@fitapp/contracts'
 import { valibotResolver } from '@hookform/resolvers/valibot'
 import { useForm } from 'react-hook-form'
 
+import { ROUTES } from '../../lib/routes'
+
 import { submitSignUp } from './submit-sign-up'
 
 import type { SignUpFormValues } from '@fitapp/contracts'
 import type { UseFormReturn } from 'react-hook-form'
-
-const ONBOARDING_PATH = '/onboarding'
 
 const EMPTY_VALUES: SignUpFormValues = {
 	email: '',
@@ -42,7 +42,7 @@ export function useSignUpForm(): {
 			form.setError('root', { message: submission.error.message })
 			return
 		}
-		window.location.href = ONBOARDING_PATH
+		window.location.href = ROUTES.onboarding
 	})
 
 	return { form, onSubmit }

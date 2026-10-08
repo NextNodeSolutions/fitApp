@@ -17,8 +17,10 @@ export function DeleteAccountCard(): ReactElement {
 	} = useDeleteAccount()
 
 	return (
-		<div className="border-destructive/50 rounded-lg border bg-gray-900 p-6">
-			<h2 className="text-lg font-semibold">Supprimer mon compte</h2>
+		<div>
+			<h3 className="text-[15px] font-medium tracking-tight">
+				Supprimer mon compte
+			</h3>
 			{isConfirmingDelete ? (
 				<DeleteAccountConfirmation
 					pending={pending}
@@ -28,14 +30,19 @@ export function DeleteAccountCard(): ReactElement {
 					onCancel={cancelDelete}
 				/>
 			) : (
-				<Button
-					variant="outline"
-					className="border-destructive/50 text-destructive"
-					onClick={requestConfirm}
-				>
-					<Trash2 />
-					Supprimer mon compte
-				</Button>
+				<>
+					<p className="text-muted-foreground mt-1 text-sm">
+						Efface ton compte et toutes tes données.
+					</p>
+					<Button
+						variant="outline"
+						className="text-destructive hover:border-destructive/40 mt-4"
+						onClick={requestConfirm}
+					>
+						<Trash2 />
+						Supprimer mon compte
+					</Button>
+				</>
 			)}
 			{failed ? (
 				<p role="alert" className="text-destructive mt-3 text-sm">

@@ -1,0 +1,31 @@
+---
+interface Props {
+	index: number
+	title: string
+	text: string
+}
+
+import { formatStepNumber } from './format-step-number'
+
+const { index, title, text } = Astro.props
+---
+
+<li
+	data-how-step={index}
+	class="lg:flex lg:min-h-[88svh] lg:flex-col lg:justify-center"
+>
+	<span class="font-mono text-xs text-muted-foreground">
+		{formatStepNumber(index)}
+	</span>
+	<h3
+		class="mt-2 text-[1.65rem] leading-tight font-medium tracking-[-0.03em] lg:text-[2.75rem] lg:leading-[1.05] lg:tracking-[-0.04em]"
+	>
+		{title}
+	</h3>
+	<p class="mt-2 max-w-[38ch] text-muted-foreground lg:mt-3 lg:text-lg">
+		{text}
+	</p>
+	<div class="mt-5 rounded-3xl bg-card p-4 lg:hidden">
+		<slot />
+	</div>
+</li>

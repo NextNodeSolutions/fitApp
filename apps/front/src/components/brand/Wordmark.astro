@@ -1,0 +1,19 @@
+---
+import { APP_NAME } from '@fitapp/contracts'
+
+import { ROUTES } from '../../lib/routes'
+
+interface Props {
+	href?: string
+}
+
+const { href = ROUTES.home } = Astro.props
+---
+
+<a
+	href={href}
+	class="inline-flex items-center gap-2 text-[17px] font-semibold tracking-[-0.03em]"
+>
+	<span class="size-2.5 rounded-full bg-brand" aria-hidden="true"></span>
+	{APP_NAME}
+</a>

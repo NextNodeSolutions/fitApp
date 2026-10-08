@@ -1,8 +1,7 @@
 import * as v from 'valibot'
 
+import { todayIsoDate } from '../dates/iso-dates'
 import { WeightFieldSchema } from '../onboarding/body-schema'
-
-import { todayIsoDate } from './constants'
 
 export const WeightEntryBodySchema = v.object({
 	entryDate: v.pipe(
