@@ -1,12 +1,10 @@
 import { AUTH_BASE_PATH } from '@fitapp/contracts'
-import { sentry } from '@sentry/hono/cloudflare'
-import { Hono } from 'hono'
 
 import { getUserId } from './auth/get-user-id'
 import { createAuthRoutes } from './auth/http/auth-routes'
 import { mountApiDocumentation } from './docs/api-documentation'
 import { createHealthRoutes } from './health/http/health-routes'
-import { handleAppError } from './http/handle-app-error'
+import { createHttpApp } from './http/create-http-app'
 import { createIngestRoutes } from './ingest/http/ingest-routes'
 import { createD1IngestRepository } from './ingest/infrastructure/d1-ingest-repository'
 import { createD1MealRepository } from './meals/infrastructure/d1-meal-repository'
@@ -21,21 +19,9 @@ import { createD1SettingsProfileRepository } from './settings/infrastructure/d1-
 import { createWeightRoutes } from './weight/http/weight-routes'
 import { createD1WeightRepository } from './weight/infrastructure/d1-weight-repository'
 
-const app = new Hono<{ Bindings: Env }>()
-
-// Sentry must be the first middleware: it captures unhandled errors from Hono's
-// onError chain (4xx responses are excluded) and builds a trace per request.
-// The DSN comes from the SENTRY_DSN secret - without it the SDK stays disabled.
-app.use(
-	sentry(app, env => ({
-		dsn: env.SENTRY_DSN,
-		tracesSampleRate: 1.0,
-	})),
-)
+const app = createHttpApp()
 
 app.route('/healthz', createHealthRoutes())
-
-app.onError(handleAppError)
 
 app.route(AUTH_BASE_PATH, createAuthRoutes())
 
