@@ -11,5 +11,8 @@ jobs:
         with:
             environment: production
         secrets: inherit
+        # The called workflow asks for both: a job-level block sets every
+        # permission it omits to none, and GitHub then refuses to start it.
         permissions:
+            contents: read
             pull-requests: write
