@@ -228,3 +228,26 @@ describe('POST /api/onboarding', () => {
 		expect(response.status).toBe(HTTP_BAD_REQUEST)
 	})
 })
+
+describe('malformed JSON body', () => {
+	it.each([
+		['POST', '/api/onboarding'],
+		['PATCH', '/api/settings/profile'],
+		['POST', '/api/weight'],
+	])('%s %s answers 400 in the validation shape', async (method, path) => {
+		const response = await app.request(
+			path,
+			{
+				method,
+				headers: { 'Content-Type': 'application/json' },
+				body: '{',
+			},
+			createAuthTestEnv(),
+		)
+
+		expect(response.status).toBe(HTTP_BAD_REQUEST)
+		await expect(response.json()).resolves.toEqual({
+			errors: [expect.any(String)],
+		})
+	})
+})
