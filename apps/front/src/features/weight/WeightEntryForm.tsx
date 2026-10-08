@@ -1,6 +1,11 @@
 import { weightUnitLabel } from '@fitapp/contracts'
-import { Alert, Button, Card, CardDescription, CardTitle } from '@fitapp/ui'
-import { LoaderCircle } from 'lucide-react'
+import {
+	Alert,
+	Card,
+	CardDescription,
+	CardTitle,
+	SubmitButton,
+} from '@fitapp/ui'
 
 import { formatWeight } from './format-weight'
 import { useWeightForm } from './use-weight-form'
@@ -40,21 +45,14 @@ export function WeightEntryForm({
 					<WeightDateField form={form} />
 					<WeightEntryField form={form} units={units} />
 				</div>
-				<Button
-					type="submit"
+				<SubmitButton
+					pending={form.formState.isSubmitting}
+					pendingLabel="Enregistrement…"
 					size="lg"
-					disabled={form.formState.isSubmitting}
 					className="w-full"
 				>
-					{form.formState.isSubmitting ? (
-						<>
-							<LoaderCircle className="animate-spin" />
-							Enregistrement…
-						</>
-					) : (
-						'Enregistrer la pesée'
-					)}
-				</Button>
+					Enregistrer la pesée
+				</SubmitButton>
 			</form>
 		</Card>
 	)

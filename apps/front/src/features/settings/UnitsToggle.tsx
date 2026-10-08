@@ -1,7 +1,6 @@
 import { UNITS_OPTIONS } from '@fitapp/contracts'
-import { Card, CardTitle, RadioGroup } from '@fitapp/ui'
+import { Card, CardTitle, RadioCard, RadioGroup } from '@fitapp/ui'
 
-import { ProfileRadioOptionRow } from './profile-radio-option-row'
 import { useUnits } from './use-units'
 
 import type { Units } from '@fitapp/contracts'
@@ -37,7 +36,13 @@ export function UnitsToggle({ units }: UnitsToggleProps): ReactElement {
 				className="mt-5 sm:grid-cols-2"
 			>
 				{UNITS_OPTIONS.map(option => (
-					<ProfileRadioOptionRow key={option.value} option={option} />
+					<RadioCard
+						key={option.value}
+						value={option.value}
+						surface="card"
+					>
+						{option.label}
+					</RadioCard>
 				))}
 			</RadioGroup>
 			{pending ? (
