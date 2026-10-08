@@ -3,19 +3,10 @@ import * as v from 'valibot'
 import { ProfileNotFoundError } from '../errors'
 
 import { OnboardingBodySchema } from './body-schema'
-import { ONBOARDING_UNAUTHORIZED_MESSAGE } from './constants'
 
 export const OnboardingCreatedResponseSchema = v.object({
 	profile: OnboardingBodySchema,
 	sessionId: v.string(),
-})
-
-export const OnboardingErrorResponseSchema = v.object({
-	errors: v.array(v.string()),
-})
-
-export const OnboardingUnauthorizedResponseSchema = v.object({
-	error: v.literal(ONBOARDING_UNAUTHORIZED_MESSAGE),
 })
 
 export const OnboardingProfileResponseSchema = v.object({
@@ -34,10 +25,6 @@ export const OnboardingProfileNotFoundResponseSchema = v.object({
 
 export type OnboardingCreatedResponse = v.InferOutput<
 	typeof OnboardingCreatedResponseSchema
->
-
-export type OnboardingUnauthorizedResponse = v.InferOutput<
-	typeof OnboardingUnauthorizedResponseSchema
 >
 
 export type OnboardingProfileResponse = v.InferOutput<

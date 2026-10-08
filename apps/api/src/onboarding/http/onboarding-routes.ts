@@ -3,20 +3,22 @@ import {
 	HTTP_CREATED,
 	HTTP_OK,
 	HTTP_UNAUTHORIZED,
-	ONBOARDING_UNAUTHORIZED_MESSAGE,
 	OnboardingBodySchema,
 	OnboardingCreatedResponseSchema,
-	OnboardingErrorResponseSchema,
 	OnboardingProfileNotFoundResponseSchema,
 	OnboardingProfileResponseSchema,
-	OnboardingUnauthorizedResponseSchema,
+	UnauthorizedResponseSchema,
+	ValidationErrorResponseSchema,
 } from '@fitapp/contracts'
 import { Hono } from 'hono'
 import { describeRoute, resolver, validator } from 'hono-openapi'
 
+import { requireUserId } from '../../auth/http/require-user-id'
+import { rejectInvalidInput } from '../../http/reject-invalid-input'
 import { createProfile } from '../application/create-profile'
 import { getProfile } from '../application/get-profile'
 
+import type { GetUserId } from '../../auth/http/require-user-id'
 import type { ProfileRepository } from '../ports/profile-repository'
 
 type OnboardingRoutes = Hono<{ Bindings: Env }>
@@ -25,7 +27,7 @@ export type OnboardingDeps = {
 	createRepository: (db: D1Database) => ProfileRepository
 	generateSessionId: () => string
 	generateApiToken: () => string
-	getUserId: (env: Env, headers: Headers) => Promise<string | null>
+	getUserId: GetUserId
 }
 
 const describeCreateProfileRoute = describeRoute({
@@ -45,7 +47,7 @@ const describeCreateProfileRoute = describeRoute({
 			description: 'Invalid body',
 			content: {
 				'application/json': {
-					schema: resolver(OnboardingErrorResponseSchema),
+					schema: resolver(ValidationErrorResponseSchema),
 				},
 			},
 		},
@@ -53,7 +55,7 @@ const describeCreateProfileRoute = describeRoute({
 			description: 'Missing session',
 			content: {
 				'application/json': {
-					schema: resolver(OnboardingUnauthorizedResponseSchema),
+					schema: resolver(UnauthorizedResponseSchema),
 				},
 			},
 		},
@@ -94,13 +96,7 @@ const describeGetProfileRoute = describeRoute({
 const validateOnboardingBody = validator(
 	'json',
 	OnboardingBodySchema,
-	(parseResult, res) => {
-		if (parseResult.success) return
-		return res.json(
-			{ errors: parseResult.error.map(issue => issue.message) },
-			HTTP_BAD_REQUEST,
-		)
-	},
+	rejectInvalidInput,
 )
 
 export function createOnboardingRoutes(deps: OnboardingDeps): OnboardingRoutes {
@@ -118,14 +114,9 @@ function registerCreateProfileRoute(
 		'/',
 		describeCreateProfileRoute,
 		validateOnboardingBody,
+		requireUserId(deps.getUserId),
 		async res => {
-			const userId = await deps.getUserId(res.env, res.req.raw.headers)
-			if (!userId) {
-				return res.json(
-					{ error: ONBOARDING_UNAUTHORIZED_MESSAGE },
-					HTTP_UNAUTHORIZED,
-				)
-			}
+			const userId = res.get('userId')
 			const body = res.req.valid('json')
 			const profile = await createProfile(
 				{

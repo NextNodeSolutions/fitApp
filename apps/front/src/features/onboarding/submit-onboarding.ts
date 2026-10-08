@@ -2,9 +2,9 @@ import {
 	ConnectionError,
 	InvalidServerResponseError,
 	OnboardingCreatedResponseSchema,
-	OnboardingErrorResponseSchema,
 	OnboardingSaveError,
 	OnboardingValidationError,
+	ValidationErrorResponseSchema,
 } from '@fitapp/contracts'
 import * as v from 'valibot'
 
@@ -25,7 +25,7 @@ export async function submitOnboarding(
 		})
 		const payload: unknown = await response.json()
 		if (!response.ok) {
-			const parsed = v.safeParse(OnboardingErrorResponseSchema, payload)
+			const parsed = v.safeParse(ValidationErrorResponseSchema, payload)
 			return {
 				ok: false,
 				error: parsed.success

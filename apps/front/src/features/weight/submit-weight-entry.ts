@@ -2,8 +2,8 @@ import {
 	ConnectionError,
 	InvalidServerResponseError,
 	SaveFailedError,
+	ValidationErrorResponseSchema,
 	WeightEntryResponseSchema,
-	WeightValidationErrorResponseSchema,
 } from '@fitapp/contracts'
 import * as v from 'valibot'
 
@@ -25,7 +25,7 @@ export async function submitWeightEntry(
 		const payload: unknown = await response.json()
 		if (!response.ok) {
 			const validationErrors = v.safeParse(
-				WeightValidationErrorResponseSchema,
+				ValidationErrorResponseSchema,
 				payload,
 			)
 			return {

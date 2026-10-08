@@ -1,9 +1,12 @@
+import * as v from 'valibot'
 import { describe, expect, it } from 'vitest'
 
 import { AppError } from './app-error'
 import { OnboardingSaveError } from './business/onboarding-save-error'
 import { OnboardingValidationError } from './business/onboarding-validation-error'
 import { ProfileNotFoundError } from './business/profile-not-found-error'
+import { UnauthorizedError } from './business/unauthorized-error'
+import { UnauthorizedResponseSchema } from './responses'
 import { ConnectionError } from './technical/connection-error'
 import { InvalidServerResponseError } from './technical/invalid-server-response-error'
 
@@ -40,6 +43,16 @@ describe('business errors', () => {
 		expect(error.message).toBe(
 			"La taille est obligatoire L'âge doit être entre 10 et 120",
 		)
+	})
+
+	it('renders the 401 body clients already parse', () => {
+		const error = new UnauthorizedError()
+
+		expect(error).toBeInstanceOf(AppError)
+		expect(error.code).toBe('UNAUTHORIZED')
+		expect(error.status).toBe(401)
+		expect(error.toJSON()).toEqual({ error: 'Unauthorized' })
+		expect(v.is(UnauthorizedResponseSchema, error.toJSON())).toBe(true)
 	})
 })
 

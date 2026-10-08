@@ -4,32 +4,34 @@ import {
 	HTTP_CREATED,
 	HTTP_OK,
 	HTTP_UNAUTHORIZED,
-	SETTINGS_UNAUTHORIZED_MESSAGE,
+	UnauthorizedResponseSchema,
+	ValidationErrorResponseSchema,
 	WEIGHT_PERIODS,
 	WeightEntryBodySchema,
 	WeightEntryResponseSchema,
 	WeightListResponseSchema,
 	WeightPeriodSchema,
-	WeightUnauthorizedResponseSchema,
-	WeightValidationErrorResponseSchema,
 } from '@fitapp/contracts'
 import { Hono } from 'hono'
 import { describeRoute, resolver, validator } from 'hono-openapi'
 import * as v from 'valibot'
 
+import { requireUserId } from '../../auth/http/require-user-id'
+import { rejectInvalidInput } from '../../http/reject-invalid-input'
 import { listWeightEntries } from '../application/list-weight-entries'
 import { getPeriodStartDate } from '../application/period-start-date'
 import { saveWeightEntry } from '../application/save-weight-entry'
 
+import type { GetUserId } from '../../auth/http/require-user-id'
 import type { WeightRepository } from '../ports/weight-repository'
 
 export type WeightDeps = {
 	createRepository: (db: D1Database) => WeightRepository
-	getUserId: (env: Env, headers: Headers) => Promise<string | null>
+	getUserId: GetUserId
 }
 
-const unauthorizedResponseSchema = resolver(WeightUnauthorizedResponseSchema)
-const validationResponseSchema = resolver(WeightValidationErrorResponseSchema)
+const unauthorizedResponseSchema = resolver(UnauthorizedResponseSchema)
+const validationResponseSchema = resolver(ValidationErrorResponseSchema)
 
 const describeSaveWeightRoute = describeRoute({
 	summary: 'Save or update a weight entry',
@@ -98,13 +100,7 @@ const describeListWeightsRoute = describeRoute({
 const validateWeightEntryBody = validator(
 	'json',
 	WeightEntryBodySchema,
-	(parseResult, res) => {
-		if (parseResult.success) return
-		return res.json(
-			{ errors: parseResult.error.map(issue => issue.message) },
-			HTTP_BAD_REQUEST,
-		)
-	},
+	rejectInvalidInput,
 )
 
 export function createWeightRoutes(deps: WeightDeps): Hono<{ Bindings: Env }> {
@@ -122,14 +118,9 @@ function registerSaveWeightRoute(
 		'/',
 		describeSaveWeightRoute,
 		validateWeightEntryBody,
+		requireUserId(deps.getUserId),
 		async res => {
-			const userId = await deps.getUserId(res.env, res.req.raw.headers)
-			if (!userId) {
-				return res.json(
-					{ error: SETTINGS_UNAUTHORIZED_MESSAGE },
-					HTTP_UNAUTHORIZED,
-				)
-			}
+			const userId = res.get('userId')
 			const body = res.req.valid('json')
 			await saveWeightEntry(deps.createRepository(res.env.DB), {
 				userId,
@@ -148,29 +139,28 @@ function registerListWeightsRoute(
 	routes: Hono<{ Bindings: Env }>,
 	deps: WeightDeps,
 ): void {
-	routes.get('/', describeListWeightsRoute, async res => {
-		const userId = await deps.getUserId(res.env, res.req.raw.headers)
-		if (!userId) {
-			return res.json(
-				{ error: SETTINGS_UNAUTHORIZED_MESSAGE },
-				HTTP_UNAUTHORIZED,
+	routes.get(
+		'/',
+		describeListWeightsRoute,
+		requireUserId(deps.getUserId),
+		async res => {
+			const userId = res.get('userId')
+			const period = v.safeParse(
+				WeightPeriodSchema,
+				res.req.query('period') ?? DEFAULT_WEIGHT_PERIOD,
 			)
-		}
-		const period = v.safeParse(
-			WeightPeriodSchema,
-			res.req.query('period') ?? DEFAULT_WEIGHT_PERIOD,
-		)
-		if (!period.success) {
-			return res.json(
-				{ errors: period.issues.map(issue => issue.message) },
-				HTTP_BAD_REQUEST,
+			if (!period.success) {
+				return res.json(
+					{ errors: period.issues.map(issue => issue.message) },
+					HTTP_BAD_REQUEST,
+				)
+			}
+			const entries = await listWeightEntries(
+				deps.createRepository(res.env.DB),
+				userId,
+				getPeriodStartDate(period.output),
 			)
-		}
-		const entries = await listWeightEntries(
-			deps.createRepository(res.env.DB),
-			userId,
-			getPeriodStartDate(period.output),
-		)
-		return res.json({ entries }, HTTP_OK)
-	})
+			return res.json({ entries }, HTTP_OK)
+		},
+	)
 }
