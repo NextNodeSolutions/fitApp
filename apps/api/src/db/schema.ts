@@ -127,9 +127,13 @@ export const foodEntries = sqliteTable(
 			.notNull()
 			.default(sql`(unixepoch() * 1000)`),
 	},
+	// Meals are always read per user over a date range; user_id leads, so
+	// the index also serves the cascade delete on user.
 	table => [
-		index('food_entries_user_id_idx').on(table.userId),
-		index('food_entries_entry_date_idx').on(table.entryDate),
+		index('food_entries_user_id_entry_date_idx').on(
+			table.userId,
+			table.entryDate,
+		),
 	],
 )
 

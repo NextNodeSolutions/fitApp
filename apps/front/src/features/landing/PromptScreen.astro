@@ -1,0 +1,8 @@
+---
+import ChatHeader from './ChatHeader.astro'
+import { DEMO_LUNCH } from './demo-data'
+import UserBubble from './UserBubble.astro'
+---
+
+<ChatHeader time={DEMO_LUNCH.time} />
+<UserBubble>{DEMO_LUNCH.prompt}</UserBubble>

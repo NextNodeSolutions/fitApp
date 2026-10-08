@@ -9,7 +9,11 @@ export function ProfileSaveButton({
 	submitting: boolean
 }): ReactElement {
 	return (
-		<Button type="submit" disabled={submitting}>
+		<Button
+			type="submit"
+			disabled={submitting}
+			className="w-full sm:w-auto"
+		>
 			{submitting ? (
 				<>
 					<LoaderCircle className="animate-spin" />

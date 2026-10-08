@@ -1,0 +1,50 @@
+---
+import {
+	cardDescriptionVariants,
+	cardHeaderVariants,
+	cardTitleVariants,
+	cardVariants,
+	Progress,
+} from '@fitapp/ui'
+
+import { formatNumber } from '../../lib/format/format-number'
+import { MACRO_TONES } from '../../lib/macro-tones'
+
+import type { MacroProgress } from '@fitapp/contracts'
+
+interface Props {
+	macros: MacroProgress[]
+}
+
+const { macros } = Astro.props
+---
+
+<section class={cardVariants()}>
+	<header class={cardHeaderVariants()}>
+		<h2 class={cardTitleVariants()}>Macros</h2>
+		<p class={cardDescriptionVariants()}>Cibles calculées pour toi</p>
+	</header>
+	<ul class="mt-2 divide-y divide-secondary">
+		{
+			macros.map(macro => (
+				<li class="grid grid-cols-[1fr_auto] gap-x-3 gap-y-2 py-4 last:pb-1">
+					<span class="font-medium">{macro.label}</span>
+					<span class="text-sm text-muted-foreground tabular-nums">
+						{formatNumber(macro.consumedG)} / {formatNumber(macro.targetG)} g
+					</span>
+					<Progress
+						value={macro.targetG > 0 ? macro.consumedG / macro.targetG : 0}
+						label={macro.label}
+						tone={MACRO_TONES[macro.key]}
+						className="col-span-2"
+					/>
+					{macro.message ? (
+						<span class="col-span-2 text-[13px] text-muted-foreground">
+							{macro.message}
+						</span>
+					) : null}
+				</li>
+			))
+		}
+	</ul>
+</section>

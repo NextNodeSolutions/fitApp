@@ -43,6 +43,13 @@
 			"when": 1791376041996,
 			"tag": "0005_serious_mephisto",
 			"breakpoints": true
+		},
+		{
+			"idx": 6,
+			"version": "6",
+			"when": 1791404687383,
+			"tag": "0006_nasty_sprite",
+			"breakpoints": true
 		}
 	]
 }

@@ -1,0 +1,26 @@
+---
+import AppHeader from '../components/app-shell/AppHeader.astro'
+import AppTabBar from '../components/app-shell/AppTabBar.astro'
+import { userInitial } from '../lib/user-initial'
+
+import BaseLayout from './BaseLayout.astro'
+
+import type { AppNavKey } from '../components/app-shell/app-nav-items'
+
+interface Props {
+	title: string
+	current: AppNavKey
+}
+
+const { title, current } = Astro.props
+---
+
+<BaseLayout title={title}>
+	<div class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+		<AppHeader current={current} userInitial={userInitial(Astro.locals.user)} />
+		<main class="pt-2 pb-32 md:pb-20">
+			<slot />
+		</main>
+	</div>
+	<AppTabBar current={current} />
+</BaseLayout>

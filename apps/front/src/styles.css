@@ -1,1 +1,27 @@
 @import '@fitapp/ui/index.css';
+
+@keyframes rise {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+}
+
+@keyframes settle {
+	from {
+		transform: scale(1.1);
+	}
+	to {
+		transform: scale(1);
+	}
+}
+
+@supports (animation-timeline: view()) {
+	@media (prefers-reduced-motion: no-preference) {
+		.scroll-settle {
+			animation: settle linear both;
+			animation-timeline: view();
+			animation-range: entry 0% cover 55%;
+		}
+	}
+}

@@ -12,13 +12,13 @@ function Input({
 			type={type}
 			data-slot="input"
 			className={cn(
-				'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base transition-colors outline-none placeholder:text-muted-foreground',
-				'hover:border-ring/50',
-				'focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20',
+				'flex h-12 w-full rounded-lg border border-input bg-background px-4 text-base text-foreground transition-[border-color,box-shadow] outline-none placeholder:text-muted-foreground',
+				'hover:border-foreground/30',
+				'focus-visible:border-foreground focus-visible:ring-4 focus-visible:ring-brand-soft focus-visible:outline-none',
 				'disabled:cursor-not-allowed disabled:opacity-50',
-				'aria-invalid:border-destructive aria-invalid:ring-destructive/20',
+				'aria-invalid:border-destructive aria-invalid:ring-destructive/15',
 				'file:border-0 file:bg-transparent file:text-sm file:font-medium',
-				'text-foreground md:text-sm',
+				'[&::-webkit-inner-spin-button]:appearance-none',
 				className,
 			)}
 			{...props}

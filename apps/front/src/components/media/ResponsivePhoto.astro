@@ -1,0 +1,32 @@
+---
+import { PHOTO_WIDTHS, PHOTOS, photoUrl } from './photos'
+
+import type { PhotoName } from './photos'
+
+interface Props {
+	name: PhotoName
+	alt: string
+	sizes: string
+	class?: string
+	priority?: boolean
+}
+
+const DEFAULT_WIDTH = 1600
+
+const { name, alt, sizes, class: className, priority = false } = Astro.props
+const { width, height } = PHOTOS[name]
+const srcset = PHOTO_WIDTHS.map(w => `${photoUrl(name, w)} ${w}w`).join(', ')
+---
+
+<img
+	src={photoUrl(name, DEFAULT_WIDTH)}
+	srcset={srcset}
+	sizes={sizes}
+	width={width}
+	height={height}
+	alt={alt}
+	loading={priority ? 'eager' : 'lazy'}
+	fetchpriority={priority ? 'high' : 'auto'}
+	decoding="async"
+	class:list={['h-full w-full object-cover', className]}
+/>

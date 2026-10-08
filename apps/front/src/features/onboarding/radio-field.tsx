@@ -19,9 +19,15 @@ export function RadioField({
 			name={spec.name}
 			control={form.control}
 			render={({ field, fieldState }) => (
-				<div className="space-y-2">
-					<span className="text-sm font-medium">{spec.label}</span>
+				<div className="space-y-3">
+					<span
+						id={`${spec.name}-label`}
+						className="block text-sm font-medium"
+					>
+						{spec.label}
+					</span>
 					<RadioGroup
+						aria-labelledby={`${spec.name}-label`}
 						name={field.name}
 						value={field.value}
 						onValueChange={field.onChange}

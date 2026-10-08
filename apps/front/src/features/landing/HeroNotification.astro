@@ -1,0 +1,28 @@
+---
+import { APP_NAME } from '@fitapp/contracts'
+
+import { formatNumber } from '../../lib/format/format-number'
+
+import { DEMO_DAY, DEMO_LUNCH, DEMO_LUNCH_KCAL, DEMO_TARGET_KCAL } from './demo-data'
+
+const consumedByLunch = DEMO_DAY.meals
+	.filter(meal => meal.time <= DEMO_LUNCH.time)
+	.reduce((total, meal) => total + meal.calories, 0)
+---
+
+<div
+	class="grid grid-cols-[2.5rem_1fr_auto] items-center gap-x-3 gap-y-0.5 rounded-[20px] bg-background/90 p-3 shadow-[0_12px_32px_-16px_rgba(11,14,12,0.5)] backdrop-blur-xl"
+>
+	<span
+		class="row-span-2 grid size-10 place-items-center rounded-xl bg-foreground"
+		aria-hidden="true"
+	>
+		<span class="size-3 rounded-full bg-brand"></span>
+	</span>
+	<p class="text-sm font-semibold">Déjeuner noté</p>
+	<p class="text-xs text-muted-foreground">{APP_NAME} · maintenant</p>
+	<p class="col-start-2 col-end-4 text-sm text-muted-foreground">
+		{formatNumber(DEMO_LUNCH_KCAL)} kcal · il te reste{' '}
+		{formatNumber(DEMO_TARGET_KCAL - consumedByLunch)} kcal aujourd'hui
+	</p>
+</div>

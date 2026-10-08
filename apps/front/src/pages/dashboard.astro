@@ -1,48 +1,64 @@
 ---
-import '../styles.css'
+import { env } from 'cloudflare:workers'
 
-import { LogoutButton } from '../features/auth/LogoutButton'
+import { todayIsoDate } from '@fitapp/contracts'
 
-const { user } = Astro.locals
+import DataUnavailableCard from '../components/feedback/DataUnavailableCard.astro'
+import AssistantCard from '../features/dashboard/AssistantCard.astro'
+import { buildDashboardView } from '../features/dashboard/build-dashboard-view'
+import CaloriesCard from '../features/dashboard/CaloriesCard.astro'
+import DayHeading from '../features/dashboard/DayHeading.astro'
+import DayPicker from '../features/dashboard/DayPicker.astro'
+import { loadDashboardData } from '../features/dashboard/load-dashboard-data'
+import MacrosCard from '../features/dashboard/MacrosCard.astro'
+import MealsCard from '../features/dashboard/MealsCard.astro'
+import { resolveDashboardDate } from '../features/dashboard/resolve-dashboard-date'
+import WeightCard from '../features/dashboard/WeightCard.astro'
+import ProfileMissingCard from '../features/onboarding/ProfileMissingCard.astro'
+import AppLayout from '../layouts/AppLayout.astro'
+import { loadPageData } from '../lib/load-page-data'
+
+const today = todayIsoDate()
+const date = resolveDashboardDate(Astro.url.searchParams.get('date'), today)
+const dashboardData = await loadPageData(() =>
+	loadDashboardData(env, Astro.locals.user?.id ?? null, date),
+)
+const view = dashboardData
+	? buildDashboardView(dashboardData, date, today)
+	: null
 ---
 
-<html lang="fr">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<title>Tableau de bord — fitApp</title>
-	</head>
-	<body class="min-h-screen bg-gray-950 text-white">
-		<div class="mx-auto max-w-lg px-4 py-12">
-			<div class="mb-8 text-center">
-				<h1 class="text-3xl font-bold text-lime-400">fitApp</h1>
-				<p class="mt-2 text-gray-400">
-					Bienvenue {user?.name ?? 'sur ton tableau de bord'} !
-				</p>
-			</div>
-			<div class="rounded-lg border border-gray-700 bg-gray-900 p-6 text-center">
-				<p class="text-gray-300">
-					Bienvenue dans ton suivi personnalisé.
-				</p>
-				<p class="mt-2 text-sm text-gray-500">
-					Les fonctionnalités arrivent bientôt.
-				</p>
-			</div>
-			<div class="mt-6 flex justify-center gap-3">
-				<a
-					href="/poids"
-					class="inline-flex h-10 items-center gap-2 rounded-md border border-gray-700 px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-gray-800"
-				>
-					Mon poids
-				</a>
-				<a
-					href="/parametres"
-					class="inline-flex h-10 items-center gap-2 rounded-md border border-gray-700 px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-gray-800"
-				>
-					Paramètres
-				</a>
-				<LogoutButton client:load />
-			</div>
-		</div>
-	</body>
-</html>
+<AppLayout title="Aujourd'hui" current="today">
+	{
+		view ? (
+			<>
+				<DayHeading
+					date={date}
+					today={today}
+					mealCount={view.dayMeals.length}
+				/>
+				<DayPicker days={view.days} />
+				{view.summary ? (
+					<div class="mt-5 grid gap-3 lg:grid-cols-[1.1fr_1fr] lg:items-start lg:gap-4">
+						<div class="grid gap-3 lg:gap-4">
+							<CaloriesCard summary={view.summary} />
+							<MacrosCard macros={view.summary.macros} />
+						</div>
+						<div class="grid gap-3 lg:gap-4">
+							<MealsCard meals={view.dayMeals} />
+							<WeightCard
+								entries={view.weightEntries}
+								unitLabel={view.unitLabel}
+							/>
+							<AssistantCard hasMealsThisWeek={view.hasMealsThisWeek} />
+						</div>
+					</div>
+				) : (
+					<ProfileMissingCard title="Il manque ton profil" class="mt-6" />
+				)}
+			</>
+		) : (
+			<DataUnavailableCard />
+		)
+	}
+</AppLayout>

@@ -1,0 +1,63 @@
+---
+import { formatLongDate } from '../../lib/format/format-long-date'
+import { formatNumber } from '../../lib/format/format-number'
+
+import type { WeekDay } from './build-week-days'
+
+interface Props {
+	days: WeekDay[]
+}
+
+const PERCENT = 100
+
+const { days } = Astro.props
+
+const fill: Record<WeekDay['state'], string> = {
+	deficit: 'bg-brand',
+	balance: 'bg-brand',
+	surplus: 'bg-warning',
+	empty: 'bg-transparent',
+	future: 'bg-transparent',
+}
+---
+
+<nav aria-label="Jours de la semaine" class="mt-6">
+	<ol class="grid grid-cols-7 gap-1.5 sm:max-w-xl sm:gap-2">
+		{
+			days.map(day => {
+				const content = (
+					<>
+						<span class="text-xs">{day.letter}</span>
+						<span class:list={['text-base tabular-nums', day.isToday && 'font-semibold']}>
+							{day.dayOfMonth}
+						</span>
+						<span class="relative h-1 w-6 overflow-hidden rounded-full bg-secondary group-aria-[current=date]:bg-white/15">
+							<span
+								class:list={['absolute inset-y-0 left-0 rounded-full', fill[day.state]]}
+								style={`width: ${Math.min(1, day.share) * PERCENT}%`}
+							/>
+						</span>
+					</>
+				)
+				return (
+					<li>
+						{day.state === 'future' ? (
+							<span class="flex flex-col items-center gap-1.5 rounded-2xl border border-dashed border-border py-2.5 text-muted-foreground">
+								{content}
+							</span>
+						) : (
+							<a
+								href={day.href}
+								aria-current={day.isSelected ? 'date' : undefined}
+								aria-label={`${formatLongDate(day.isoDate)} : ${formatNumber(day.kcal)} kcal`}
+								class="group flex flex-col items-center gap-1.5 rounded-2xl bg-card py-2.5 text-muted-foreground transition-colors hover:bg-secondary aria-[current=date]:bg-foreground aria-[current=date]:text-background"
+							>
+								{content}
+							</a>
+						)}
+					</li>
+				)
+			})
+		}
+	</ol>
+</nav>

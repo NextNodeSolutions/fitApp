@@ -1,0 +1,71 @@
+---
+import { APP_NAME } from '@fitapp/contracts'
+import { buttonVariants } from '@fitapp/ui'
+import { ArrowRight } from 'lucide-react'
+
+import ResponsivePhoto from '../../components/media/ResponsivePhoto.astro'
+import { ROUTES } from '../../lib/routes'
+
+import { DEMO_LUNCH } from './demo-data'
+import HeroNotification from './HeroNotification.astro'
+import { HOW_IT_WORKS_SECTION } from './landing-sections'
+import UserBubble from './UserBubble.astro'
+---
+
+<section
+	class="mx-auto max-w-6xl px-4 pt-28 text-center sm:px-6 sm:pt-32 lg:px-8 lg:pt-40"
+>
+	<h1
+		class="mx-auto max-w-[14ch] text-[2.65rem] leading-[1.02] font-medium tracking-[-0.045em] motion-safe:animate-[rise_0.9s_cubic-bezier(0.22,1,0.36,1)_both] sm:text-6xl lg:text-[5.25rem]"
+	>
+		Ton suivi nutrition vit dans ton IA.
+	</h1>
+	<p
+		class="mx-auto mt-5 max-w-[36ch] text-[17px] text-muted-foreground motion-safe:animate-[rise_0.9s_0.08s_cubic-bezier(0.22,1,0.36,1)_both] sm:text-lg"
+	>
+		Dis à ton assistant ce que tu as mangé. {APP_NAME} compte les calories et les
+		macros, et suit ton poids. Rien à saisir.
+	</p>
+	<div
+		class="mt-7 flex flex-wrap justify-center gap-2.5 motion-safe:animate-[rise_0.9s_0.16s_cubic-bezier(0.22,1,0.36,1)_both]"
+	>
+		<a href={ROUTES.signup} class={buttonVariants({ size: 'lg' })}>
+			Commencer
+			<ArrowRight className="size-4" strokeWidth={2} />
+		</a>
+		<a
+			href={`#${HOW_IT_WORKS_SECTION.id}`}
+			class={buttonVariants({ size: 'lg', variant: 'outline' })}
+		>
+			Comment ça marche
+		</a>
+	</div>
+	<p class="mt-5 text-sm text-muted-foreground">
+		Fonctionne avec ChatGPT, Claude, Gemini et tout client MCP.
+	</p>
+	<figure
+		class="relative mt-10 aspect-[4/5] overflow-hidden rounded-3xl bg-card sm:aspect-[16/10] lg:mt-14 lg:aspect-[16/8]"
+	>
+		<ResponsivePhoto
+			name="runner-park"
+			alt="Une femme qui court dans un parc, au soleil du matin"
+			sizes="(min-width: 1200px) 1150px, (min-width: 640px) 95vw, 170vw"
+			class="object-[30%_center] sm:object-[35%_75%]"
+			priority
+		/>
+		<figcaption
+			class="absolute inset-x-3 top-3 bottom-3 flex flex-col justify-between text-left sm:inset-x-auto sm:top-6 sm:right-6 sm:bottom-6 sm:w-[360px]"
+		>
+			<UserBubble
+				class="shadow-[0_10px_28px_-14px_rgba(11,14,12,0.45)] motion-safe:animate-[rise_0.8s_0.7s_cubic-bezier(0.22,1,0.36,1)_both]"
+			>
+				{DEMO_LUNCH.prompt}
+			</UserBubble>
+			<div
+				class="motion-safe:animate-[rise_0.8s_1.5s_cubic-bezier(0.22,1,0.36,1)_both]"
+			>
+				<HeroNotification />
+			</div>
+		</figcaption>
+	</figure>
+</section>

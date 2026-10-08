@@ -13,7 +13,12 @@ export function AuthSubmitButton({
 	loadingLabel: string
 }): ReactElement {
 	return (
-		<Button type="submit" disabled={submitting} className="w-full">
+		<Button
+			type="submit"
+			size="lg"
+			disabled={submitting}
+			className="mt-2 w-full"
+		>
 			{submitting ? (
 				<>
 					<LoaderCircle className="animate-spin" />

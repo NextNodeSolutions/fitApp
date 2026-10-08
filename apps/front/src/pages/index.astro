@@ -1,18 +1,24 @@
 ---
-import { StatusIndicator } from '../components/StatusIndicator'
+import AssistantsSection from '../features/landing/AssistantsSection.astro'
+import FinalCta from '../features/landing/FinalCta.astro'
+import HowItWorks from '../features/landing/HowItWorks.astro'
+import LandingHero from '../features/landing/LandingHero.astro'
+import LandingNav from '../features/landing/LandingNav.astro'
+import OutdoorBanner from '../features/landing/OutdoorBanner.astro'
+import SiteFooter from '../features/landing/SiteFooter.astro'
+import BaseLayout from '../layouts/BaseLayout.astro'
+
+export const prerender = true
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>fitApp</title>
-	</head>
-	<body>
-		<h1>fitApp</h1>
-		<StatusIndicator client:load />
-	</body>
-</html>
+<BaseLayout>
+	<LandingNav />
+	<main>
+		<LandingHero />
+		<HowItWorks />
+		<OutdoorBanner />
+		<AssistantsSection />
+		<FinalCta />
+	</main>
+	<SiteFooter />
+</BaseLayout>

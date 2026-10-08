@@ -4,12 +4,13 @@ export type WeightPeriod = (typeof WEIGHT_PERIODS)[number]
 
 export const DEFAULT_WEIGHT_PERIOD: WeightPeriod = '90d'
 
-export const WEIGHT_PERIOD_OPTIONS = [
-	{ value: '30d', label: '30 derniers jours' },
-	{ value: '90d', label: '90 derniers jours' },
-	{ value: '365d', label: '12 derniers mois' },
-] as const
-
-export function todayIsoDate(): string {
-	return new Date().toISOString().slice(0, 10)
+export const WEIGHT_PERIOD_LABELS: Record<WeightPeriod, string> = {
+	'30d': '30 jours',
+	'90d': '90 jours',
+	'365d': '12 mois',
 }
+
+export const WEIGHT_PERIOD_OPTIONS = WEIGHT_PERIODS.map(value => ({
+	value,
+	label: WEIGHT_PERIOD_LABELS[value],
+}))

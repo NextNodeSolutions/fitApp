@@ -9,6 +9,7 @@ import {
 	WeightEntryBodySchema,
 	WeightEntryResponseSchema,
 	WeightListResponseSchema,
+	WeightPeriodSchema,
 	WeightUnauthorizedResponseSchema,
 	WeightValidationErrorResponseSchema,
 } from '@fitapp/contracts'
@@ -156,7 +157,7 @@ function registerListWeightsRoute(
 			)
 		}
 		const period = v.safeParse(
-			v.picklist(WEIGHT_PERIODS, 'La période demandée est invalide'),
+			WeightPeriodSchema,
 			res.req.query('period') ?? DEFAULT_WEIGHT_PERIOD,
 		)
 		if (!period.success) {

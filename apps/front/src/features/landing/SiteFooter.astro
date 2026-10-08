@@ -1,0 +1,27 @@
+---
+import { APP_NAME } from '@fitapp/contracts'
+
+import { ROUTES } from '../../lib/routes'
+
+const YEAR = new Date().getFullYear()
+---
+
+<footer class="mx-auto mt-24 max-w-6xl px-4 pb-8 sm:px-6 lg:mt-36 lg:px-8">
+	<p
+		class="border-t border-border pt-8 text-[clamp(5rem,30vw,22rem)] leading-[0.8] font-semibold tracking-[-0.07em]"
+		aria-hidden="true"
+	>
+		{APP_NAME}<span
+			class="ml-[0.04em] inline-block size-[0.16em] rounded-full bg-brand"
+		></span>
+	</p>
+	<div
+		class="mt-6 flex flex-wrap items-center justify-between gap-4 text-sm text-muted-foreground"
+	>
+		<span>© {YEAR} {APP_NAME}</span>
+		<nav aria-label="Compte" class="flex gap-5">
+			<a href={ROUTES.login} class="hover:text-foreground">Connexion</a>
+			<a href={ROUTES.signup} class="hover:text-foreground">Créer un compte</a>
+		</nav>
+	</div>
+</footer>

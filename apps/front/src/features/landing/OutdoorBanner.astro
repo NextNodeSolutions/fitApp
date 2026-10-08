@@ -1,0 +1,39 @@
+---
+import { APP_NAME } from '@fitapp/contracts'
+import ResponsivePhoto from '../../components/media/ResponsivePhoto.astro'
+
+const TITLE_ID = 'outdoor-title'
+---
+
+<section
+	aria-labelledby={TITLE_ID}
+	class="relative mt-24 h-[88svh] min-h-[520px] overflow-hidden text-white lg:mt-32"
+>
+	<div class="scroll-settle absolute inset-0">
+		<ResponsivePhoto
+			name="yoga-park"
+			alt="Un cours de yoga en plein air, dans un parc"
+			sizes="100vw"
+			class="object-[45%_center]"
+		/>
+	</div>
+	<div
+		class="absolute inset-0 bg-linear-to-b from-transparent from-35% to-black/55"
+		aria-hidden="true"
+	>
+	</div>
+	<div
+		class="absolute inset-x-0 bottom-0 mx-auto max-w-6xl px-4 pb-10 sm:px-6 lg:px-8 lg:pb-16"
+	>
+		<h2
+			id={TITLE_ID}
+			class="max-w-[12ch] text-[2.75rem] leading-[0.98] font-medium tracking-[-0.045em] sm:text-7xl lg:text-[5.5rem]"
+		>
+			Moins d'écran. Plus de dehors.
+		</h2>
+		<p class="mt-4 max-w-[34ch] text-[17px] text-white/85">
+			{APP_NAME} n'est pas une app de plus à ouvrir. Ton suivi se fait là où tu
+			parles déjà.
+		</p>
+	</div>
+</section>

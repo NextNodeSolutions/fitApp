@@ -2,12 +2,12 @@ import { OnboardingFormSchema, toOnboardingBody } from '@fitapp/contracts'
 import { valibotResolver } from '@hookform/resolvers/valibot'
 import { useForm } from 'react-hook-form'
 
+import { ROUTES } from '../../lib/routes'
+
 import { submitOnboarding } from './submit-onboarding'
 
 import type { OnboardingFormValues } from '@fitapp/contracts'
 import type { UseFormReturn } from 'react-hook-form'
-
-const DASHBOARD_PATH = '/dashboard'
 
 const EMPTY_VALUES: OnboardingFormValues = {
 	height: '',
@@ -46,7 +46,7 @@ export function useOnboardingForm(): {
 			form.setError('root', { message: submission.error.message })
 			return
 		}
-		window.location.href = DASHBOARD_PATH
+		window.location.href = ROUTES.dashboard
 	})
 
 	return { form, onSubmit }

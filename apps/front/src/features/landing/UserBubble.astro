@@ -1,0 +1,17 @@
+---
+interface Props {
+	class?: string
+}
+
+const { class: className } = Astro.props
+---
+
+<p
+	data-bubble
+	class:list={[
+		'ml-auto w-fit max-w-[86%] rounded-[18px] rounded-br-md bg-background px-3.5 py-2.5 text-[15px] leading-snug',
+		className,
+	]}
+>
+	<slot />
+</p>

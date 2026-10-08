@@ -1,4 +1,5 @@
 import { RADIO_FIELDS, TEXT_FIELDS } from '@fitapp/contracts'
+import { Alert, Card, CardDescription, CardTitle } from '@fitapp/ui'
 
 import { ProfileRadioField } from './profile-radio-field'
 import { ProfileSaveButton } from './profile-save-button'
@@ -19,25 +20,27 @@ export function ProfilePatchForm({
 	const serverError = form.formState.errors.root?.message
 
 	return (
-		<div className="rounded-lg border border-gray-700 bg-gray-900 p-6">
-			<h2 className="text-lg font-semibold">Mon profil</h2>
-			<form noValidate onSubmit={onSubmit} className="mt-4 space-y-5">
-				{serverError ? (
-					<div
-						role="alert"
-						className="border-destructive/50 bg-destructive/10 text-destructive rounded-md border p-3 text-sm"
-					>
-						{serverError}
-					</div>
-				) : null}
+		<Card>
+			<CardTitle>Profil</CardTitle>
+			<CardDescription className="mt-1">
+				Sert à calculer ta cible calorique et tes macros.
+			</CardDescription>
+			<form noValidate onSubmit={onSubmit} className="mt-6 space-y-6">
+				{serverError ? <Alert role="alert">{serverError}</Alert> : null}
 				{isSaved ? (
-					<p role="status" className="text-sm text-lime-400">
+					<Alert role="status" tone="positive">
 						Profil mis à jour.
-					</p>
+					</Alert>
 				) : null}
-				{TEXT_FIELDS.map(spec => (
-					<ProfileTextField key={spec.id} spec={spec} form={form} />
-				))}
+				<div className="grid gap-5 sm:grid-cols-3 sm:gap-3">
+					{TEXT_FIELDS.map(spec => (
+						<ProfileTextField
+							key={spec.id}
+							spec={spec}
+							form={form}
+						/>
+					))}
+				</div>
 				{RADIO_FIELDS.map(spec => (
 					<ProfileRadioField
 						key={spec.name}
@@ -47,6 +50,6 @@ export function ProfilePatchForm({
 				))}
 				<ProfileSaveButton submitting={form.formState.isSubmitting} />
 			</form>
-		</div>
+		</Card>
 	)
 }

@@ -1,4 +1,5 @@
 import { RADIO_FIELDS, TEXT_FIELDS } from '@fitapp/contracts'
+import { Alert } from '@fitapp/ui'
 
 import { RadioField } from './radio-field'
 import { SubmitButton } from './submit-button'
@@ -12,22 +13,13 @@ export function OnboardingForm(): ReactElement {
 	const serverError = form.formState.errors.root?.message
 
 	return (
-		<form
-			noValidate
-			onSubmit={onSubmit}
-			className="mx-auto max-w-md space-y-6"
-		>
-			{serverError ? (
-				<div
-					role="alert"
-					className="border-destructive/50 bg-destructive/10 text-destructive rounded-md border p-3 text-sm"
-				>
-					{serverError}
-				</div>
-			) : null}
-			{TEXT_FIELDS.map(spec => (
-				<TextField key={spec.id} spec={spec} form={form} />
-			))}
+		<form noValidate onSubmit={onSubmit} className="space-y-7">
+			{serverError ? <Alert role="alert">{serverError}</Alert> : null}
+			<div className="grid gap-5 sm:grid-cols-3 sm:gap-3">
+				{TEXT_FIELDS.map(spec => (
+					<TextField key={spec.id} spec={spec} form={form} />
+				))}
+			</div>
 			{RADIO_FIELDS.map(spec => (
 				<RadioField key={spec.name} spec={spec} form={form} />
 			))}

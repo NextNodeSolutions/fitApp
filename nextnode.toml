@@ -19,7 +19,7 @@ secrets = ["FRONT_SENTRY_DSN"]
 [deploy.services.api]
 url = "api-fitapp.nextnode.fr"
 needs = ["d1"]
-entry = "apps/api/src/index.ts"
+entry = "apps/api/src/worker.ts"
 secrets = ["BETTER_AUTH_SECRET", "SENTRY_DSN"]
 
 [deploy.services.mcp]
