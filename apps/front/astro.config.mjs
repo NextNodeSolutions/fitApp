@@ -15,17 +15,19 @@ export default defineConfig({
 	integrations: [react(), sentry()],
 	vite: {
 		plugins: [tailwindcss()],
-		environments: {
-			ssr: {
-				optimizeDeps: {
-					// The dependency scan only crawls pages and components. A dependency
-					// found after startup re-runs the optimizer and leaves two copies of
-					// React in workerd, which breaks hooks: also crawl the middleware
-					// chain (Sentry server config), and list what is injected at runtime
-					// (Sentry's middleware, Astro's JSON logger).
-					entries: ['src/middleware.ts'],
-					include: ['@sentry/astro/middleware', 'astro/logger/json'],
-				},
+		ssr: {
+			optimizeDeps: {
+				// The SSR dependency scan only crawls pages and components. What only
+				// the middleware reaches (Sentry server config) or what is injected at
+				// runtime (Sentry's middleware, Astro's JSON logger) would be found
+				// late, re-run the optimizer and leave two copies of React in workerd,
+				// which breaks hooks. Not `environments.ssr`: declaring it replaces the
+				// adapter's SSR build input and renames dist/server/entry.mjs.
+				include: [
+					'@sentry/astro',
+					'@sentry/astro/middleware',
+					'astro/logger/json',
+				],
 			},
 		},
 	},
